@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Spelling Worksheet — 1–4 Syllables + Unified Sounds Folder</title>
+<style>
+  /* keep borders/padding from shifting grid math */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* hide spelling steps panel */
+  #stepsPanel { display: none !important; }
+
+  html,body{height:100vh;margin:0;overflow:hidden;background:#f4f4f4}
+  body{font-family:Arial,Helvetica,sans-serif;display:flex;align-items:flex-start;justify-content:center}
+  #stage{transform-origin:top center;will-change:transform}
+
+  .sheet{width:1100px;background:#fff;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.12);
+         margin-top:10px;padding:12px 12px 16px}
+  .title{text-align:center;font-size:34px;font-weight:800;margin:8px 0 8px}
+
+  .steps{border:2px solid #000;margin:6px 0 10px}
+  .steps h3{margin:0;padding:6px 10px;border-bottom:2px solid #000;text-align:center;font-size:22px;font-weight:800}
+  .steps .script{margin:10px 14px;line-height:1.55;font-size:18px}
+  .steps .line{margin:4px 0}
+  .steps .em{font-weight:700;text-decoration:underline}
+  .steps .current{background:#fff8cc;border-radius:4px;padding:2px 4px}
+
+  #instruction{font-size:18px;margin:10px 0 8px;min-height:28px}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  button{padding:7px 10px;font-size:14px;border:1px solid #cfcfcf;border-radius:5px;background:#1e9e47;color:#fff;cursor:pointer}
+  button:hover{background:#17883c}
+  button[disabled]{opacity:.6;cursor:not-allowed}
+  #restartBtn{background:#e33}
+  .secondary{background:#495057}
+  .secondary:hover{background:#3e464c}
+
+  /* top lesson selector */
+  .lessonbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    padding:6px 0 2px;
+  }
+  .lessonbar label{font-size:14px;font-weight:700}
+  .lessonbar select{
+    padding:7px 10px; font-size:14px; border:1px solid #cfcfcf; border-radius:6px;
+    background:#fff;
+    min-width:260px;
+  }
+  .lessonbar .hint{
+    font-size:12px; color:#555;
+  }
+
+  #studentLayout{margin-top:12px}
+
+  .grid{border:2px solid #000}
+  .hdr{display:grid}
+  .hdr div{padding:8px 10px;font-weight:800;border-right:2px solid #000;text-align:left;font-size:18px}
+  .hdr div:last-child{border-right:none}
+  .row{display:grid}
+  .row .cell{min-height:120px;border-top:2px solid #000;border-right:2px solid #000;position:relative;background:#fff}
+  .row .cell:last-child{border-right:none}
+
+  .syllableDrop{position:absolute;left:10px;bottom:12px;width:110px;height:74px;background:transparent}
+
+  .tiles-row{display:grid;border-top:2px solid #000;background:#fff}
+  .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-right:2px solid #000;padding:8px}
+  .tiles:last-child{border-right:none}
+
+  /* ===== Sound slots (aligned counter row + aligned letter row) ===== */
+  .counter-slot{
+    position:relative;
+    height:64px;
+    background:transparent;
+    border:none;
+    border-left:1px dashed #cfd4da;
+    overflow:visible;
+  }
+  .counter-slot:first-child{border-left:none}
+
+  .counter-slot::after{
+    content: attr(data-ord);
+    position:absolute; top:2px; left:6px;
+    font-size:11px; color:#88919a;
+    pointer-events:none; user-select:none;
+  }
+  .counter-slot.has-counter::after{ color:#6b7280 }
+
+  /* Disabled: keep visible, but no interaction */
+  .counter-slot.disabled{ pointer-events:none; }
+
+  /* ghost slot for span-2 token (x) */
+  .counter-slot.span-ghost{ pointer-events:none; }
+  .counter-slot.span-ghost::after{ opacity:.15; }
+
+  /* COUNTER: fixed row */
+  .counter.in-slot{
+    position:absolute;
+    top:26px;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:4;
+  }
+
+  /* LABEL: fixed row */
+  .tile-label{
+    position:absolute;
+    bottom:6px;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    margin:0;
+    text-align:center;
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+    z-index:3;
+  }
+
+  /* x label spans 2 boxes: centered at the boundary between 2 slots */
+  .tile-label.span2{
+    left:100%;
+    width:200%;
+    transform:translateX(-50%);
+  }
+
+  .wholeword-write{padding:8px;display:flex;align-items:flex-start;justify-content:flex-start}
+  #wholewordText{font-size:42px;font-weight:700;margin-top:6px}
+
+  .counter-tray{display:flex;gap:8px;margin:12px 0 0;align-items:center;flex-wrap:wrap}
+  .counter{width:26px;height:26px;border-radius:50%;background:#2d6cdf;cursor:grab}
+  .counter.locked{cursor:not-allowed;}
+
+  .syllableText{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:40px;font-weight:700;pointer-events:none}
+
+  .teacher-panel{
+    position:fixed; right:12px; top:12px; width:960px; max-width:96vw; max-height:90vh;
+    background:#fff; border:2px solid #000; border-radius:8px;
+    box-shadow:0 6px 20px rgba(0,0,0,.18); padding:12px; display:none; z-index:9999; overflow:auto;
+  }
+  .teacher-panel h4{margin:0 0 8px; font-size:16px}
+  .teacher-panel .hint{font-size:12px; color:#555; margin-top:6px}
+  .teacher-panel .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:8px 0}
+  .teacher-panel label{font-size:12px;display:block;margin:6px 0 2px}
+  .teacher-panel input,.teacher-panel select,.teacher-panel textarea{
+    padding:6px 8px; border:1px solid #bbb; border-radius:6px; font-size:14px
+  }
+  .teacher-panel textarea{width:100%; min-height:60px}
+  .kbd{background:#eee;border:1px solid #bbb;border-bottom-color:#999;border-radius:4px;padding:0 4px;font:12px/1.4 monospace;color:#333}
+
+  .tile-grid .tg-row{display:flex; gap:8px; align-items:center; margin:6px 0}
+  .tile-grid .tg-title{width:86px; font-size:12px; font-weight:700}
+  .tile-grid .tg-tiles{display:grid; grid-template-columns:repeat(6,1fr); gap:6px}
+  .tile-grid input{padding:6px 8px; border:1px solid #bbb; border-radius:6px; font-size:14px}
+
+  table.wordlist{width:100%; border-collapse:collapse; font-size:14px; margin-top:8px}
+  .wordlist th,.wordlist td{border:1px solid #ccc; padding:6px; vertical-align:top}
+  .wordlist th{background:#f7f7f7; position:sticky; top:0; z-index:1}
+  .wordlist tr.selected{outline:2px solid #1e9e47}
+
+  .teacher-hotspot{
+    position: fixed; right: 8px; bottom: 8px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #000;
+    opacity: .08;
+    border: none;
+    cursor: pointer;
+  }
+  .teacher-hotspot:hover{ opacity:.25; }
+
+  .center,#criteria-container,#scenario-options,.output-container{display:none}
+
+  .notes-card{border:1px dashed #bbb; border-radius:8px; padding:10px; background:#fafafa; flex:1; min-width:280px}
+  .notes-card textarea{min-height:120px}
+
+  .corner-glossary{
+    position: sticky;
+    top: 8px;
+    margin-left: auto;
+    max-width: 320px;
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    padding:10px 12px;
+    font-size:12px;
+    line-height:1.35;
+  }
+  .corner-glossary h5{
+    margin:0 0 6px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  .corner-glossary ul{
+    list-style:disc;
+    padding-left:18px;
+    margin:6px 0 0;
+    max-height:38vh;
+    overflow:auto;
+  }
+  .corner-glossary li{ margin:2px 0; }
+  .corner-glossary code{
+    background:#f6f8fa;
+    border:1px solid #e5e7eb;
+    border-radius:4px;
+    padding:0 4px;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  .credits{position:fixed;right:12px;bottom:8px;font-size:11px;line-height:1.3;color:#555;pointer-events:none}
+  .credits a{pointer-events:auto}
+  .credits p{margin:2px 0}.credits p:first-child{color:#000;font-weight:bold}
+</style>
+</head>
+
+<body>
+<div id="stage">
+  <div class="sheet">
+    <div class="title">Spelling Worksheet</div>
+
+    <!-- ✅ NEW: Lesson dropdown (loads JSON sets) -->
+    <div class="lessonbar">
+      <label for="lessonSelect">Lesson set</label>
+      <select id="lessonSelect" onchange="onLessonChange(this.value)">
+        <option value="">Choose a cycle/session…</option>
+        <option value="Cycle 1 Session 1.json">Cycle 1 Session 1</option>
+        <option value="Cycle 1 Session 2.json">Cycle 1 Session 2</option>
+      </select>
+      <span class="hint">Select a set to auto-load the Word List.</span>
+    </div>
+
+    <div class="steps" id="stepsPanel">
+      <h3>Spelling Steps</h3>
+      <div id="script" class="script">
+        <div class="line current" id="L0">watch me spell some words. remember how i do it. you will have to do it later.</div>
+        <div class="line" id="La">a) <span class="em">say</span> the word, give the meaning in a sentence, and repeat the word.</div>
+        <div class="line" id="Lb">b) i track the syllables. &nbsp; <span id="Lb1">1st syllable /___/.</span> &nbsp; <span id="Lb2">2 syll /___/.</span> &nbsp; <span id="Lb3">3 syll /___/.</span> &nbsp; <span id="Lb4">4 syll /___/.</span></div>
+        <div class="line" id="Lc1">c) i track and spell the sounds in each syllable.</div>
+        <div class="line" id="Lc2">1st syllable /__/.</div>
+        <div class="line" id="Lc3">1st sound /__/ . 2nd sound /___/. 3rd sound /__/.</div>
+        <div class="line" id="Lc4">1st sound /___/, letter ___. 2nd sound /___/, letter ___. 3rd sound, /___/, letter ___.</div>
+        <div class="line" id="Ld">(d) <span class="em">blend</span> and check syllable. i write it in the syllable cell.</div>
+        <div class="line" id="Le">(e) repeat for next syllable.</div>
+        <div class="line" id="Lf">(f) <span class="em">blend</span> and check whole word. /___/</div>
+      </div>
+    </div>
+
+    <div id="instruction" aria-live="polite">
+      open teacher panel (<span class="kbd">ctrl</span>+<span class="kbd">alt</span>+<span class="kbd">t</span> or the tiny dot). load tiles (or choose a lesson set above), then “begin”.
+    </div>
+
+    <div class="controls">
+      <button id="beginBtn"  onclick="begin()">Begin</button>
+      <button id="nextBtn"   onclick="nextStep()" disabled>Next Step</button>
+      <button id="restartBtn"onclick="restart()">Restart</button>
+      <button class="secondary" id="toggleInstructionsBtn" onclick="toggleInstructions()">Hide Instructions</button>
+      <button class="secondary" id="toggleVoiceBtn" onclick="toggleVoice()">Mute Voice</button>
+    </div>
+
+    <div id="studentLayout"></div>
+
+    <h3 style="margin:12px 0 6px;font-size:18px">Counters</h3>
+    <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
+      <div class="counter locked" id="seedCounter" draggable="true" ondragstart="dragSpawn(event)" title="drag to create a counter"></div>
+    </div>
+
+    <button id="teacherHotspot" class="teacher-hotspot" aria-label="open teacher panel"></button>
+  </div>
+</div>
+
+<!-- Teacher Panel -->
+<div class="teacher-panel" id="teacherPanel" aria-hidden="true">
+  <h4>Teacher tools</h4>
+
+  <div class="row" style="align-items:flex-start; justify-content:flex-end">
+    <div class="corner-glossary">
+      <h5>Sound Markers</h5>
+      <ul>
+        <li><code>a_</code> is a that sounds like schwa.</li>
+        <li><code>a__</code> is short sound for a.</li>
+        <li><code>c_</code> is soft c.</li>
+        <li><code>e_</code> is e that sounds like schwa.</li>
+        <li><code>e__</code> is short sound for e.</li>
+        <li><code>ea_</code> is short sound for e.</li>
+        <li><code>ea__</code> is long e sound.</li>
+        <li><code>ed_</code> is /d/ sound</li>
+        <li><code>ed__</code> is /t/ sound.</li>
+        <li><code>ei_</code> is long e sound</li>
+        <li><code>ew_</code> is oo sound.</li>
+        <li><code>ew</code> is u sound.</li>
+        <li><code>g_</code> is soft g sound.</li>
+        <li><code>i__</code> is short i sound.</li>
+        <li><code>i_</code> is schwa sound.</li>
+        <li><code>ie_</code> is e sound.</li>
+        <li><code>ie</code> is i sound.</li>
+        <li><code>o__</code> is short o sound.</li>
+        <li><code>oo_</code> is long oo sound.</li>
+        <li><code>oo</code> is short oo sound.</li>
+        <li><code>ow_</code> is short o sound.</li>
+        <li><code>ow</code> is ou sound.</li>
+        <li><code>th</code> is unvoiced th.</li>
+        <li><code>th_</code> is voiced th.</li>
+        <li><code>u__</code> is short u sound.</li>
+        <li><code>u_</code> is schwa sound.</li>
+        <li><code>u</code> is long u sound.</li>
+        <li><code>ue</code> is oo sound.</li>
+        <li><code>ue_</code> is u sound.</li>
+        <li><code>ai_</code> is schwa sound.</li>
+        <li><code>ar_</code> is schwa sound.</li>
+        <li><code>ay_</code> is schwa sound.</li>
+        <li><code>ea_</code> is schwa sound.</li>
+        <li><code>er_</code> is schwa sound.</li>
+        <li><code>ir_</code> is schwa sound.</li>
+        <li><code>or_</code> is schwa sound.</li>
+        <li><code>ur_</code> is schwa sound.</li>
+        <li><code>y_e</code> is y sounding as long e sound.</li>
+        <li><code>y_i</code> is y sounding as long i sound.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row" style="align-items:flex-start">
+    <div style="min-width:280px">
+      <label>Word</label>
+      <input id="qWord" placeholder="vocabulary"/>
+      <label>Meaning</label>
+      <textarea id="qMeaning" placeholder="a short definition or example sentence."></textarea>
+
+      <!-- ✅ Keep only this -->
+      <label>Syllable count for this word</label>
+      <select id="qSylCount">
+        <option value="1">1 syllable</option>
+        <option value="2">2 syllables</option>
+        <option value="3" selected>3 syllables</option>
+        <option value="4">4 syllables</option>
+      </select>
+
+      <div class="hint" style="margin:6px 0 8px;">enter sound units per tile (digraphs/teams). leave blanks where unused.</div>
+
+      <div class="tile-grid">
+        <div class="tg-row">
+          <div class="tg-title">syllable 1</div>
+          <div class="tg-tiles">
+            <input id="q1_0"><input id="q1_1"><input id="q1_2"><input id="q1_3"><input id="q1_4"><input id="q1_5">
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-title">syllable 2</div>
+          <div class="tg-tiles">
+            <input id="q2_0"><input id="q2_1"><input id="q2_2"><input id="q2_3"><input id="q2_4"><input id="q2_5">
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-title">syllable 3</div>
+          <div class="tg-tiles">
+            <input id="q3_0"><input id="q3_1"><input id="q3_2"><input id="q3_3"><input id="q3_4"><input id="q3_5">
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-title">syllable 4</div>
+          <div class="tg-tiles">
+            <input id="q4_0"><input id="q4_1"><input id="q4_2"><input id="q4_3"><input id="q4_4"><input id="q4_5">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="quickUse()">Use tiles above</button>
+        <button type="button" onclick="quickAddToList()">Add to Word List</button>
+      </div>
+    </div>
+
+    <div style="flex:1; min-width:520px">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:700">Word List</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap">
+          <button type="button" onclick="addBlankRow()">Add blank row</button>
+          <button type="button" onclick="deleteSelected()">Delete selected</button>
+          <button type="button" onclick="useSelected()">Use selected</button>
+          <button type="button" onclick="useAll()">Use entire list</button>
+          <button type="button" onclick="shuffleTeacherSet()">Shuffle list</button>
+          <button type="button" onclick="downloadSet()">Download set</button>
+          <label style="display:inline-flex;gap:6px;align-items:center">
+            <input type="file" id="uploadInput" accept="application/json" style="display:none" onchange="uploadSet(event)"/>
+            <button type="button" onclick="document.getElementById('uploadInput').click()">Upload set</button>
+          </label>
+        </div>
+      </div>
+
+      <table class="wordlist" id="wordTable">
+        <thead>
+          <tr>
+            <th style="width:140px">word</th>
+            <th>meaning</th>
+            <th style="width:90px">syllables</th>
+            <th style="width:180px">s1 tiles (comma-sep)</th>
+            <th style="width:180px">s2 tiles</th>
+            <th style="width:180px">s3 tiles</th>
+            <th style="width:180px">s4 tiles</th>
+          </tr>
+        </thead>
+        <tbody id="wordTBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row" style="align-items:flex-start">
+    <div class="notes-card">
+      <label for="devNotes"><strong>Teacher / Developer Notes</strong> (auto-save)</label>
+      <textarea id="devNotes" placeholder="Type lesson notes, reminders, TODOs, or setup tips here. Notes are stored locally and not shown to students."></textarea>
+      <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap">
+        <button class="secondary" type="button" onclick="copyNotes()">Copy</button>
+        <button class="secondary" type="button" onclick="downloadNotes()">Download</button>
+        <button class="secondary" type="button" onclick="clearNotes()">Clear</button>
+      </div>
+      <div class="hint">Autosaves to your browser (<span class="kbd">localStorage</span>) under <span class="kbd">devNotesV1</span>.</div>
+    </div>
+  </div>
+
+  <div class="hint">
+    toggle panel: <span class="kbd">ctrl</span>+<span class="kbd">alt</span>+<span class="kbd">t</span> or click the dot.
+  </div>
+</div>
+
+<div class="credits">
+  <p>© 2025 lim kim sze. <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">cc by-nc-nd 4.0</a></p>
+</div>
+
+<script>
+  /* ===== Span rules ===== */
+  function tokenSpan(tok){
+    const k = String(tok||"").trim().toLowerCase();
+    return (k === 'x') ? 2 : 1;   // only x spans 2 boxes
+  }
+
+  /* ===== Fit stage ===== */
+  (function(){
+    let W=0,H=0,stage=document.getElementById('stage');
+    function measure(){ stage.style.transform='none'; W=stage.offsetWidth; H=stage.offsetHeight; }
+    function fit(){ if(!W||!H) measure(); const s=Math.min((innerWidth-2)/W,(innerHeight-2)/H); stage.style.transform='scale('+s+')'; }
+    addEventListener('load',()=>requestAnimationFrame(()=>{ measure(); fit(); refreshTable(); restoreNotes(); setCountersLocked(true); lockAllSoundSlots(); autoFitDisplayToWord(); }));
+    addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,50));
+  })();
+
+  /* ===== Teacher panel toggle + keyboard shortcut ===== */
+  function toggleTeacherPanel(force){
+    const panel=document.getElementById('teacherPanel');
+    const show=(typeof force==='boolean')?force:panel.style.display!=='block';
+    panel.style.display=show?'block':'none';
+    panel.setAttribute('aria-hidden', show?'false':'true');
+  }
+  addEventListener('keydown', (e) => {
+    const isT = (e.code === 'KeyT') || (e.key && e.key.toLowerCase() === 't');
+    if (e.ctrlKey && e.altKey && isT) { e.preventDefault(); e.stopPropagation(); toggleTeacherPanel(); }
+  });
+  addEventListener('load',()=>{
+    document.body.tabIndex = -1;
+    document.body.focus({ preventScroll: true });
+    document.getElementById('teacherHotspot').addEventListener('click',()=>toggleTeacherPanel());
+    const notes = document.getElementById('devNotes');
+    if (notes) notes.addEventListener('input', saveNotes);
+  });
+
+  /* ===== Instructions visibility + voice ===== */
+  let instructionsHidden=false;
+  let voiceEnabled=true;
+
+  // Guard: true = suppress ALL TTS (speech synthesis). Token audio still plays.
+  let BLOCK_TTS = false;
+
+  function toggleInstructions(){
+    instructionsHidden=!instructionsHidden;
+    const steps=document.getElementById('stepsPanel');
+    const bar=document.getElementById('instruction');
+    steps.style.display = instructionsHidden ? 'none' : 'block';
+    bar.style.display   = instructionsHidden ? 'none' : 'block';
+    document.getElementById('toggleInstructionsBtn').textContent =
+      instructionsHidden ? 'Show Instructions' : 'Hide Instructions';
+    requestAnimationFrame(()=>{ const evt=new Event('resize'); window.dispatchEvent(evt); });
+  }
+
+  function toggleVoice(){
+    voiceEnabled=!voiceEnabled;
+    document.getElementById('toggleVoiceBtn').textContent = voiceEnabled ? 'Mute Voice' : 'Unmute Voice';
+    if(!voiceEnabled && window.speechSynthesis){ speechSynthesis.cancel(); }
+  }
+
+  function setInstruction(text, speakNow=true){
+    const el=document.getElementById('instruction');
+    el.textContent = text || '';
+    if(speakNow && voiceEnabled) tts(text);
+  }
+
+  function setCurrentLine(id){
+    document.querySelectorAll('.steps .line').forEach(el=>el.classList.remove('current'));
+    const el=document.getElementById(id); if(el) el.classList.add('current');
+  }
+
+  /* ===== TTS & token audio ===== */
+  function tts(text, cb){
+    if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) { cb && cb(); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.onend = ()=> cb && cb();
+    u.onerror = ()=> cb && cb();
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  function playAudio(url, cb, fallbackToken){
+    const audio = new Audio(url);
+    audio.onended = ()=> cb && cb();
+    audio.onerror = ()=> {
+      if (fallbackToken && !BLOCK_TTS) tts('/' + fallbackToken + '/', cb);
+      else cb && cb();
+    };
+    audio.play().catch(()=> {
+      if (fallbackToken && !BLOCK_TTS) tts('/' + fallbackToken + '/', cb);
+      else cb && cb();
+    });
+  }
+  function playSoundForToken(token, cb){
+    const k = (token || '').toLowerCase().trim();
+    if(!k){ cb && cb(); return; }
+    playAudio(`sounds/${k}.m4a`, cb, k);
+  }
+
+  /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
+  const TOKEN_DISPLAY_MAP = {
+    "a_":"a","a__":"a",
+    "ai_":"ai",
+    "ar_":"ar",
+    "ay_":"ay",
+    "c_":"c",
+    "e_":"e","e__":"e",
+    "ea_":"ea","ea__":"ea","ea_is":"ea",
+    "ed_":"ed","ed__":"ed",
+    "ei_":"ei",
+    "er_":"er",
+    "ew_":"ew","ew":"ew",
+    "g_":"g",
+    "i__":"i","i_":"i",
+    "ie_":"ie","ie":"ie",
+    "ir_":"ir",
+    "o__":"o",
+    "oo_":"oo","oo":"oo",
+    "or_":"or",
+    "ow_":"ow","ow":"ow",
+    "th":"th","th_":"th",
+    "u__":"u","u_":"u","u":"u",
+    "ue":"ue","ue_":"ue",
+    "ur_":"ur",
+    "y_e":"y","y_i":"y"
+  };
+  function displayToken(t){
+    const k = String(t||"").trim().toLowerCase();
+    if (k in TOKEN_DISPLAY_MAP) return TOKEN_DISPLAY_MAP[k];
+    return k.replace(/_/g,"");
+  }
+
+  /* ===== Lesson data (defaults) ===== */
+  let words = [
+    { word:"map", meaning:"a map shows places. i see a map on the wall.",
+      syllables:[{letters:["m","a","p"]}] }
+  ];
+  let teacherSet = [
+    { word:"map", meaning:"a map shows places. i see a map on the wall.",
+      syllables:[{letters:["m","a","p"]}] }
+  ];
+
+  /* ===== Student layout: auto-fit columns to CURRENT WORD syllable count ===== */
+  let DISPLAY_SYL = 1;
+
+  function renderLayout(){
+    const container=document.getElementById('studentLayout');
+    container.innerHTML='';
+
+    const displaySyl = Math.max(1, Math.min(4, parseInt(DISPLAY_SYL||1,10)));
+    const COLS = `repeat(${displaySyl}, minmax(0,1fr)) 1.1fr`;
+
+    const grid=document.createElement('div'); grid.className='grid';
+
+    // Header
+    const hdr=document.createElement('div'); hdr.className='hdr';
+    hdr.style.gridTemplateColumns = COLS;
+    for(let s=1;s<=displaySyl;s++){
+      const d=document.createElement('div');
+      d.textContent = (s===1?'first':s===2?'second':s===3?'third':'fourth')+' syllable';
+      hdr.appendChild(d);
+    }
+    const wholeHdr=document.createElement('div'); wholeHdr.textContent='whole word';
+    hdr.appendChild(wholeHdr);
+    grid.appendChild(hdr);
+
+    // Syllable drop row
+    const row=document.createElement('div'); row.className='row';
+    row.style.gridTemplateColumns = COLS;
+    for(let s=1;s<=displaySyl;s++){
+      const cell=document.createElement('div'); cell.className='cell'; cell.id='syllable'+s;
+      const drop=document.createElement('div'); drop.className='syllableDrop'; drop.id='syldrop'+s;
+      drop.setAttribute('ondrop','dropSyllable(event,'+s+')');
+      drop.setAttribute('ondragover','allowDropBasic(event)');
+      cell.appendChild(drop); row.appendChild(cell);
+    }
+    const wholeCell=document.createElement('div'); wholeCell.className='cell wholeword-write';
+    const wholeText=document.createElement('div'); wholeText.id='wholewordText';
+    wholeCell.appendChild(wholeText); row.appendChild(wholeCell);
+    grid.appendChild(row);
+
+    // Tiles row
+    const tilesRow=document.createElement('div'); tilesRow.className='tiles-row';
+    tilesRow.style.gridTemplateColumns = COLS;
+
+    for(let s=1;s<=displaySyl;s++){
+      const tiles=document.createElement('div'); tiles.className='tiles'; tiles.setAttribute('aria-label','syllable '+s+' tiles');
+      for(let t=0;t<6;t++){
+        const slot=document.createElement('div');
+        slot.className='counter-slot disabled';
+        slot.dataset.allow='0';
+        slot.id='s'+s+'t'+t;
+        slot.dataset.ord = (t+1);
+        slot.title = 'slot ' + (t+1) + ' (left→right)';
+        slot.setAttribute('ondrop','dropSound(event,'+s+','+t+')');
+        slot.setAttribute('ondragover','allowDropSound(event)');
+        tiles.appendChild(slot);
+      }
+      tilesRow.appendChild(tiles);
+    }
+    tilesRow.appendChild(document.createElement('div'));
+    grid.appendChild(tilesRow);
+
+    container.appendChild(grid);
+  }
+
+  function autoFitDisplayToWord(){
+    const w = (typeof wIndex === 'number' && Array.isArray(words)) ? (words[wIndex] || words[0]) : (words?.[0]);
+    if (!w) { DISPLAY_SYL = 1; renderLayout(); return; }
+    DISPLAY_SYL = Math.max(1, Math.min(4, (w.syllables || [{letters:[]}]).length));
+    renderLayout();
+  }
+
+  /* ===== Word list UI ===== */
+  function refreshTable(){
+    const tbody=document.getElementById('wordTBody');
+    tbody.innerHTML='';
+    teacherSet.forEach((item, idx)=>{
+      const tr=document.createElement('tr');
+      tr.onclick=()=>selectRow(idx,tr);
+      tr.dataset.index=idx;
+
+      const tdW=cellInput(item.word,  (v)=>item.word=v);
+      const tdM=cellTextarea(item.meaning,(v)=>item.meaning=v);
+      const sylCount=item.syllables.length;
+
+      const tdS=cellSelect(
+        [1,2,3,4], sylCount,
+        (v)=>{ const n=parseInt(v,10);
+               while(item.syllables.length<n) item.syllables.push({letters:[]});
+               while(item.syllables.length>n) item.syllables.pop(); }
+      );
+
+      const s1=(item.syllables[0]?.letters||[]).join(',');
+      const s2=(item.syllables[1]?.letters||[]).join(',');
+      const s3=(item.syllables[2]?.letters||[]).join(',');
+      const s4=(item.syllables[3]?.letters||[]).join(',');
+
+      const tdS1=cellInput(s1,(v)=>item.syllables[0]={letters:csvToTokens(v)});
+      const tdS2=cellInput(s2,(v)=>{ if(item.syllables.length<2) item.syllables[1]={letters:[]}; item.syllables[1].letters=csvToTokens(v); });
+      const tdS3=cellInput(s3,(v)=>{ if(item.syllables.length<3) item.syllables[2]={letters:[]}; item.syllables[2].letters=csvToTokens(v); });
+      const tdS4=cellInput(s4,(v)=>{ if(item.syllables.length<4) item.syllables[3]={letters:[]}; item.syllables[3].letters=csvToTokens(v); });
+
+      tr.appendChild(tdW); tr.appendChild(tdM); tr.appendChild(tdS);
+      tr.appendChild(tdS1); tr.appendChild(tdS2); tr.appendChild(tdS3); tr.appendChild(tdS4);
+      tbody.appendChild(tr);
+    });
+  }
+  function cellInput(val,onchange){
+    const td=document.createElement('td');
+    const inp=document.createElement('input'); inp.type='text'; inp.value=val||'';
+    inp.onchange=e=>onchange(e.target.value.trim());
+    td.appendChild(inp); return td;
+  }
+  function cellTextarea(val,onchange){
+    const td=document.createElement('td');
+    const ta=document.createElement('textarea'); ta.value=val||'';
+    ta.onchange=e=>onchange(e.target.value.trim());
+    td.appendChild(ta); return td;
+  }
+  function cellSelect(options, value, onchange){
+    const td=document.createElement('td');
+    const sel=document.createElement('select');
+    options.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o+' syll'; sel.appendChild(op); });
+    sel.value=value;
+    sel.onchange=e=>onchange(e.target.value);
+    td.appendChild(sel); return td;
+  }
+  function csvToTokens(v){ return (v||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).slice(0,6); }
+
+  let selectedIndex = -1;
+  function selectRow(idx,tr){
+    Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r=>r.classList.remove('selected'));
+    tr.classList.add('selected'); selectedIndex=idx;
+  }
+  function addBlankRow(){
+    teacherSet.push({word:'',meaning:'',syllables:[{letters:[]}]});
+    refreshTable();
+  }
+  function deleteSelected(){
+    if(selectedIndex<0) return;
+    teacherSet.splice(selectedIndex,1); selectedIndex=-1; refreshTable();
+  }
+  function useSelected(){
+    if(selectedIndex<0) return;
+    const it = teacherSet[selectedIndex];
+    if(!it.word || it.syllables.every(s=>!s.letters.length)){
+      alert('please fill the word and at least one tile.'); return;
+    }
+    words = [deepCopy(it)];
+    setInstruction(`loaded. click “begin”.`);
+    autoFitDisplayToWord();
+  }
+
+  function quickUse(){
+    const it=quickBuildItem();
+    if(!it) return;
+    words=[deepCopy(it)];
+    setInstruction(`loaded. click “begin”.`);
+    autoFitDisplayToWord();
+  }
+  function quickAddToList(){
+    const it=quickBuildItem();
+    if(!it) return;
+    teacherSet.push(it); refreshTable();
+  }
+  function quickBuildItem(){
+    const word=(document.getElementById('qWord').value||'').trim();
+    const meaning=(document.getElementById('qMeaning').value||'').trim();
+    const sc=parseInt(document.getElementById('qSylCount').value,10);
+    const syls=[];
+    for(let s=1;s<=sc;s++){
+      const arr=[];
+      for(let i=0;i<6;i++){
+        const v=(document.getElementById(`q${s}_${i}`).value||'').trim();
+        if(v) arr.push(v.toLowerCase());
+      }
+      syls.push({letters:arr});
+    }
+    if(!word){ alert('please enter the word.'); return null; }
+    if(syls.every(s=>!s.letters.length)){ alert('enter at least one tile.'); return null; }
+    return {word,meaning,syllables:syls};
+  }
+
+  function downloadSet(){
+    const data = JSON.stringify({words:teacherSet}, null, 2);
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='spelling_word_set.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+  function uploadSet(ev){
+    const file = ev.target.files?.[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const obj=JSON.parse(reader.result);
+        if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
+        teacherSet = normalizeWordSet(obj.words);
+        refreshTable();
+        setInstruction(`uploaded set loaded (${teacherSet.length} words). click “begin”.`, false);
+        words = teacherSet.map(deepCopy);
+        wIndex = 0;
+        autoFitDisplayToWord();
+        document.getElementById('beginBtn').disabled = false;
+        document.getElementById('nextBtn').disabled  = true;
+      }catch(e){ alert('could not parse json: '+e.message); }
+      ev.target.value = '';
+    };
+    reader.readAsText(file);
+  }
+
+  function shuffleTeacherSet(){
+    for (let i = teacherSet.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [teacherSet[i], teacherSet[j]] = [teacherSet[j], teacherSet[i]];
+    }
+    refreshTable();
+  }
+
+  function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
+
+  function normalizeWordSet(arr){
+    return (arr||[]).map(w=>({
+      word: String(w.word||'').trim(),
+      meaning: String(w.meaning||'').trim(),
+      syllables: (Array.isArray(w.syllables)? w.syllables : [])
+        .slice(0,4)
+        .map(s=>({
+          letters: Array.isArray(s.letters) ? s.letters.slice(0,6).map(t=>String(t||'').toLowerCase()) : []
+        }))
+    })).filter(w => w.word);
+  }
+
+  /* ===== Slot guards for sounds (span-aware) ===== */
+  function lockAllSoundSlots(){
+    document.querySelectorAll('.counter-slot').forEach(s=>{
+      s.classList.add('disabled');
+      s.classList.remove('span-ghost');
+      s.dataset.allow='0';
+      delete s.dataset.tokenIndex;
+      delete s.dataset.span;
+      delete s.dataset.spanGhost;
+      delete s.dataset.spanParent;
+    });
+  }
+
+  function guardSoundSlots(activeSylIndex, tokens){
+    lockAllSoundSlots();
+
+    const toks = (tokens||[]).slice(0,6);
+    let cursor = 0;
+
+    for (let i=0; i<toks.length && cursor<6; i++){
+      const tok = toks[i];
+      let span = tokenSpan(tok);
+
+      if (span === 2 && cursor+1 >= 6) span = 1;
+
+      const start = document.getElementById(`s${activeSylIndex}t${cursor}`);
+      if (!start) break;
+
+      start.classList.remove('disabled');
+      start.dataset.allow = '1';
+      start.dataset.tokenIndex = String(i);
+      start.dataset.span = String(span);
+
+      if (span === 2){
+        const ghost = document.getElementById(`s${activeSylIndex}t${cursor+1}`);
+        if (ghost){
+          ghost.classList.add('span-ghost');
+          ghost.dataset.spanGhost = '1';
+          ghost.dataset.spanParent = start.id;
+        }
+      }
+
+      cursor += span;
+    }
+  }
+
+  /* ===== Notes ===== */
+  const NOTES_KEY = 'devNotesV1';
+  function restoreNotes(){
+    const ta = document.getElementById('devNotes');
+    if(!ta) return;
+    try{
+      const saved = localStorage.getItem(NOTES_KEY);
+      if(saved!==null) ta.value = saved;
+    }catch(_){}
+  }
+  function saveNotes(){
+    const ta = document.getElementById('devNotes');
+    if(!ta) return;
+    try{ localStorage.setItem(NOTES_KEY, ta.value||''); }catch(_){}
+  }
+  function copyNotes(){
+    const ta = document.getElementById('devNotes');
+    if(!ta) return;
+    ta.select();
+    document.execCommand('copy');
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+  }
+  function downloadNotes(){
+    const ta = document.getElementById('devNotes');
+    const blob = new Blob([ta?.value||''], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+  function clearNotes(){
+    const ta = document.getElementById('devNotes');
+    if(!ta) return;
+    if(confirm('Clear notes?')){ ta.value=''; saveNotes(); }
+  }
+
+  /* ===== Drag gating ===== */
+  let ALLOW_DRAG = false;
+  function setCountersLocked(locked){
+    document.querySelectorAll('.counter').forEach(c=>{
+      c.classList.toggle('locked', locked);
+    });
+  }
+
+  /* ===== Flow state ===== */
+  let step=0, wIndex=0, activeSyllable=1;
+  let needSyllableDrops=0, syllableDropsDone=0;
+  let needSoundDrops=0, soundDropsDone=0;
+
+  function addTileLabel(slotEl, text){
+    if (slotEl.querySelector('.tile-label')) return;
+
+    const lbl = document.createElement('div');
+    lbl.className = 'tile-label';
+
+    const spanByToken   = tokenSpan(text);
+    const spanByDataset = parseInt(slotEl.dataset.span || '1', 10);
+    const span = Math.max(spanByToken, spanByDataset);
+    if (span === 2) lbl.classList.add('span2');
+
+    lbl.textContent = displayToken(text || "");
+    slotEl.appendChild(lbl);
+  }
+
+  function dragSpawn(ev){
+    if(!ALLOW_DRAG || ev.target.classList.contains('locked')){
+      ev.preventDefault();
+      return;
+    }
+    const seed=ev.target, clone=seed.cloneNode(true);
+    clone.id='c'+Math.random().toString(36).slice(2,8);
+    clone.addEventListener('dragstart',dragSpawn);
+    if(!ALLOW_DRAG) clone.classList.add('locked');
+    document.getElementById('counters').appendChild(clone);
+    ev.dataTransfer.setData('text', clone.id);
+  }
+
+  /* ===== drag-over logic ===== */
+  function allowDropBasic(ev){
+    if (!ALLOW_DRAG) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+  }
+  function allowDropSound(ev){
+    if (!ALLOW_DRAG) return;
+    const ok = ev.currentTarget?.dataset?.allow === '1';
+    if (ok){
+      ev.preventDefault();
+      ev.dataTransfer.dropEffect = 'move';
+    } else {
+      ev.dataTransfer.dropEffect = 'none';
+    }
+  }
+
+  function dropToTray(ev){
+    if(!ALLOW_DRAG){ ev.preventDefault(); return; }
+    ev.preventDefault();
+    const id=ev.dataTransfer.getData('text');
+    const el=document.getElementById(id);
+    if(el){
+      el.classList.remove('in-slot');
+      el.style.left = '';
+      el.style.top = '';
+      el.style.transform = '';
+      el.style.position = '';
+      el.style.zIndex = '';
+      ev.currentTarget.appendChild(el);
+    }
+  }
+
+  function dropSyllable(ev,which){
+    if(!ALLOW_DRAG){ ev.preventDefault(); return; }
+    ev.preventDefault();
+    if(needSyllableDrops<=0) return;
+    const id=ev.dataTransfer.getData('text');
+    const host=ev.currentTarget;
+    if(!host.hasChildNodes()){
+      host.appendChild(document.getElementById(id));
+      syllableDropsDone++;
+      if(syllableDropsDone>=needSyllableDrops){
+        setInstruction("syllables tracked — start with 1st syllable sounds.", false);
+        startSyllableTrack(1);
+      }
+    }
+  }
+
+  function dropSound(ev, syll, tile){
+    if(!ALLOW_DRAG){ ev.preventDefault(); return; }
+
+    const host = ev.currentTarget;
+    const allow = host?.dataset?.allow === '1';
+    if (!allow){ ev.preventDefault(); return; }
+
+    ev.preventDefault();
+    if(needSoundDrops<=0 || syll!==activeSyllable) return;
+
+    const id = ev.dataTransfer.getData('text');
+    const counterEl = document.getElementById(id);
+    if(!counterEl) return;
+
+    if(!host.hasChildNodes()){
+      host.appendChild(counterEl);
+      host.classList.add('has-counter');
+
+      const w = words[wIndex];
+      const sylLetters = (w.syllables?.[syll-1]?.letters) || [];
+
+      const tokenIndex = parseInt(host.dataset.tokenIndex || String(tile), 10);
+      const token = sylLetters[tokenIndex];
+
+      const span = parseInt(host.dataset.span || '1', 10);
+      host.dataset.span = String(span);
+
+      counterEl.classList.add('in-slot');
+
+      if (span === 2){
+        counterEl.style.left = '100%';
+        const ghost = document.getElementById(`s${syll}t${tile+1}`);
+        if (ghost) ghost.classList.add('has-counter');
+      } else {
+        counterEl.style.left = '';
+      }
+
+      if(token){
+        playSoundForToken(token, ()=> addTileLabel(host, token));
+      }
+
+      soundDropsDone++;
+
+      if(soundDropsDone >= Math.min(6, sylLetters.length)){
+        blendWriteSyllable(syll);
+
+        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+        if(syll < sylCount){
+          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+          startSyllableTrack(syll+1);
+        }else{
+          setCurrentLine('Le');
+          setInstruction("all syllables done. press “next” to show the whole word.", false);
+          exitNoTTSPhase();
+          step = 18;
+          ALLOW_DRAG = false;
+          setCountersLocked(true);
+          lockAllSoundSlots();
+          document.getElementById('nextBtn').disabled=false;
+        }
+      }
+    }
+  }
+
+  function ordinal(n){ return n===1?'1st':n===2?'2nd':n===3?'3rd':'4th'; }
+
+  function enterNoTTSPhase(){ BLOCK_TTS = true; if (window.speechSynthesis) speechSynthesis.cancel(); }
+  function exitNoTTSPhase(){ BLOCK_TTS = false; }
+
+  function startSyllableTrack(n){
+    setCurrentLine('Lc1');
+    activeSyllable=n; soundDropsDone=0; document.getElementById('nextBtn').disabled=true;
+    enterNoTTSPhase();
+    const w=words[wIndex]; const sylLetters=(w.syllables?.[n-1]?.letters)||[];
+    needSoundDrops=Math.min(6,sylLetters.length);
+    ALLOW_DRAG = true;
+    setCountersLocked(false);
+
+    guardSoundSlots(n, sylLetters);
+
+    if(needSoundDrops===0){
+      blendWriteSyllable(n);
+      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      if(n < sylCount){ startSyllableTrack(n+1); }
+      else{
+        setCurrentLine('Le');
+        setInstruction("all syllables done. press “next” to show the whole word.", false);
+        exitNoTTSPhase();
+        step = 18;
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
+        document.getElementById('nextBtn').disabled=false;
+      }
+    }else{
+      setInstruction(`${ordinal(n)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+    }
+  }
+
+  function blendWriteSyllable(n){
+    setCurrentLine('Ld');
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    setInstruction(`i blend and check the ${ordinal(n)} syllable. i write it in the syllable cell.`, false);
+    const w=words[wIndex];
+    const raw=(w.syllables?.[n-1]?.letters||[]);
+    const text = raw.map(displayToken).join('').toLowerCase();
+    if(text){
+      const cell=document.getElementById('syllable'+n);
+      let tag=cell.querySelector('.syllableText');
+      if(!tag){ tag=document.createElement('div'); tag.className='syllableText'; cell.appendChild(tag); }
+      tag.textContent=text;
+    }
+  }
+
+  /* ===== Begin / Restart / Next ===== */
+  function begin(){
+    if(!words || !words.length){
+      if (teacherSet && teacherSet.length){
+        const valid = teacherSet.filter(it =>
+          it && it.word && (it.syllables||[]).some(s => (s.letters||[]).length)
+        );
+        if (valid.length){
+          words = valid.map(deepCopy);
+          wIndex = 0;
+        } else {
+          alert('Your Word List has no usable items yet. Fill in at least one word with tiles.');
+          return;
+        }
+      } else {
+        alert('Load words in the teacher panel first.');
+        return;
+      }
+    }
+
+    document.getElementById('beginBtn').disabled=true;
+    document.getElementById('nextBtn').disabled=false;
+    step=0; activeSyllable=1;
+
+    autoFitDisplayToWord();
+    resetBoard(); setCurrentLine('L0'); setInstruction("");
+    ALLOW_DRAG = false; setCountersLocked(true);
+    lockAllSoundSlots();
+
+    nextStep();
+  }
+
+  function restart(){
+    document.getElementById('beginBtn').disabled=false; document.getElementById('nextBtn').disabled=true;
+    step=0; wIndex=0; activeSyllable=1; resetBoard();
+    setCurrentLine('L0'); setInstruction('open the teacher panel to load a word, or choose a lesson set above, then begin.');
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    exitNoTTSPhase();
+    ALLOW_DRAG = false; setCountersLocked(true);
+    lockAllSoundSlots();
+    autoFitDisplayToWord();
+  }
+
+  function resetBoard(){
+    const ww=document.getElementById('wholewordText'); if(ww) ww.textContent='';
+    document.querySelectorAll('[id^=syldrop]').forEach(n=>{ n.innerHTML=''; });
+    document.querySelectorAll('.counter-slot').forEach(s=>{ s.innerHTML=''; s.classList.remove('has-counter'); });
+    document.querySelectorAll('.syllableText').forEach(e=>e.remove());
+    lockAllSoundSlots();
+  }
+
+  function nextStep(){
+    const w=words[wIndex];
+    const sylCount=Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+
+    switch(step){
+      case 0:
+        setCurrentLine('L0');
+        setInstruction("watch me spell some words.");
+        ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        break;
+
+      case 1:
+        // ✅ Do NOT show the word on display (only say "Say the word")
+        setCurrentLine('La');
+        document.getElementById('nextBtn').disabled=true;
+        setInstruction(`say the word.`, false);
+
+        // still speak the actual word and meaning (audio only)
+        tts(`say the word ${w.word}`, ()=>{
+          if (w.meaning) tts(w.meaning, ()=>{
+            tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
+          }); else {
+            tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
+          }
+        });
+        break;
+
+      case 2:
+        setCurrentLine('Lb');
+        setInstruction("i track the syllables. put one counter in each syllable box.");
+        needSyllableDrops=sylCount; syllableDropsDone=0; document.getElementById('nextBtn').disabled=true;
+        ALLOW_DRAG = true; setCountersLocked(false);
+        lockAllSoundSlots();
+        break;
+
+      case 19:
+        setCurrentLine('Lf');
+        const fullWord =
+          (w.word && String(w.word).toLowerCase()) ||
+          (w.syllables||[])
+            .flatMap(s => s.letters || [])
+            .map(displayToken)
+            .join("")
+            .toLowerCase();
+
+        document.getElementById('wholewordText').textContent = fullWord;
+        setInstruction("i blend and check the whole word.", false);
+        tts(fullWord);
+        document.getElementById('nextBtn').disabled=false;
+        ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        break;
+
+      case 20:
+        wIndex++;
+        if (wIndex >= words.length){
+          setInstruction("all words completed! load another word in the teacher panel, or choose a lesson set above, then begin.");
+          document.getElementById('nextBtn').disabled = true;
+          document.getElementById('beginBtn').disabled = false;
+          ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        } else {
+          step = -1;
+          resetBoard();
+          document.getElementById('wholewordText').textContent = '';
+          setCurrentLine('L0');
+          setInstruction("");
+          autoFitDisplayToWord();
+          ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        }
+        break;
+    }
+    step++;
+  }
+
+  /* ===== Use entire list ===== */
+  function useAll(){
+    const src = Array.isArray(teacherSet) ? teacherSet : [];
+    const valid = src.filter(it =>
+      it && it.word &&
+      Array.isArray(it.syllables) && it.syllables.length > 0
+    );
+    if (!valid.length){
+      alert('Your Word List has no usable items yet. Add a word and at least one syllable.');
+      return;
+    }
+
+    words = valid.map(v => ({
+      word: String(v.word || '').trim(),
+      meaning: String(v.meaning || ''),
+      syllables: (v.syllables || []).slice(0,4).map(s => ({
+        letters: Array.isArray(s.letters)
+          ? s.letters.slice(0,6).map(t => String(t || '').toLowerCase())
+          : []
+      }))
+    }));
+
+    wIndex = 0;
+
+    const n = words.length;
+    setInstruction(`loaded ${n} ${n===1?'word':'words'}. click “begin”.`);
+    autoFitDisplayToWord();
+
+    document.getElementById('beginBtn').disabled = false;
+    document.getElementById('nextBtn').disabled  = true;
+  }
+
+  /* ===== NEW: Lesson dropdown loader ===== */
+  async function onLessonChange(filename){
+    if(!filename){
+      setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
+      return;
+    }
+    try{
+      setInstruction(`loading: ${filename}…`, false);
+      const res = await fetch(filename, {cache:'no-store'});
+      if(!res.ok) throw new Error(`could not load ${filename} (status ${res.status})`);
+      const obj = await res.json();
+      if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
+
+      teacherSet = normalizeWordSet(obj.words);
+      refreshTable();
+
+      words = teacherSet.map(deepCopy);
+      wIndex = 0;
+      autoFitDisplayToWord();
+
+      document.getElementById('beginBtn').disabled = false;
+      document.getElementById('nextBtn').disabled  = true;
+
+      setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`);
+    }catch(e){
+      alert(e.message);
+      setInstruction("could not load the lesson set. check that the json file is bundled in the same folder as this html.", false);
+    }
+  }
+
+  /* ===== Expose ===== */
+  window.renderLayout=renderLayout;
+  window.autoFitDisplayToWord=autoFitDisplayToWord;
+
+  window.allowDropBasic=allowDropBasic;
+  window.allowDropSound=allowDropSound;
+  window.dropToTray=dropToTray;
+  window.dropSyllable=dropSyllable;
+  window.dropSound=dropSound;
+  window.dragSpawn=dragSpawn;
+
+  window.refreshTable=refreshTable;
+  window.addBlankRow=addBlankRow;
+  window.deleteSelected=deleteSelected;
+  window.useSelected=useSelected;
+  window.downloadSet=downloadSet;
+  window.uploadSet=uploadSet;
+
+  window.quickUse=quickUse;
+  window.quickAddToList=quickAddToList;
+
+  window.begin=begin;
+  window.nextStep=nextStep;
+  window.restart=restart;
+
+  window.toggleInstructions=toggleInstructions;
+  window.toggleVoice=toggleVoice;
+
+  window.copyNotes=copyNotes;
+  window.downloadNotes=downloadNotes;
+  window.clearNotes=clearNotes;
+
+  window.useAll=useAll;
+  window.shuffleTeacherSet=shuffleTeacherSet;
+
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL });
+</script>
+</body>
+</html>
