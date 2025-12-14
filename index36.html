@@ -223,13 +223,13 @@
   <div class="sheet">
     <div class="title">Spelling Worksheet</div>
 
-    <!-- ✅ NEW: Lesson dropdown (loads JSON sets) -->
+    <!-- ✅ Lesson dropdown (loads JSON sets from GitHub CDN) -->
     <div class="lessonbar">
       <label for="lessonSelect">Lesson set</label>
       <select id="lessonSelect" onchange="onLessonChange(this.value)">
         <option value="">Choose a cycle/session…</option>
-        <option value="Cycle 1 Session 1.json">Cycle 1 Session 1</option>
-        <option value="Cycle 1 Session 2.json">Cycle 1 Session 2</option>
+        <option value="c1s1">Cycle 1 Session 1</option>
+        <option value="c1s2">Cycle 1 Session 2</option>
       </select>
       <span class="hint">Select a set to auto-load the Word List.</span>
     </div>
@@ -432,6 +432,26 @@
 </div>
 
 <script>
+  /* =========================================================
+     ✅ GitHub-permalink → USABLE URL CHOICE (jsDelivr)
+     ---------------------------------------------------------
+     Base CDN (pinned to your commit):
+     https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@3c7bc1ea3f4cfab433561189cc89d00c162ce987/
+
+     JSON:
+     .../Cycle%201%20Session%201.json
+     .../Cycle%201%20Session%202.json
+
+     Sounds:
+     .../sounds/<token>.m4a
+     ========================================================= */
+  const ASSET_BASE = "https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@3c7bc1ea3f4cfab433561189cc89d00c162ce987/";
+  const SOUND_BASE = ASSET_BASE + "sounds/";
+  const LESSON_URLS = {
+    c1s1: ASSET_BASE + "Cycle%201%20Session%201.json",
+    c1s2: ASSET_BASE + "Cycle%201%20Session%202.json",
+  };
+
   /* ===== Span rules ===== */
   function tokenSpan(tok){
     const k = String(tok||"").trim().toLowerCase();
@@ -523,10 +543,12 @@
       else cb && cb();
     });
   }
+
   function playSoundForToken(token, cb){
     const k = (token || '').toLowerCase().trim();
     if(!k){ cb && cb(); return; }
-    playAudio(`sounds/${k}.m4a`, cb, k);
+    // ✅ CHANGED: use GitHub CDN sounds base
+    playAudio(`${SOUND_BASE}${encodeURIComponent(k)}.m4a`, cb, k);
   }
 
   /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
@@ -1250,16 +1272,21 @@
     document.getElementById('nextBtn').disabled  = true;
   }
 
-  /* ===== NEW: Lesson dropdown loader ===== */
-  async function onLessonChange(filename){
-    if(!filename){
+  /* ===== ✅ Lesson dropdown loader (GitHub CDN) ===== */
+  async function onLessonChange(key){
+    if(!key){
       setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
       return;
     }
+    const url = LESSON_URLS[key];
+    if(!url){
+      alert("Lesson URL not configured.");
+      return;
+    }
     try{
-      setInstruction(`loading: ${filename}…`, false);
-      const res = await fetch(filename, {cache:'no-store'});
-      if(!res.ok) throw new Error(`could not load ${filename} (status ${res.status})`);
+      setInstruction(`loading lesson…`, false);
+      const res = await fetch(url, { cache:'no-store' });
+      if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
       const obj = await res.json();
       if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
 
@@ -1273,10 +1300,10 @@
       document.getElementById('beginBtn').disabled = false;
       document.getElementById('nextBtn').disabled  = true;
 
-      setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`);
+      setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`, false);
     }catch(e){
       alert(e.message);
-      setInstruction("could not load the lesson set. check that the json file is bundled in the same folder as this html.", false);
+      setInstruction("could not load the lesson set. check internet / URL / CORS.", false);
     }
   }
 
@@ -1315,7 +1342,7 @@
   window.useAll=useAll;
   window.shuffleTeacherSet=shuffleTeacherSet;
 
-  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL });
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS });
 </script>
 </body>
 </html>
