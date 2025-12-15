@@ -823,7 +823,20 @@
       }
     }
   }
-
+// expose
+  window.onLessonChange = onLessonChange;
+  window.prefetchLessonSilently = prefetchLessonSilently;
+  window.allowDropBasic=allowDropBasic;
+  window.allowDropSound=allowDropSound;
+  window.dropToTray=dropToTray;
+  window.dropSyllable=dropSyllable;
+  window.dropSound=dropSound;
+  window.dragSpawn=dragSpawn;
+  window.begin=begin;
+  window.nextStep=nextStep;
+  window.restart=restart;
+  window.toggleInstructions=toggleInstructions;
+  window.toggleVoice=toggleVoice;
 /* =========================================================
    ✅ FINAL MOBILE + DESKTOP COUNTER DRAG FIX (SAFE)
    - Restores mobile dragging
@@ -937,24 +950,10 @@ if (window.matchMedia('(pointer: coarse)').matches){
   document.addEventListener('pointermove', _mobileMove, true);
   document.addEventListener('pointerup', _mobileUp, true);
   document.addEventListener('pointercancel', _mobileUp, true);
-}
-
-  // expose
-  window.onLessonChange = onLessonChange;
-  window.prefetchLessonSilently = prefetchLessonSilently;
-  window.allowDropBasic=allowDropBasic;
-  window.allowDropSound=allowDropSound;
-  window.dropToTray=dropToTray;
-  window.dropSyllable=dropSyllable;
-  window.dropSound=dropSound;
-  window.dragSpawn=dragSpawn;
-  window.begin=begin;
-  window.nextStep=nextStep;
-  window.restart=restart;
-  window.toggleInstructions=toggleInstructions;
-  window.toggleVoice=toggleVoice;
+} 
 </script>
 </body>
 </html>
+
 
 
