@@ -838,122 +838,254 @@
   window.toggleInstructions=toggleInstructions;
   window.toggleVoice=toggleVoice;
 /* =========================================================
-   ✅ FINAL MOBILE + DESKTOP COUNTER DRAG FIX (SAFE)
-   - Restores mobile dragging
-   - Keeps desktop HTML5 drag
-   - Unlimited counters
-   - Stage-scale aware
+   ✅ FINAL MOBILE DRAG (POINTER) — USES YOUR EXISTING RULES
+   - Follows finger (stage scale aware)
+   - Unlimited counters (seed spawns)
+   - Drops into:
+     (A) syllableDrop using your syllable gating
+     (B) counter-slot using your sound gating + plays token + advances steps
+   - Safe: removes older installed handlers if any
    ========================================================= */
 
-let _pDrag = null;
+(function installMobileDragV2(){
+  // Only on touch devices
+  const isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  if(!isTouch) return;
 
-function _getStageScale(){
-  const stage = document.getElementById('stage');
-  const tr = stage.getBoundingClientRect();
-  return stage.offsetWidth ? tr.width / stage.offsetWidth : 1;
-}
+  // Remove previous version if installed
+  if(window.__MOBILE_DND_V2__){
+    const old = window.__MOBILE_DND_V2__;
+    document.removeEventListener('pointerdown', old.down, true);
+    document.removeEventListener('pointermove', old.move, true);
+    document.removeEventListener('pointerup', old.up, true);
+    document.removeEventListener('pointercancel', old.up, true);
+  }
 
-function _floatCounter(el, clientX, clientY){
-  const scale = _getStageScale();
-  el.style.position = 'fixed';
-  el.style.left = (clientX / scale) + 'px';
-  el.style.top  = (clientY / scale) + 'px';
-  el.style.transform = 'translate(-50%,-50%)';
-  el.style.zIndex = 9999;
-}
+  function getStageScale(){
+    const stage = document.getElementById('stage');
+    const r = stage.getBoundingClientRect();
+    return stage.offsetWidth ? (r.width / stage.offsetWidth) : 1;
+  }
 
-function _spawnCounterClone(){
-  const seed = document.getElementById('seedCounter');
-  if(!seed) return null;
-  const clone = seed.cloneNode(true);
-  clone.id = 'c' + Math.random().toString(36).slice(2,9);
-  clone.classList.remove('locked');
-  clone.removeAttribute('draggable'); // mobile uses pointer
-  document.getElementById('counters').appendChild(clone);
-  return clone;
-}
+  function spawnCounterClone(){
+    const seed = document.getElementById('seedCounter');
+    if(!seed) return null;
+    const clone = seed.cloneNode(true);
+    clone.id = 'c' + Math.random().toString(36).slice(2,10);
+    clone.classList.remove('locked');
+    clone.removeAttribute('draggable'); // pointer drag
+    document.getElementById('counters')?.appendChild(clone);
+    return clone;
+  }
 
-function _findDropTarget(clientX, clientY){
-  const slots = document.querySelectorAll('.counter-slot[data-allow="1"]');
-  for(const s of slots){
-    const r = s.getBoundingClientRect();
-    if(clientX>=r.left && clientX<=r.right && clientY>=r.top && clientY<=r.bottom){
-      return s;
+  function resetToTray(el){
+    const tray = document.getElementById('counters');
+    if(!tray) return;
+    el.classList.remove('in-slot');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.transform = '';
+    el.style.zIndex = '';
+    el.style.opacity = '';
+    tray.appendChild(el);
+  }
+
+  function floatCounter(el, clientX, clientY){
+    const scale = getStageScale();
+    el.style.position = 'fixed';
+    el.style.left = (clientX / scale) + 'px';
+    el.style.top  = (clientY / scale) + 'px';
+    el.style.transform = 'translate(-50%,-50%)';
+    el.style.zIndex = 9999;
+  }
+
+  function inside(x,y,r){ return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; }
+
+  function findTarget(clientX, clientY){
+    // allowed sound slots first
+    const allowed = Array.from(document.querySelectorAll('.counter-slot[data-allow="1"]'));
+    for(const s of allowed){
+      const r = s.getBoundingClientRect();
+      if(inside(clientX, clientY, r)) return { type:'sound', el:s };
+    }
+
+    // syllable drops
+    const syl = Array.from(document.querySelectorAll('.syllableDrop'));
+    for(const s of syl){
+      const r = s.getBoundingClientRect();
+      if(inside(clientX, clientY, r)) return { type:'syllable', el:s };
+    }
+
+    // tray
+    const tray = document.getElementById('counters');
+    if(tray){
+      const r = tray.getBoundingClientRect();
+      if(inside(clientX, clientY, r)) return { type:'tray', el:tray };
+    }
+    return null;
+  }
+
+  // This is your desktop dropSound logic, rewritten as a callable helper for mobile
+  function snapToSoundSlot(counterEl, host){
+    // Enforce gating
+    if(!ALLOW_DRAG) return resetToTray(counterEl);
+    if(needSoundDrops <= 0) return resetToTray(counterEl);
+    if(host.dataset.allow !== '1') return resetToTray(counterEl);
+    if(host.hasChildNodes()) return resetToTray(counterEl);
+
+    const m = /^s(\d)t(\d)$/.exec(host.id || '');
+    if(!m) return resetToTray(counterEl);
+    const syll = parseInt(m[1],10);
+    const tile = parseInt(m[2],10);
+
+    if(syll !== activeSyllable) return resetToTray(counterEl);
+
+    // Place into slot
+    counterEl.style.position = '';
+    counterEl.style.left = '';
+    counterEl.style.top = '';
+    counterEl.style.transform = '';
+    counterEl.style.zIndex = '';
+    counterEl.style.opacity = '';
+
+    host.appendChild(counterEl);
+    host.classList.add('has-counter');
+    counterEl.classList.add('in-slot');
+
+    const w = words[wIndex];
+    const sylLetters = (w.syllables?.[syll-1]?.letters) || [];
+    const tokenIndex = parseInt(host.dataset.tokenIndex || String(tile), 10);
+    const token = sylLetters[tokenIndex];
+
+    const span = parseInt(host.dataset.span || '1', 10);
+    host.dataset.span = String(span);
+
+    if(span === 2){
+      counterEl.style.left = '100%';
+      const ghost = document.getElementById(`s${syll}t${tile+1}`);
+      if(ghost) ghost.classList.add('has-counter');
+    } else {
+      counterEl.style.left = '';
+    }
+
+    if(token){
+      playSoundForToken(token, ()=> addTileLabel(host, token));
+    }
+
+    soundDropsDone++;
+
+    if(soundDropsDone >= Math.min(6, sylLetters.length)){
+      blendWriteSyllable(syll);
+
+      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      if(syll < sylCount){
+        setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+        startSyllableTrack(syll+1);
+      } else {
+        setCurrentLine('Le');
+        setInstruction("all syllables done. press “next” to show the whole word.", false);
+        exitNoTTSPhase();
+        step = 18;
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
+        document.getElementById('nextBtn').disabled = false;
+      }
     }
   }
-  const syllDrops = document.querySelectorAll('.syllableDrop');
-  for(const s of syllDrops){
-    const r = s.getBoundingClientRect();
-    if(clientX>=r.left && clientX<=r.right && clientY>=r.top && clientY<=r.bottom){
-      return s;
+
+  function snapToSyllableDrop(counterEl, host){
+    if(!ALLOW_DRAG) return resetToTray(counterEl);
+    if(needSyllableDrops <= 0) return resetToTray(counterEl);
+    if(host.hasChildNodes()) return resetToTray(counterEl);
+
+    counterEl.style.position = '';
+    counterEl.style.left = '';
+    counterEl.style.top = '';
+    counterEl.style.transform = '';
+    counterEl.style.zIndex = '';
+    counterEl.style.opacity = '';
+
+    host.appendChild(counterEl);
+
+    syllableDropsDone++;
+    if(syllableDropsDone >= needSyllableDrops){
+      setInstruction("syllables tracked — start with 1st syllable sounds.", false);
+      startSyllableTrack(1);
     }
   }
-  return null;
-}
 
-/* ===== Pointer events (mobile / tablet) ===== */
-function _mobileDown(e){
-  const target = e.target.closest('.counter');
-  if(!target || !ALLOW_DRAG || target.classList.contains('locked')) return;
+  let drag = null;
 
-  e.preventDefault();
+  function onDown(e){
+    const c0 = e.target.closest('.counter');
+    if(!c0) return;
+    if(!ALLOW_DRAG || c0.classList.contains('locked')) return;
 
-  let el = target;
-  if(target.id === 'seedCounter'){
-    el = _spawnCounterClone();
-    if(!el) return;
+    e.preventDefault();
+
+    let c = c0;
+    if(c0.id === 'seedCounter'){
+      const clone = spawnCounterClone();
+      if(!clone) return;
+      c = clone;
+    }
+
+    drag = { el:c, pid:e.pointerId };
+    c.setPointerCapture(e.pointerId);
+    c.style.opacity = '0.85';
+    floatCounter(c, e.clientX, e.clientY);
   }
 
-  _pDrag = { el, pid: e.pointerId };
-  el.setPointerCapture(e.pointerId);
-  el.style.opacity = '0.85';
-  _floatCounter(el, e.clientX, e.clientY);
-}
-
-function _mobileMove(e){
-  if(!_pDrag || e.pointerId !== _pDrag.pid) return;
-  e.preventDefault();
-  _floatCounter(_pDrag.el, e.clientX, e.clientY);
-}
-
-function _mobileUp(e){
-  if(!_pDrag || e.pointerId !== _pDrag.pid) return;
-  e.preventDefault();
-
-  const el = _pDrag.el;
-  el.releasePointerCapture(e.pointerId);
-  el.style.opacity = '';
-
-  const hit = _findDropTarget(e.clientX, e.clientY);
-  if(hit){
-    hit.appendChild(el);
-    el.style.position='';
-    el.style.left='';
-    el.style.top='';
-    el.style.transform='';
-    el.style.zIndex='';
-  }else{
-    document.getElementById('counters').appendChild(el);
-    el.style.position='';
-    el.style.left='';
-    el.style.top='';
-    el.style.transform='';
-    el.style.zIndex='';
+  function onMove(e){
+    if(!drag || e.pointerId !== drag.pid) return;
+    e.preventDefault();
+    floatCounter(drag.el, e.clientX, e.clientY);
   }
 
-  _pDrag = null;
-}
+  function onUp(e){
+    if(!drag || e.pointerId !== drag.pid) return;
+    e.preventDefault();
 
-/* ===== Activate pointer dragging ONLY on touch devices ===== */
-if (window.matchMedia('(pointer: coarse)').matches){
-  document.addEventListener('pointerdown', _mobileDown, true);
-  document.addEventListener('pointermove', _mobileMove, true);
-  document.addEventListener('pointerup', _mobileUp, true);
-  document.addEventListener('pointercancel', _mobileUp, true);
-} 
+    const el = drag.el;
+    try{ el.releasePointerCapture(e.pointerId); }catch(_){}
+
+    const hit = findTarget(e.clientX, e.clientY);
+
+    if(!hit || hit.type === 'tray'){
+      resetToTray(el);
+      drag = null;
+      return;
+    }
+
+    if(hit.type === 'syllable'){
+      snapToSyllableDrop(el, hit.el);
+      drag = null;
+      return;
+    }
+
+    if(hit.type === 'sound'){
+      snapToSoundSlot(el, hit.el);
+      drag = null;
+      return;
+    }
+
+    resetToTray(el);
+    drag = null;
+  }
+
+  document.addEventListener('pointerdown', onDown, true);
+  document.addEventListener('pointermove', onMove, true);
+  document.addEventListener('pointerup', onUp, true);
+  document.addEventListener('pointercancel', onUp, true);
+
+  window.__MOBILE_DND_V2__ = { down:onDown, move:onMove, up:onUp };
+})();
 </script>
 </body>
 </html>
+
 
 
 
