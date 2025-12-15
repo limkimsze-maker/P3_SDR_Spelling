@@ -216,18 +216,18 @@
   .credits a{pointer-events:auto}
   .credits p{margin:2px 0}.credits p:first-child{color:#000;font-weight:bold}
 
-  /* =========================================================
-     ✅ MOBILE COUNTER MOVE FIX (CSS)
-     - prevent scroll/zoom from hijacking dragging
-     ========================================================= */
+  /* ================================
+     ✅ MOBILE DRAG FIX (IMPORTANT)
+     Prevents page scroll/zoom stealing the drag gesture.
+     ================================ */
   .counter,
   .counter-slot,
   .syllableDrop,
   #counters{
-    touch-action: none;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
+    touch-action:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
   }
 </style>
 </head>
@@ -951,109 +951,102 @@
   }
 
   /* =========================================================
-     ✅ MOBILE COUNTER MOVE FIX (scaled-stage correct + snap)
-     - Works even when #stage is scaled with transform
-     - Counter follows finger precisely
-     - Drops snap into syllable boxes / sound slots and stay there
+     ✅ MOBILE DRAG SYSTEM (Pointer Events)
+     - follows finger (scale-aware with #stage scaling)
+     - snaps to syllableDrop / allowed sound slots
+     - unlimited counters: seedCounter spawns clones on touch
      ========================================================= */
-  function _getStage() { return document.getElementById('stage'); }
-
-  function _getStageScale() {
-    const stage = _getStage();
-    const r = stage.getBoundingClientRect();
-    const s = (stage.offsetWidth ? (r.width / stage.offsetWidth) : 1);
+  function _getStage(){ return document.getElementById('stage'); }
+  function _getStageScale(){
+    const stage=_getStage();
+    const r=stage.getBoundingClientRect();
+    const s = stage.offsetWidth ? (r.width / stage.offsetWidth) : 1;
     return (s && isFinite(s)) ? s : 1;
   }
-
-  function _clientToStage(clientX, clientY) {
-    const stage = _getStage();
-    const sr = stage.getBoundingClientRect();
-    const scale = _getStageScale();
-    return {
-      x: (clientX - sr.left) / scale,
-      y: (clientY - sr.top) / scale,
-      scale
-    };
+  function _clientToStage(clientX, clientY){
+    const stage=_getStage();
+    const sr=stage.getBoundingClientRect();
+    const scale=_getStageScale();
+    return { x:(clientX - sr.left)/scale, y:(clientY - sr.top)/scale, scale };
   }
-
   function _rect(el){ return el.getBoundingClientRect(); }
   function _inside(x,y,r){ return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; }
 
-  let _pDrag = null;      // {el,pid,offX,offY}
-  let _preview = null;
+  let _pDrag=null;   // {el,pid,offX,offY}
+  let _preview=null;
 
   function _clearPreview(){
-    if (_preview){ _preview.style.outline = ''; _preview = null; }
+    if(_preview){ _preview.style.outline=''; _preview=null; }
   }
 
   function _findDropTarget(clientX, clientY){
-    // sound slots allowed
+    // allowed sound slots first
     const allowed = Array.from(document.querySelectorAll('.counter-slot[data-allow="1"]'));
-    for (const s of allowed){
-      const r = _rect(s);
-      if (_inside(clientX,clientY,r)) return {type:'sound', el:s};
+    for(const s of allowed){
+      const r=_rect(s);
+      if(_inside(clientX,clientY,r)) return {type:'sound', el:s};
     }
     // syllable drop areas
     const sylDrops = Array.from(document.querySelectorAll('.syllableDrop'));
-    for (const s of sylDrops){
-      const r = _rect(s);
-      if (_inside(clientX,clientY,r)) return {type:'syllable', el:s};
+    for(const s of sylDrops){
+      const r=_rect(s);
+      if(_inside(clientX,clientY,r)) return {type:'syllable', el:s};
     }
     // tray
-    const tray = document.getElementById('counters');
-    if (tray){
-      const r = _rect(tray);
-      if (_inside(clientX,clientY,r)) return {type:'tray', el:tray};
+    const tray=document.getElementById('counters');
+    if(tray){
+      const r=_rect(tray);
+      if(_inside(clientX,clientY,r)) return {type:'tray', el:tray};
     }
     return null;
   }
 
   function _floatCounter(el, clientX, clientY){
-    const stage = _getStage();
+    const stage=_getStage();
     stage.appendChild(el);
 
     el.classList.remove('in-slot');
-    el.style.position = 'absolute';
-    el.style.zIndex = '9998';
-    el.style.transform = 'none';
+    el.style.position='absolute';
+    el.style.zIndex='9998';
+    el.style.transform='none';
 
-    const p = _clientToStage(clientX, clientY);
+    const p=_clientToStage(clientX, clientY);
     el.style.left = (p.x - (_pDrag?.offX || 0)) + 'px';
     el.style.top  = (p.y - (_pDrag?.offY || 0)) + 'px';
   }
 
   function _resetToTray(el){
-    const tray = document.getElementById('counters');
+    const tray=document.getElementById('counters');
     if(!tray) return;
     el.classList.remove('in-slot');
-    el.style.position = '';
-    el.style.left = '';
-    el.style.top = '';
-    el.style.transform = '';
-    el.style.zIndex = '';
-    el.style.opacity = '';
+    el.style.position='';
+    el.style.left='';
+    el.style.top='';
+    el.style.transform='';
+    el.style.zIndex='';
+    el.style.opacity='';
     tray.appendChild(el);
   }
 
   function _snapToSyllableDrop(el, host){
     el.classList.remove('in-slot');
-    el.style.position = '';
-    el.style.left = '';
-    el.style.top = '';
-    el.style.transform = '';
-    el.style.zIndex = '';
-    el.style.opacity = '';
+    el.style.position='';
+    el.style.left='';
+    el.style.top='';
+    el.style.transform='';
+    el.style.zIndex='';
+    el.style.opacity='';
     host.appendChild(el);
   }
 
+  // mobile snap to sound slot: reuse your same logic (soundDropsDone, span, audio, label)
   function _snapToSoundSlot(el, host, syll, tile){
-    // clear floating inline styles then let your .counter.in-slot CSS position it
-    el.style.opacity = '';
-    el.style.position = '';
-    el.style.left = '';
-    el.style.top = '';
-    el.style.transform = '';
-    el.style.zIndex = '';
+    el.style.opacity='';
+    el.style.position='';
+    el.style.left='';
+    el.style.top='';
+    el.style.transform='';
+    el.style.zIndex='';
 
     host.appendChild(el);
     host.classList.add('has-counter');
@@ -1061,6 +1054,7 @@
 
     const w = words[wIndex];
     const sylLetters = (w.syllables?.[syll-1]?.letters) || [];
+
     const tokenIndex = parseInt(host.dataset.tokenIndex || String(tile), 10);
     const token = sylLetters[tokenIndex];
 
@@ -1101,119 +1095,140 @@
     }
   }
 
-  function _mobileDown(e){
-    const t = e.target.closest('.counter');
-    if (!t) return;
+  // ✅ unlimited counters: touching seedCounter spawns a clone
+  function _spawnCounterClone(){
+    const seed=document.getElementById('seedCounter');
+    if(!seed) return null;
+    const clone=seed.cloneNode(true);
+    clone.id='c'+Math.random().toString(36).slice(2,10);
+    clone.classList.remove('locked');
+    clone.removeAttribute('draggable'); // mobile uses pointer events
+    document.getElementById('counters')?.appendChild(clone);
+    return clone;
+  }
 
-    if (!ALLOW_DRAG || t.classList.contains('locked')) return;
+  function _mobileDown(e){
+    const t0 = e.target.closest('.counter');
+    if(!t0) return;
+    if(!ALLOW_DRAG || t0.classList.contains('locked')) return;
 
     e.preventDefault();
 
-    // pointer offset inside counter in STAGE coords (scale-aware)
+    // seed spawns a fresh counter on mobile (unlimited)
+    let t = t0;
+    if(t0.id === 'seedCounter'){
+      const clone=_spawnCounterClone();
+      if(!clone) return;
+      t = clone;
+    }
+
     const tr = t.getBoundingClientRect();
     const scale = _getStageScale();
     const offX = (e.clientX - tr.left) / scale;
     const offY = (e.clientY - tr.top)  / scale;
 
-    _pDrag = { el: t, pid: e.pointerId, offX, offY };
+    _pDrag = { el:t, pid:e.pointerId, offX, offY };
 
-    t.style.opacity = '0.85';
+    t.style.opacity='0.85';
     t.setPointerCapture(e.pointerId);
 
     _floatCounter(t, e.clientX, e.clientY);
   }
 
   function _mobileMove(e){
-    if (!_pDrag || e.pointerId !== _pDrag.pid) return;
+    if(!_pDrag || e.pointerId !== _pDrag.pid) return;
     e.preventDefault();
 
     _floatCounter(_pDrag.el, e.clientX, e.clientY);
 
-    const hit = _findDropTarget(e.clientX, e.clientY);
+    const hit=_findDropTarget(e.clientX, e.clientY);
     _clearPreview();
-    if (hit && hit.el){
-      hit.el.style.outline = '3px solid rgba(30,158,71,.55)';
+    if(hit && hit.el){
+      hit.el.style.outline='3px solid rgba(30,158,71,.55)';
       _preview = hit.el;
     }
   }
 
   function _mobileUp(e){
-    if (!_pDrag || e.pointerId !== _pDrag.pid) return;
+    if(!_pDrag || e.pointerId !== _pDrag.pid) return;
     e.preventDefault();
 
-    const el = _pDrag.el;
+    const el=_pDrag.el;
     _clearPreview();
 
-    try { el.releasePointerCapture(e.pointerId); } catch(_){}
+    try{ el.releasePointerCapture(e.pointerId); }catch(_){}
 
-    const hit = _findDropTarget(e.clientX, e.clientY);
+    const hit=_findDropTarget(e.clientX, e.clientY);
 
-    if (!hit){
+    // no hit => back to tray
+    if(!hit){
       _resetToTray(el);
-      _pDrag = null;
+      _pDrag=null;
       return;
     }
 
-    if (hit.type === 'tray'){
+    if(hit.type === 'tray'){
       _resetToTray(el);
-      _pDrag = null;
+      _pDrag=null;
       return;
     }
 
-    if (hit.type === 'syllable'){
-      if (needSyllableDrops<=0 || hit.el.hasChildNodes()){
+    if(hit.type === 'syllable'){
+      // enforce your syllable gating rules
+      if(needSyllableDrops<=0 || hit.el.hasChildNodes()){
         _resetToTray(el);
-        _pDrag = null;
+        _pDrag=null;
         return;
       }
       _snapToSyllableDrop(el, hit.el);
       syllableDropsDone++;
-      if(syllableDropsDone>=needSyllableDrops){
+      if(syllableDropsDone >= needSyllableDrops){
         setInstruction("syllables tracked — start with 1st syllable sounds.", false);
         startSyllableTrack(1);
       }
-      _pDrag = null;
+      _pDrag=null;
       return;
     }
 
-    if (hit.type === 'sound'){
-      const host = hit.el;
-      if (needSoundDrops<=0 || host.dataset.allow !== '1' || host.hasChildNodes()){
+    if(hit.type === 'sound'){
+      const host=hit.el;
+      // enforce your sound gating rules
+      if(needSoundDrops<=0 || host.dataset.allow !== '1' || host.hasChildNodes()){
         _resetToTray(el);
-        _pDrag = null;
+        _pDrag=null;
         return;
       }
-      const m = /^s(\d)t(\d)$/.exec(host.id || '');
-      if (!m){ _resetToTray(el); _pDrag=null; return; }
+      const m=/^s(\d)t(\d)$/.exec(host.id || '');
+      if(!m){ _resetToTray(el); _pDrag=null; return; }
 
-      const syll = parseInt(m[1],10);
-      const tile = parseInt(m[2],10);
+      const syll=parseInt(m[1],10);
+      const tile=parseInt(m[2],10);
 
-      if (syll !== activeSyllable){
+      if(syll !== activeSyllable){
         _resetToTray(el);
-        _pDrag = null;
+        _pDrag=null;
         return;
       }
 
       _snapToSoundSlot(el, host, syll, tile);
-      _pDrag = null;
+      _pDrag=null;
       return;
     }
 
     _resetToTray(el);
-    _pDrag = null;
+    _pDrag=null;
   }
 
-  // only enable on touch-y devices
+  // enable only for touch/coarse pointers
   const _isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  if (_isTouch){
+  if(_isTouch){
     document.addEventListener('pointerdown', _mobileDown, true);
     document.addEventListener('pointermove', _mobileMove, true);
     document.addEventListener('pointerup', _mobileUp, true);
     document.addEventListener('pointercancel', _mobileUp, true);
   }
 
-  /* ===== Existing desktop drag spawn (HTML5 DnD) ===== */
+  /* ===== Desktop drag (unchanged) ===== */
   function dragSpawn(ev){
     if(!ALLOW_DRAG || ev.target.classList.contains('locked')){
       ev.preventDefault();
