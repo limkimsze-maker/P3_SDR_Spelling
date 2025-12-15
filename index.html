@@ -336,7 +336,6 @@
       <label>Meaning</label>
       <textarea id="qMeaning" placeholder="a short definition or example sentence."></textarea>
 
-      <!-- ✅ Keep only this -->
       <label>Syllable count for this word</label>
       <select id="qSylCount">
         <option value="1">1 syllable</option>
@@ -439,16 +438,6 @@
 <script>
   /* =========================================================
      ✅ GitHub-permalink → USABLE URL CHOICE (jsDelivr)
-     ---------------------------------------------------------
-     Base CDN (pinned to your commit):
-     https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@3c7bc1ea3f4cfab433561189cc89d00c162ce987/
-
-     JSON:
-     .../Cycle%201%20Session%201.json
-     .../Cycle%201%20Session%202.json
-
-     Sounds:
-     .../sounds/<token>.m4a
      ========================================================= */
   const ASSET_BASE = "https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@main/";
   const SOUND_BASE = ASSET_BASE + "sounds/";
@@ -554,7 +543,6 @@
   function playSoundForToken(token, cb){
     const k = (token || '').toLowerCase().trim();
     if(!k){ cb && cb(); return; }
-    // ✅ CHANGED: use GitHub CDN sounds base
     playAudio(`${SOUND_BASE}${encodeURIComponent(k)}.m4a`, cb, k);
   }
 
@@ -617,7 +605,6 @@
 
     const grid=document.createElement('div'); grid.className='grid';
 
-    // Header
     const hdr=document.createElement('div'); hdr.className='hdr';
     hdr.style.gridTemplateColumns = COLS;
     for(let s=1;s<=displaySyl;s++){
@@ -629,7 +616,6 @@
     hdr.appendChild(wholeHdr);
     grid.appendChild(hdr);
 
-    // Syllable drop row
     const row=document.createElement('div'); row.className='row';
     row.style.gridTemplateColumns = COLS;
     for(let s=1;s<=displaySyl;s++){
@@ -644,7 +630,6 @@
     wholeCell.appendChild(wholeText); row.appendChild(wholeCell);
     grid.appendChild(row);
 
-    // Tiles row
     const tilesRow=document.createElement('div'); tilesRow.className='tiles-row';
     tilesRow.style.gridTemplateColumns = COLS;
 
@@ -1190,12 +1175,10 @@
         break;
 
       case 1:
-        // ✅ Do NOT show the word on display (only say "Say the word")
         setCurrentLine('La');
         document.getElementById('nextBtn').disabled=true;
         setInstruction(`say the word.`, false);
 
-        // still speak the actual word and meaning (audio only)
         tts(`say the word ${w.word}`, ()=>{
           if (w.meaning) tts(w.meaning, ()=>{
             tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
@@ -1283,24 +1266,28 @@
     document.getElementById('nextBtn').disabled  = true;
   }
 
-  /* ===== ✅ Lesson dropdown loader (GitHub CDN) ===== */
+  /* ===== ✅ Lesson dropdown loader (GitHub CDN) — Option A cache-buster ===== */
   async function onLessonChange(key){
     if(!key){
       setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
       return;
     }
-    const url = LESSON_URLS[key];
-    if(!url){
+
+    const url0 = LESSON_URLS[key];
+    if(!url0){
       alert("Lesson URL not configured.");
       return;
     }
+
+    // ✅ Option A: cache-bust the JSON URL so CDN never serves stale content
+    const url = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + Date.now();
+
     try{
       setInstruction(`loading lesson…`, false);
-      const bust = 'v=' + Date.now();
-      const url0 = LESSON_URLS[key];
-      const url  = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + Date.now();
+
       const res = await fetch(url, { cache:'no-store' });
       if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
+
       const obj = await res.json();
       if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
 
@@ -1360,16 +1347,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
