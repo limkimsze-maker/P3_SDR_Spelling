@@ -1296,7 +1296,8 @@
     }
     try{
       setInstruction(`loading lesson…`, false);
-      const res = await fetch(url, { cache:'no-store' });
+      const bust = 'v=' + Date.now();
+      const res = await fetch(url + (url.includes('?') ? '&' : '?') + bust, { cache:'no-store' });
       if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
       const obj = await res.json();
       if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
@@ -1357,6 +1358,7 @@
 </script>
 </body>
 </html>
+
 
 
 
