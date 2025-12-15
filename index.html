@@ -217,13 +217,9 @@
   .credits p{margin:2px 0}.credits p:first-child{color:#000;font-weight:bold}
 
   /* =========================================================
-     ✅ MOBILE COUNTER MOVE FIX (touch + mouse)
-     - Enables dragging counters on phones/tablets
-     - Uses Pointer Events with pointer capture
-     - Keeps your existing HTML5 drag/drop for desktop too
+     ✅ MOBILE COUNTER MOVE FIX (CSS)
+     - prevent scroll/zoom from hijacking dragging
      ========================================================= */
-
-  /* prevent scroll/zoom from hijacking dragging */
   .counter,
   .counter-slot,
   .syllableDrop,
@@ -954,21 +950,17 @@
     slotEl.appendChild(lbl);
   }
 
-
-  <script>
-/* =========================================================
-   ✅ MOBILE COUNTER MOVE FIX (scaled-stage correct + snap)
-   - Works even when #stage is scaled with transform
-   - Counter follows finger precisely (no lag/jump)
-   - Drops snap into syllable boxes / sound slots and stay there
-   ========================================================= */
-
+  /* =========================================================
+     ✅ MOBILE COUNTER MOVE FIX (scaled-stage correct + snap)
+     - Works even when #stage is scaled with transform
+     - Counter follows finger precisely
+     - Drops snap into syllable boxes / sound slots and stay there
+     ========================================================= */
   function _getStage() { return document.getElementById('stage'); }
 
   function _getStageScale() {
     const stage = _getStage();
     const r = stage.getBoundingClientRect();
-    // offsetWidth is unscaled layout width; rect.width is scaled
     const s = (stage.offsetWidth ? (r.width / stage.offsetWidth) : 1);
     return (s && isFinite(s)) ? s : 1;
   }
@@ -1017,7 +1009,6 @@
   }
 
   function _floatCounter(el, clientX, clientY){
-    // move into stage and float at pointer, respecting scale
     const stage = _getStage();
     stage.appendChild(el);
 
@@ -1045,7 +1036,6 @@
   }
 
   function _snapToSyllableDrop(el, host){
-    // inside syllableDrop, keep it simple (normal flow)
     el.classList.remove('in-slot');
     el.style.position = '';
     el.style.left = '';
@@ -1078,7 +1068,6 @@
     host.dataset.span = String(span);
 
     if (span === 2){
-      // center across two slots (your existing behavior)
       el.style.left = '100%';
       const ghost = document.getElementById(`s${syll}t${tile+1}`);
       if (ghost) ghost.classList.add('has-counter');
@@ -1118,14 +1107,11 @@
 
     if (!ALLOW_DRAG || t.classList.contains('locked')) return;
 
-    // stop page scroll taking over the gesture
     e.preventDefault();
 
-    // compute pointer offset inside the counter in STAGE coords
-    const p = _clientToStage(e.clientX, e.clientY);
+    // pointer offset inside counter in STAGE coords (scale-aware)
     const tr = t.getBoundingClientRect();
     const scale = _getStageScale();
-
     const offX = (e.clientX - tr.left) / scale;
     const offY = (e.clientY - tr.top)  / scale;
 
@@ -1162,7 +1148,6 @@
 
     const hit = _findDropTarget(e.clientX, e.clientY);
 
-    // no hit => back to tray
     if (!hit){
       _resetToTray(el);
       _pDrag = null;
@@ -1227,7 +1212,6 @@
     document.addEventListener('pointerup', _mobileUp, true);
     document.addEventListener('pointercancel', _mobileUp, true);
   }
-</script>
 
   /* ===== Existing desktop drag spawn (HTML5 DnD) ===== */
   function dragSpawn(ev){
@@ -1354,18 +1338,6 @@
         }
       }
     }
-  }
-
-  function dropToTrayMobileSafe(el){
-    const tray = document.getElementById('counters');
-    if(!tray || !el) return;
-    el.classList.remove('in-slot');
-    el.style.left = '';
-    el.style.top = '';
-    el.style.transform = '';
-    el.style.position = '';
-    el.style.zIndex = '';
-    tray.appendChild(el);
   }
 
   function ordinal(n){ return n===1?'1st':n===2?'2nd':n===3?'3rd':'4th'; }
@@ -1653,4 +1625,3 @@
 </script>
 </body>
 </html>
-
