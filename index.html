@@ -823,6 +823,122 @@
       }
     }
   }
+ <script>
+/* =========================================================
+   ✅ FINAL MOBILE + DESKTOP COUNTER DRAG FIX (SAFE)
+   - Restores mobile dragging
+   - Keeps desktop HTML5 drag
+   - Unlimited counters
+   - Stage-scale aware
+   ========================================================= */
+
+let _pDrag = null;
+
+function _getStageScale(){
+  const stage = document.getElementById('stage');
+  const tr = stage.getBoundingClientRect();
+  return stage.offsetWidth ? tr.width / stage.offsetWidth : 1;
+}
+
+function _floatCounter(el, clientX, clientY){
+  const scale = _getStageScale();
+  el.style.position = 'fixed';
+  el.style.left = (clientX / scale) + 'px';
+  el.style.top  = (clientY / scale) + 'px';
+  el.style.transform = 'translate(-50%,-50%)';
+  el.style.zIndex = 9999;
+}
+
+function _spawnCounterClone(){
+  const seed = document.getElementById('seedCounter');
+  if(!seed) return null;
+  const clone = seed.cloneNode(true);
+  clone.id = 'c' + Math.random().toString(36).slice(2,9);
+  clone.classList.remove('locked');
+  clone.removeAttribute('draggable'); // mobile uses pointer
+  document.getElementById('counters').appendChild(clone);
+  return clone;
+}
+
+function _findDropTarget(clientX, clientY){
+  const slots = document.querySelectorAll('.counter-slot[data-allow="1"]');
+  for(const s of slots){
+    const r = s.getBoundingClientRect();
+    if(clientX>=r.left && clientX<=r.right && clientY>=r.top && clientY<=r.bottom){
+      return s;
+    }
+  }
+  const syllDrops = document.querySelectorAll('.syllableDrop');
+  for(const s of syllDrops){
+    const r = s.getBoundingClientRect();
+    if(clientX>=r.left && clientX<=r.right && clientY>=r.top && clientY<=r.bottom){
+      return s;
+    }
+  }
+  return null;
+}
+
+/* ===== Pointer events (mobile / tablet) ===== */
+function _mobileDown(e){
+  const target = e.target.closest('.counter');
+  if(!target || !ALLOW_DRAG || target.classList.contains('locked')) return;
+
+  e.preventDefault();
+
+  let el = target;
+  if(target.id === 'seedCounter'){
+    el = _spawnCounterClone();
+    if(!el) return;
+  }
+
+  _pDrag = { el, pid: e.pointerId };
+  el.setPointerCapture(e.pointerId);
+  el.style.opacity = '0.85';
+  _floatCounter(el, e.clientX, e.clientY);
+}
+
+function _mobileMove(e){
+  if(!_pDrag || e.pointerId !== _pDrag.pid) return;
+  e.preventDefault();
+  _floatCounter(_pDrag.el, e.clientX, e.clientY);
+}
+
+function _mobileUp(e){
+  if(!_pDrag || e.pointerId !== _pDrag.pid) return;
+  e.preventDefault();
+
+  const el = _pDrag.el;
+  el.releasePointerCapture(e.pointerId);
+  el.style.opacity = '';
+
+  const hit = _findDropTarget(e.clientX, e.clientY);
+  if(hit){
+    hit.appendChild(el);
+    el.style.position='';
+    el.style.left='';
+    el.style.top='';
+    el.style.transform='';
+    el.style.zIndex='';
+  }else{
+    document.getElementById('counters').appendChild(el);
+    el.style.position='';
+    el.style.left='';
+    el.style.top='';
+    el.style.transform='';
+    el.style.zIndex='';
+  }
+
+  _pDrag = null;
+}
+
+/* ===== Activate pointer dragging ONLY on touch devices ===== */
+if (window.matchMedia('(pointer: coarse)').matches){
+  document.addEventListener('pointerdown', _mobileDown, true);
+  document.addEventListener('pointermove', _mobileMove, true);
+  document.addEventListener('pointerup', _mobileUp, true);
+  document.addEventListener('pointercancel', _mobileUp, true);
+}
+</script>
 
   // expose
   window.onLessonChange = onLessonChange;
@@ -841,3 +957,4 @@
 </script>
 </body>
 </html>
+
