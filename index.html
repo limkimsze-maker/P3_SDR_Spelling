@@ -237,23 +237,19 @@
   <div class="sheet">
     <div class="title">Spelling Worksheet</div>
 
-    <!-- ✅ Lesson dropdown (loads JSON sets from GitHub CDN) -->
+    <!-- ✅ Lesson dropdown (loads JSON sets) -->
     <div class="lessonbar">
       <label for="lessonSelect">Lesson set</label>
-      <select id="lessonSelect" onchange="onLessonChange(this.value)">
+      <select id="lessonSelect"
+              onchange="onLessonChange(this.value)"
+              onfocus="prefetchLessonSilently(this.value)"
+              onmouseover="prefetchLessonSilently(this.value)">
         <option value="">Choose a cycle/session…</option>
         <option value="c1s1">Cycle 1 Session 1</option>
         <option value="c1s2">Cycle 1 Session 2</option>
         <option value="c1s3">Cycle 1 Session 3</option>
         <option value="c2s1">Cycle 2 Session 1</option>
       </select>
-
-      <!-- ✅ NEW: Force reload even if same selection (fix “stuck cache” feeling) -->
-      <button type="button" class="secondary" onclick="reloadLesson()">Reload lesson</button>
-
-      <!-- ✅ NEW: One-click jsDelivr purge (optional, but helps when CDN is stubborn) -->
-      <button type="button" class="secondary" onclick="purgeLesson()">Purge CDN</button>
-
       <span class="hint">Select a set to auto-load the Word List.</span>
     </div>
 
@@ -469,19 +465,27 @@
     c2s1: ASSET_BASE + "Cycle%202%20Session%201.json",
   };
 
-  /* ================================
-     ✅ Token cleaner (fix hidden whitespace/zero-width chars)
-     ================================ */
-  function cleanToken(t){
-    return String(t ?? "")
-      .replace(/[\u200B-\u200D\uFEFF]/g, "")  // zero-width chars
-      .trim()
-      .toLowerCase();
+  /* =========================================================
+     🔇 Silent background prefetch (warm cache only)
+     - NO cache-buster (prevents CDN rate-limit)
+     - NO state mutation
+     - NO user-facing errors
+     ========================================================= */
+  const _prefetchedLessons = new Set();
+  function prefetchLessonSilently(key){
+    if(!key || _prefetchedLessons.has(key)) return;
+    const base = LESSON_URLS[key];
+    if(!base) return;
+
+    fetch(base, { cache: 'force-cache' })
+      .then(r => r.ok ? r.text() : null)
+      .then(() => { _prefetchedLessons.add(key); })
+      .catch(() => {});
   }
 
   /* ===== Span rules ===== */
   function tokenSpan(tok){
-    const k = cleanToken(tok);
+    const k = String(tok||"").trim().toLowerCase();
     return (k === 'x') ? 2 : 1;   // only x spans 2 boxes
   }
 
@@ -505,12 +509,18 @@
     const isT = (e.code === 'KeyT') || (e.key && e.key.toLowerCase() === 't');
     if (e.ctrlKey && e.altKey && isT) { e.preventDefault(); e.stopPropagation(); toggleTeacherPanel(); }
   });
+
   addEventListener('load',()=>{
     document.body.tabIndex = -1;
     document.body.focus({ preventScroll: true });
     document.getElementById('teacherHotspot').addEventListener('click',()=>toggleTeacherPanel());
     const notes = document.getElementById('devNotes');
     if (notes) notes.addEventListener('input', saveNotes);
+
+    // ✅ silent warm-up so dropdown feels instant
+    Object.keys(LESSON_URLS).forEach((k, i) => {
+      setTimeout(() => prefetchLessonSilently(k), 600 + i*180);
+    });
   });
 
   /* ===== Instructions visibility + voice ===== */
@@ -571,30 +581,25 @@
     });
   }
 
-  /* ✅ uses cleanToken + audio cache-bust */
   function playSoundForToken(token, cb){
-    const k = cleanToken(token);
+    const k = (token || '').toLowerCase().trim();
     if(!k){ cb && cb(); return; }
+    // ✅ cache-bust audio too (prevents "stuck sound" after a wrong file was cached)
     const url = `${SOUND_BASE}${encodeURIComponent(k)}.m4a?v=${Date.now()}`;
-    console.log("PLAY TOKEN:", k, url);
     playAudio(url, cb, k);
   }
 
   /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
   const TOKEN_DISPLAY_MAP = {
     "a_":"a","a__":"a",
-    "ai_":"ai",
-    "ar_":"ar",
-    "ay_":"ay",
+    "ai_":"ai","ar_":"ar","ay_":"ay",
     "c_":"c",
     "e_":"e","e__":"e",
     "ea_":"ea","ea__":"ea","ea_is":"ea",
     "ed_":"ed","ed__":"ed",
-    "ei_":"ei",
-    "er_":"er",
+    "ei_":"ei","er_":"er",
     "ew_":"ew","ew":"ew",
-    "ff":"ff",
-    "g_":"g",
+    "ff":"ff","g_":"g",
     "i__":"i","i_":"i",
     "ie_":"ie","ie":"ie",
     "ir_":"ir",
@@ -612,7 +617,7 @@
     "zz":"zz","z":"z"
   };
   function displayToken(t){
-    const k = cleanToken(t);
+    const k = String(t||"").trim().toLowerCase();
     if (k in TOKEN_DISPLAY_MAP) return TOKEN_DISPLAY_MAP[k];
     return k.replace(/_/g,"");
   }
@@ -750,7 +755,7 @@
     sel.onchange=e=>onchange(e.target.value);
     td.appendChild(sel); return td;
   }
-  function csvToTokens(v){ return (v||'').split(',').map(s=>cleanToken(s)).filter(Boolean).slice(0,6); }
+  function csvToTokens(v){ return (v||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).slice(0,6); }
 
   let selectedIndex = -1;
   function selectRow(idx,tr){
@@ -797,7 +802,7 @@
       const arr=[];
       for(let i=0;i<6;i++){
         const v=(document.getElementById(`q${s}_${i}`).value||'').trim();
-        if(v) arr.push(cleanToken(v));
+        if(v) arr.push(v.toLowerCase());
       }
       syls.push({letters:arr});
     }
@@ -847,7 +852,6 @@
 
   function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
 
-  /* ✅ normalize trims tokens + removes zero-width */
   function normalizeWordSet(arr){
     return (arr||[]).map(w=>({
       word: String(w.word||'').trim(),
@@ -855,9 +859,7 @@
       syllables: (Array.isArray(w.syllables)? w.syllables : [])
         .slice(0,4)
         .map(s=>({
-          letters: Array.isArray(s.letters)
-            ? s.letters.slice(0,6).map(t=>cleanToken(t)).filter(Boolean)
-            : []
+          letters: Array.isArray(s.letters) ? s.letters.slice(0,6).map(t=>String(t||'').toLowerCase()) : []
         }))
     })).filter(w => w.word);
   }
@@ -1062,7 +1064,6 @@
     host.appendChild(el);
   }
 
-  // mobile snap to sound slot: reuse your same logic (soundDropsDone, span, audio, label)
   function _snapToSoundSlot(el, host, syll, tile){
     el.style.opacity='';
     el.style.position='';
@@ -1118,7 +1119,6 @@
     }
   }
 
-  // ✅ unlimited counters: touching seedCounter spawns a clone
   function _spawnCounterClone(){
     const seed=document.getElementById('seedCounter');
     if(!seed) return null;
@@ -1137,7 +1137,6 @@
 
     e.preventDefault();
 
-    // seed spawns a fresh counter on mobile (unlimited)
     let t = t0;
     if(t0.id === 'seedCounter'){
       const clone=_spawnCounterClone();
@@ -1183,7 +1182,6 @@
 
     const hit=_findDropTarget(e.clientX, e.clientY);
 
-    // no hit => back to tray
     if(!hit){
       _resetToTray(el);
       _pDrag=null;
@@ -1197,7 +1195,6 @@
     }
 
     if(hit.type === 'syllable'){
-      // enforce your syllable gating rules
       if(needSyllableDrops<=0 || hit.el.hasChildNodes()){
         _resetToTray(el);
         _pDrag=null;
@@ -1215,7 +1212,6 @@
 
     if(hit.type === 'sound'){
       const host=hit.el;
-      // enforce your sound gating rules
       if(needSoundDrops<=0 || host.dataset.allow !== '1' || host.hasChildNodes()){
         _resetToTray(el);
         _pDrag=null;
@@ -1242,7 +1238,6 @@
     _pDrag=null;
   }
 
-  // enable only for touch/coarse pointers
   const _isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   if(_isTouch){
     document.addEventListener('pointerdown', _mobileDown, true);
@@ -1524,10 +1519,7 @@
 
         document.getElementById('wholewordText').textContent = fullWord;
         setInstruction("i blend and check the whole word.", false);
-
-        /* ✅ optional safer whole-word voice (spells letters to avoid weird TTS like “dress”→“drees”) */
-        tts(fullWord.split('').join(' '));
-
+        tts(fullWord);
         document.getElementById('nextBtn').disabled=false;
         ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
         break;
@@ -1570,7 +1562,7 @@
       meaning: String(v.meaning || ''),
       syllables: (v.syllables || []).slice(0,4).map(s => ({
         letters: Array.isArray(s.letters)
-          ? s.letters.slice(0,6).map(t => cleanToken(t)).filter(Boolean)
+          ? s.letters.slice(0,6).map(t => String(t || '').toLowerCase())
           : []
       }))
     }));
@@ -1586,91 +1578,74 @@
   }
 
   /* =========================================================
-     ✅ Lesson loader (strong anti-cache + force reload)
+     ✅ Lesson dropdown loader (robust)
+     - try CDN with cache-buster for "latest"
+     - if CDN fails: fallback to raw GitHub
      ========================================================= */
-  let _lastLessonKey = "";
-  let _lastLessonUrl0 = "";
-
-  async function onLessonChange(key, force=false){
+  async function onLessonChange(key){
     if(!key){
       setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
-      _lastLessonKey = "";
-      _lastLessonUrl0 = "";
       return;
     }
 
-    const url0 = LESSON_URLS[key];
-    if(!url0){
+    const base = LESSON_URLS[key];
+    if(!base){
       alert("Lesson URL not configured.");
       return;
     }
 
-    _lastLessonKey = key;
-    _lastLessonUrl0 = url0;
+    // Warm cache immediately (silent)
+    prefetchLessonSilently(key);
 
-    const url = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + Date.now();
+    // Source 1: CDN + cache-bust for latest
+    const cdnFresh = base + (base.includes('?') ? '&' : '?') + 'v=' + Date.now();
 
-    try{
-      setInstruction(`loading lesson…`, false);
+    // Source 2: raw GitHub fallback (helps when CDN has issues)
+    const rawFallback = base
+      .replace('https://cdn.jsdelivr.net/gh/limkimsze-maker/', 'https://raw.githubusercontent.com/limkimsze-maker/')
+      .replace('@main/', '/main/');
 
-      const res = await fetch(url, {
-        cache:'no-store',
-        headers: { 'Cache-Control':'no-cache', 'Pragma':'no-cache' }
-      });
+    const sources = [cdnFresh, rawFallback];
 
-      if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
+    setInstruction("loading lesson…", false);
 
-      const obj = await res.json();
-      if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
+    let lastErr = null;
 
-      teacherSet = normalizeWordSet(obj.words);
-      refreshTable();
+    for (const url of sources){
+      try{
+        const res = await fetch(url, { cache:'no-store', headers:{'Cache-Control':'no-cache'} });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      words = teacherSet.map(deepCopy);
-      wIndex = 0;
-      autoFitDisplayToWord();
+        const obj = await res.json();
+        if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
 
-      document.getElementById('beginBtn').disabled = false;
-      document.getElementById('nextBtn').disabled  = true;
+        teacherSet = normalizeWordSet(obj.words);
+        refreshTable();
 
-      setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`, false);
-    }catch(e){
-      alert(e.message);
-      setInstruction("could not load the lesson set. check internet / URL / CORS.", false);
-    }
-  }
+        words = teacherSet.map(deepCopy);
+        wIndex = 0;
+        autoFitDisplayToWord();
 
-  /* ✅ NEW: reload even if dropdown value didn’t change */
-  function reloadLesson(){
-    const sel = document.getElementById('lessonSelect');
-    const key = sel?.value || _lastLessonKey;
-    if(!key){
-      setInstruction("choose a lesson set first, then reload.", false);
-      return;
-    }
-    onLessonChange(key, true);
-  }
+        document.getElementById('beginBtn').disabled = false;
+        document.getElementById('nextBtn').disabled  = true;
 
-  /* ✅ NEW: one-click jsDelivr purge (opens in new tab) */
-  function purgeLesson(){
-    const sel = document.getElementById('lessonSelect');
-    const key = sel?.value || _lastLessonKey;
-    const url0 = (key && LESSON_URLS[key]) ? LESSON_URLS[key] : _lastLessonUrl0;
-
-    if(!url0){
-      setInstruction("choose a lesson set first, then purge.", false);
-      return;
+        setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`, false);
+        return;
+      }catch(e){
+        lastErr = e;
+        console.warn('lesson load failed:', url, e.message);
+      }
     }
 
-    // jsDelivr purge endpoint: https://purge.jsdelivr.net/gh/<user>/<repo>@<ref>/<path>
-    // Convert your CDN URL into a purge URL.
-    const purge = url0.replace(
-      /^https:\/\/cdn\.jsdelivr\.net\/gh\//,
-      "https://purge.jsdelivr.net/gh/"
+    alert(
+      "Could not load the lesson.\n\n" +
+      "Possible reasons:\n" +
+      "• Temporary CDN issue\n" +
+      "• Internet connectivity problem\n\n" +
+      "Please try again later."
     );
-
-    window.open(purge, "_blank", "noopener");
-    setInstruction("purge opened in a new tab. after it loads, click “Reload lesson”.", false);
+    setInstruction("lesson load failed. please try again later.", false);
+    if(lastErr) console.warn(lastErr);
   }
 
   /* ===== Expose ===== */
@@ -1708,10 +1683,10 @@
   window.useAll=useAll;
   window.shuffleTeacherSet=shuffleTeacherSet;
 
-  window.reloadLesson = reloadLesson;
-  window.purgeLesson  = purgeLesson;
+  window.prefetchLessonSilently = prefetchLessonSilently;
+  window.onLessonChange = onLessonChange;
 
-  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS, _lastLessonKey, _lastLessonUrl0 });
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS });
 </script>
 </body>
 </html>
