@@ -555,10 +555,15 @@
   }
 
   function playSoundForToken(token, cb){
-    const k = (token || '').toLowerCase().trim();
-    if(!k){ cb && cb(); return; }
-    playAudio(`${SOUND_BASE}${encodeURIComponent(k)}.m4a`, cb, k);
-  }
+  const k = (token || '').toLowerCase().trim();
+  if(!k){ cb && cb(); return; }
+
+  // ✅ cache-bust audio too
+  const url = `${SOUND_BASE}${encodeURIComponent(k)}.m4a?v=${Date.now()}`;
+
+  console.log("PLAY TOKEN:", k, url);
+  playAudio(url, cb, k);
+}
 
   /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
   const TOKEN_DISPLAY_MAP = {
@@ -1640,3 +1645,4 @@
 </script>
 </body>
 </html>
+
