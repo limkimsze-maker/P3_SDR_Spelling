@@ -954,126 +954,200 @@
     slotEl.appendChild(lbl);
   }
 
-  /* =========================================================
-     ✅ MOBILE COUNTER MOVE FIX (adds touch dragging)
-     - desktop: keeps your existing HTML5 drag/drop
-     - mobile: uses pointer dragging + "drop" by hit-testing slots
-     ========================================================= */
 
-  // hit test helper
+  <script>
+/* =========================================================
+   ✅ MOBILE COUNTER MOVE FIX (scaled-stage correct + snap)
+   - Works even when #stage is scaled with transform
+   - Counter follows finger precisely (no lag/jump)
+   - Drops snap into syllable boxes / sound slots and stay there
+   ========================================================= */
+
+  function _getStage() { return document.getElementById('stage'); }
+
+  function _getStageScale() {
+    const stage = _getStage();
+    const r = stage.getBoundingClientRect();
+    // offsetWidth is unscaled layout width; rect.width is scaled
+    const s = (stage.offsetWidth ? (r.width / stage.offsetWidth) : 1);
+    return (s && isFinite(s)) ? s : 1;
+  }
+
+  function _clientToStage(clientX, clientY) {
+    const stage = _getStage();
+    const sr = stage.getBoundingClientRect();
+    const scale = _getStageScale();
+    return {
+      x: (clientX - sr.left) / scale,
+      y: (clientY - sr.top) / scale,
+      scale
+    };
+  }
+
   function _rect(el){ return el.getBoundingClientRect(); }
   function _inside(x,y,r){ return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; }
 
-  let _pDrag = null; // {el, pid, fromTray, startX, startY, baseLeft, baseTop}
-  let _dropPreviewEl = null;
-
-  function _ensureAbsInTray(counterEl){
-    // keep tray layout: use relative positioning inside tray (not absolute)
-    counterEl.style.position = '';
-    counterEl.style.left = '';
-    counterEl.style.top = '';
-    counterEl.style.transform = '';
-    counterEl.style.zIndex = '';
-  }
-
-  function _ensureAbsInSlot(counterEl){
-    counterEl.classList.add('in-slot');
-    counterEl.style.position = 'absolute';
-    counterEl.style.top = '';   // handled by .in-slot CSS
-    counterEl.style.left = '';  // handled (or overridden for span2)
-    counterEl.style.transform = ''; // .in-slot sets transform
-    counterEl.style.zIndex = '';
-  }
-
-  function _setDragStyle(counterEl, on){
-    counterEl.style.opacity = on ? '0.85' : '';
-  }
+  let _pDrag = null;      // {el,pid,offX,offY}
+  let _preview = null;
 
   function _clearPreview(){
-    if (_dropPreviewEl){
-      _dropPreviewEl.style.outline = '';
-      _dropPreviewEl = null;
-    }
+    if (_preview){ _preview.style.outline = ''; _preview = null; }
   }
 
-  function _findDropTarget(x,y){
-    // prefer sound slots that are allowed
+  function _findDropTarget(clientX, clientY){
+    // sound slots allowed
     const allowed = Array.from(document.querySelectorAll('.counter-slot[data-allow="1"]'));
     for (const s of allowed){
       const r = _rect(s);
-      if (_inside(x,y,r)) return {type:'sound', el:s};
+      if (_inside(clientX,clientY,r)) return {type:'sound', el:s};
     }
     // syllable drop areas
     const sylDrops = Array.from(document.querySelectorAll('.syllableDrop'));
     for (const s of sylDrops){
       const r = _rect(s);
-      if (_inside(x,y,r)) return {type:'syllable', el:s};
+      if (_inside(clientX,clientY,r)) return {type:'syllable', el:s};
     }
     // tray
     const tray = document.getElementById('counters');
     if (tray){
       const r = _rect(tray);
-      if (_inside(x,y,r)) return {type:'tray', el:tray};
+      if (_inside(clientX,clientY,r)) return {type:'tray', el:tray};
     }
     return null;
+  }
+
+  function _floatCounter(el, clientX, clientY){
+    // move into stage and float at pointer, respecting scale
+    const stage = _getStage();
+    stage.appendChild(el);
+
+    el.classList.remove('in-slot');
+    el.style.position = 'absolute';
+    el.style.zIndex = '9998';
+    el.style.transform = 'none';
+
+    const p = _clientToStage(clientX, clientY);
+    el.style.left = (p.x - (_pDrag?.offX || 0)) + 'px';
+    el.style.top  = (p.y - (_pDrag?.offY || 0)) + 'px';
+  }
+
+  function _resetToTray(el){
+    const tray = document.getElementById('counters');
+    if(!tray) return;
+    el.classList.remove('in-slot');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.transform = '';
+    el.style.zIndex = '';
+    el.style.opacity = '';
+    tray.appendChild(el);
+  }
+
+  function _snapToSyllableDrop(el, host){
+    // inside syllableDrop, keep it simple (normal flow)
+    el.classList.remove('in-slot');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.transform = '';
+    el.style.zIndex = '';
+    el.style.opacity = '';
+    host.appendChild(el);
+  }
+
+  function _snapToSoundSlot(el, host, syll, tile){
+    // clear floating inline styles then let your .counter.in-slot CSS position it
+    el.style.opacity = '';
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.transform = '';
+    el.style.zIndex = '';
+
+    host.appendChild(el);
+    host.classList.add('has-counter');
+    el.classList.add('in-slot');
+
+    const w = words[wIndex];
+    const sylLetters = (w.syllables?.[syll-1]?.letters) || [];
+    const tokenIndex = parseInt(host.dataset.tokenIndex || String(tile), 10);
+    const token = sylLetters[tokenIndex];
+
+    const span = parseInt(host.dataset.span || '1', 10);
+    host.dataset.span = String(span);
+
+    if (span === 2){
+      // center across two slots (your existing behavior)
+      el.style.left = '100%';
+      const ghost = document.getElementById(`s${syll}t${tile+1}`);
+      if (ghost) ghost.classList.add('has-counter');
+    } else {
+      el.style.left = '';
+    }
+
+    if(token){
+      playSoundForToken(token, ()=> addTileLabel(host, token));
+    }
+
+    soundDropsDone++;
+
+    if(soundDropsDone >= Math.min(6, sylLetters.length)){
+      blendWriteSyllable(syll);
+
+      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      if(syll < sylCount){
+        setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+        startSyllableTrack(syll+1);
+      } else {
+        setCurrentLine('Le');
+        setInstruction("all syllables done. press “next” to show the whole word.", false);
+        exitNoTTSPhase();
+        step = 18;
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
+        document.getElementById('nextBtn').disabled=false;
+      }
+    }
   }
 
   function _mobileDown(e){
     const t = e.target.closest('.counter');
     if (!t) return;
 
-    // only when your flow allows drag
     if (!ALLOW_DRAG || t.classList.contains('locked')) return;
 
-    // for mobile: stop scroll and start dragging
+    // stop page scroll taking over the gesture
     e.preventDefault();
 
-    _pDrag = {
-      el: t,
-      pid: e.pointerId,
-      startX: e.clientX,
-      startY: e.clientY,
-      baseLeft: 0,
-      baseTop: 0
-    };
+    // compute pointer offset inside the counter in STAGE coords
+    const p = _clientToStage(e.clientX, e.clientY);
+    const tr = t.getBoundingClientRect();
+    const scale = _getStageScale();
 
-    // Temporarily make it draggable as an absolute element on the page layer (inside stage)
-    const stage = document.getElementById('stage');
-    const r = t.getBoundingClientRect();
-    const sr = stage.getBoundingClientRect();
+    const offX = (e.clientX - tr.left) / scale;
+    const offY = (e.clientY - tr.top)  / scale;
 
-    // move into stage so it can float over everything
-    stage.appendChild(t);
+    _pDrag = { el: t, pid: e.pointerId, offX, offY };
 
-    t.style.position = 'absolute';
-    t.style.left = (r.left - sr.left) + 'px';
-    t.style.top  = (r.top  - sr.top)  + 'px';
-    t.style.transform = 'none';
-    t.style.zIndex = '9998';
-    t.classList.remove('in-slot');
-
-    _pDrag.baseLeft = parseFloat(t.style.left) || 0;
-    _pDrag.baseTop  = parseFloat(t.style.top)  || 0;
-
-    _setDragStyle(t, true);
+    t.style.opacity = '0.85';
     t.setPointerCapture(e.pointerId);
+
+    _floatCounter(t, e.clientX, e.clientY);
   }
 
   function _mobileMove(e){
     if (!_pDrag || e.pointerId !== _pDrag.pid) return;
     e.preventDefault();
 
-    const dx = e.clientX - _pDrag.startX;
-    const dy = e.clientY - _pDrag.startY;
-
-    _pDrag.el.style.left = (_pDrag.baseLeft + dx) + 'px';
-    _pDrag.el.style.top  = (_pDrag.baseTop  + dy) + 'px';
+    _floatCounter(_pDrag.el, e.clientX, e.clientY);
 
     const hit = _findDropTarget(e.clientX, e.clientY);
     _clearPreview();
     if (hit && hit.el){
       hit.el.style.outline = '3px solid rgba(30,158,71,.55)';
-      _dropPreviewEl = hit.el;
+      _preview = hit.el;
     }
   }
 
@@ -1081,128 +1155,79 @@
     if (!_pDrag || e.pointerId !== _pDrag.pid) return;
     e.preventDefault();
 
-    const counterEl = _pDrag.el;
-    _setDragStyle(counterEl, false);
+    const el = _pDrag.el;
     _clearPreview();
 
-    // decide where to drop
+    try { el.releasePointerCapture(e.pointerId); } catch(_){}
+
     const hit = _findDropTarget(e.clientX, e.clientY);
 
-    try { counterEl.releasePointerCapture(e.pointerId); } catch(_){}
-
+    // no hit => back to tray
     if (!hit){
-      // no target -> return to tray
-      document.getElementById('counters').appendChild(counterEl);
-      counterEl.classList.remove('in-slot');
-      _ensureAbsInTray(counterEl);
+      _resetToTray(el);
       _pDrag = null;
       return;
     }
 
-    // tray drop
     if (hit.type === 'tray'){
-      hit.el.appendChild(counterEl);
-      counterEl.classList.remove('in-slot');
-      _ensureAbsInTray(counterEl);
+      _resetToTray(el);
       _pDrag = null;
       return;
     }
 
-    // sound slot drop (respect your span + label + audio + progression logic)
-    if (hit.type === 'sound'){
-      const host = hit.el;
-
-      // same guards as dropSound()
-      if (needSoundDrops<=0) { _pDrag=null; return; }
-
-      // infer syll + tile from id s{syll}t{tile}
-      const m = /^s(\d)t(\d)$/.exec(host.id || '');
-      if (!m){ _pDrag=null; return; }
-      const syll = parseInt(m[1],10);
-      const tile = parseInt(m[2],10);
-
-      if (syll !== activeSyllable) { _pDrag=null; return; }
-      if (host.dataset.allow !== '1') { _pDrag=null; return; }
-      if (host.hasChildNodes()) { _pDrag=null; return; }
-
-      host.appendChild(counterEl);
-      host.classList.add('has-counter');
-
-      const w = words[wIndex];
-      const sylLetters = (w.syllables?.[syll-1]?.letters) || [];
-      const tokenIndex = parseInt(host.dataset.tokenIndex || String(tile), 10);
-      const token = sylLetters[tokenIndex];
-
-      const span = parseInt(host.dataset.span || '1', 10);
-      host.dataset.span = String(span);
-
-      counterEl.classList.add('in-slot');
-
-      if (span === 2){
-        counterEl.style.left = '100%';
-        const ghost = document.getElementById(`s${syll}t${tile+1}`);
-        if (ghost) ghost.classList.add('has-counter');
-      } else {
-        counterEl.style.left = '';
-      }
-
-      if (token){
-        playSoundForToken(token, ()=> addTileLabel(host, token));
-      }
-
-      soundDropsDone++;
-
-      if (soundDropsDone >= Math.min(6, sylLetters.length)){
-        blendWriteSyllable(syll);
-
-        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
-        if (syll < sylCount){
-          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
-          startSyllableTrack(syll+1);
-        }else{
-          setCurrentLine('Le');
-          setInstruction("all syllables done. press “next” to show the whole word.", false);
-          exitNoTTSPhase();
-          step = 18;
-          ALLOW_DRAG = false;
-          setCountersLocked(true);
-          lockAllSoundSlots();
-          document.getElementById('nextBtn').disabled=false;
-        }
-      }
-
-      _pDrag = null;
-      return;
-    }
-
-    // syllable drop area
     if (hit.type === 'syllable'){
-      if (needSyllableDrops<=0) { _pDrag=null; return; }
-      if (hit.el.hasChildNodes()) { _pDrag=null; return; }
-
-      hit.el.appendChild(counterEl);
+      if (needSyllableDrops<=0 || hit.el.hasChildNodes()){
+        _resetToTray(el);
+        _pDrag = null;
+        return;
+      }
+      _snapToSyllableDrop(el, hit.el);
       syllableDropsDone++;
-
-      if (syllableDropsDone>=needSyllableDrops){
+      if(syllableDropsDone>=needSyllableDrops){
         setInstruction("syllables tracked — start with 1st syllable sounds.", false);
         startSyllableTrack(1);
       }
-
       _pDrag = null;
       return;
     }
 
+    if (hit.type === 'sound'){
+      const host = hit.el;
+      if (needSoundDrops<=0 || host.dataset.allow !== '1' || host.hasChildNodes()){
+        _resetToTray(el);
+        _pDrag = null;
+        return;
+      }
+      const m = /^s(\d)t(\d)$/.exec(host.id || '');
+      if (!m){ _resetToTray(el); _pDrag=null; return; }
+
+      const syll = parseInt(m[1],10);
+      const tile = parseInt(m[2],10);
+
+      if (syll !== activeSyllable){
+        _resetToTray(el);
+        _pDrag = null;
+        return;
+      }
+
+      _snapToSoundSlot(el, host, syll, tile);
+      _pDrag = null;
+      return;
+    }
+
+    _resetToTray(el);
     _pDrag = null;
   }
 
-  // only activate pointer-drag on touch-capable devices
-  const _isTouch = matchMedia && matchMedia('(pointer: coarse)').matches;
+  // only enable on touch-y devices
+  const _isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   if (_isTouch){
     document.addEventListener('pointerdown', _mobileDown, true);
     document.addEventListener('pointermove', _mobileMove, true);
     document.addEventListener('pointerup', _mobileUp, true);
     document.addEventListener('pointercancel', _mobileUp, true);
   }
+</script>
 
   /* ===== Existing desktop drag spawn (HTML5 DnD) ===== */
   function dragSpawn(ev){
@@ -1628,3 +1653,4 @@
 </script>
 </body>
 </html>
+
