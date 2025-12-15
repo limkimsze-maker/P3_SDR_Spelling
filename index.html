@@ -247,6 +247,13 @@
         <option value="c1s3">Cycle 1 Session 3</option>
         <option value="c2s1">Cycle 2 Session 1</option>
       </select>
+
+      <!-- ✅ NEW: Force reload even if same selection (fix “stuck cache” feeling) -->
+      <button type="button" class="secondary" onclick="reloadLesson()">Reload lesson</button>
+
+      <!-- ✅ NEW: One-click jsDelivr purge (optional, but helps when CDN is stubborn) -->
+      <button type="button" class="secondary" onclick="purgeLesson()">Purge CDN</button>
+
       <span class="hint">Select a set to auto-load the Word List.</span>
     </div>
 
@@ -462,9 +469,19 @@
     c2s1: ASSET_BASE + "Cycle%202%20Session%201.json",
   };
 
+  /* ================================
+     ✅ Token cleaner (fix hidden whitespace/zero-width chars)
+     ================================ */
+  function cleanToken(t){
+    return String(t ?? "")
+      .replace(/[\u200B-\u200D\uFEFF]/g, "")  // zero-width chars
+      .trim()
+      .toLowerCase();
+  }
+
   /* ===== Span rules ===== */
   function tokenSpan(tok){
-    const k = String(tok||"").trim().toLowerCase();
+    const k = cleanToken(tok);
     return (k === 'x') ? 2 : 1;   // only x spans 2 boxes
   }
 
@@ -554,16 +571,14 @@
     });
   }
 
+  /* ✅ uses cleanToken + audio cache-bust */
   function playSoundForToken(token, cb){
-  const k = (token || '').toLowerCase().trim();
-  if(!k){ cb && cb(); return; }
-
-  // ✅ cache-bust audio too
-  const url = `${SOUND_BASE}${encodeURIComponent(k)}.m4a?v=${Date.now()}`;
-
-  console.log("PLAY TOKEN:", k, url);
-  playAudio(url, cb, k);
-}
+    const k = cleanToken(token);
+    if(!k){ cb && cb(); return; }
+    const url = `${SOUND_BASE}${encodeURIComponent(k)}.m4a?v=${Date.now()}`;
+    console.log("PLAY TOKEN:", k, url);
+    playAudio(url, cb, k);
+  }
 
   /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
   const TOKEN_DISPLAY_MAP = {
@@ -597,7 +612,7 @@
     "zz":"zz","z":"z"
   };
   function displayToken(t){
-    const k = String(t||"").trim().toLowerCase();
+    const k = cleanToken(t);
     if (k in TOKEN_DISPLAY_MAP) return TOKEN_DISPLAY_MAP[k];
     return k.replace(/_/g,"");
   }
@@ -735,7 +750,7 @@
     sel.onchange=e=>onchange(e.target.value);
     td.appendChild(sel); return td;
   }
-  function csvToTokens(v){ return (v||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).slice(0,6); }
+  function csvToTokens(v){ return (v||'').split(',').map(s=>cleanToken(s)).filter(Boolean).slice(0,6); }
 
   let selectedIndex = -1;
   function selectRow(idx,tr){
@@ -782,7 +797,7 @@
       const arr=[];
       for(let i=0;i<6;i++){
         const v=(document.getElementById(`q${s}_${i}`).value||'').trim();
-        if(v) arr.push(v.toLowerCase());
+        if(v) arr.push(cleanToken(v));
       }
       syls.push({letters:arr});
     }
@@ -832,6 +847,7 @@
 
   function deepCopy(x){ return JSON.parse(JSON.stringify(x)); }
 
+  /* ✅ normalize trims tokens + removes zero-width */
   function normalizeWordSet(arr){
     return (arr||[]).map(w=>({
       word: String(w.word||'').trim(),
@@ -839,7 +855,9 @@
       syllables: (Array.isArray(w.syllables)? w.syllables : [])
         .slice(0,4)
         .map(s=>({
-          letters: Array.isArray(s.letters) ? s.letters.slice(0,6).map(t=>String(t||'').toLowerCase()) : []
+          letters: Array.isArray(s.letters)
+            ? s.letters.slice(0,6).map(t=>cleanToken(t)).filter(Boolean)
+            : []
         }))
     })).filter(w => w.word);
   }
@@ -1506,7 +1524,10 @@
 
         document.getElementById('wholewordText').textContent = fullWord;
         setInstruction("i blend and check the whole word.", false);
-        tts(fullWord);
+
+        /* ✅ optional safer whole-word voice (spells letters to avoid weird TTS like “dress”→“drees”) */
+        tts(fullWord.split('').join(' '));
+
         document.getElementById('nextBtn').disabled=false;
         ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
         break;
@@ -1549,7 +1570,7 @@
       meaning: String(v.meaning || ''),
       syllables: (v.syllables || []).slice(0,4).map(s => ({
         letters: Array.isArray(s.letters)
-          ? s.letters.slice(0,6).map(t => String(t || '').toLowerCase())
+          ? s.letters.slice(0,6).map(t => cleanToken(t)).filter(Boolean)
           : []
       }))
     }));
@@ -1564,10 +1585,17 @@
     document.getElementById('nextBtn').disabled  = true;
   }
 
-  /* ===== ✅ Lesson dropdown loader (GitHub CDN) — Option A cache-buster ===== */
-  async function onLessonChange(key){
+  /* =========================================================
+     ✅ Lesson loader (strong anti-cache + force reload)
+     ========================================================= */
+  let _lastLessonKey = "";
+  let _lastLessonUrl0 = "";
+
+  async function onLessonChange(key, force=false){
     if(!key){
       setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
+      _lastLessonKey = "";
+      _lastLessonUrl0 = "";
       return;
     }
 
@@ -1577,13 +1605,19 @@
       return;
     }
 
-    // ✅ Option A: cache-bust the JSON URL so CDN never serves stale content
+    _lastLessonKey = key;
+    _lastLessonUrl0 = url0;
+
     const url = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + Date.now();
 
     try{
       setInstruction(`loading lesson…`, false);
 
-      const res = await fetch(url, { cache:'no-store' });
+      const res = await fetch(url, {
+        cache:'no-store',
+        headers: { 'Cache-Control':'no-cache', 'Pragma':'no-cache' }
+      });
+
       if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
 
       const obj = await res.json();
@@ -1604,6 +1638,39 @@
       alert(e.message);
       setInstruction("could not load the lesson set. check internet / URL / CORS.", false);
     }
+  }
+
+  /* ✅ NEW: reload even if dropdown value didn’t change */
+  function reloadLesson(){
+    const sel = document.getElementById('lessonSelect');
+    const key = sel?.value || _lastLessonKey;
+    if(!key){
+      setInstruction("choose a lesson set first, then reload.", false);
+      return;
+    }
+    onLessonChange(key, true);
+  }
+
+  /* ✅ NEW: one-click jsDelivr purge (opens in new tab) */
+  function purgeLesson(){
+    const sel = document.getElementById('lessonSelect');
+    const key = sel?.value || _lastLessonKey;
+    const url0 = (key && LESSON_URLS[key]) ? LESSON_URLS[key] : _lastLessonUrl0;
+
+    if(!url0){
+      setInstruction("choose a lesson set first, then purge.", false);
+      return;
+    }
+
+    // jsDelivr purge endpoint: https://purge.jsdelivr.net/gh/<user>/<repo>@<ref>/<path>
+    // Convert your CDN URL into a purge URL.
+    const purge = url0.replace(
+      /^https:\/\/cdn\.jsdelivr\.net\/gh\//,
+      "https://purge.jsdelivr.net/gh/"
+    );
+
+    window.open(purge, "_blank", "noopener");
+    setInstruction("purge opened in a new tab. after it loads, click “Reload lesson”.", false);
   }
 
   /* ===== Expose ===== */
@@ -1641,8 +1708,10 @@
   window.useAll=useAll;
   window.shuffleTeacherSet=shuffleTeacherSet;
 
-  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS });
+  window.reloadLesson = reloadLesson;
+  window.purgeLesson  = purgeLesson;
+
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS, _lastLessonKey, _lastLessonUrl0 });
 </script>
 </body>
 </html>
-
