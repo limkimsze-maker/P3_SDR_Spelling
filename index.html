@@ -7,6 +7,38 @@
 <style>
   /* keep borders/padding from shifting grid math */
   *, *::before, *::after { box-sizing: border-box; }
+  /* ✅ Teacher panel sticky close button (always reachable on mobile) */
+.teacher-panel .panel-topbar{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0 8px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.teacher-panel .panel-topbar h4{
+  margin: 0;
+}
+
+.teacher-panel .panel-toggle-btn{
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,.25);
+  background: rgba(0,0,0,.85);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 32px;
+  padding: 0;
+  cursor: pointer;
+}
+.teacher-panel .panel-toggle-btn:active{ transform: scale(.98); }
 
   /* hide spelling steps panel */
   #stepsPanel { display: none !important; }
@@ -301,8 +333,11 @@
 
 <!-- Teacher Panel -->
 <div class="teacher-panel" id="teacherPanel" aria-hidden="true">
-  <h4>Teacher tools</h4>
-
+  <div class="panel-topbar">
+    <h4>Teacher tools</h4>
+    <button type="button" class="panel-toggle-btn" aria-label="close teacher panel" onclick="toggleTeacherPanel(false)">T</button>
+  </div>
+  
   <div class="row" style="align-items:flex-start; justify-content:flex-end">
     <div class="corner-glossary">
       <h5>Sound Markers</h5>
@@ -1735,5 +1770,6 @@
 </script>
 </body>
  </html>
+
 
 
