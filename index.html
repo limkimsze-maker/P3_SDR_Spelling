@@ -162,15 +162,25 @@
   .wordlist tr.selected{outline:2px solid #1e9e47}
 
   .teacher-hotspot{
-    position: fixed; right: 8px; bottom: 8px;
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: #000;
-    opacity: .08;
-    border: none;
-    cursor: pointer;
-  }
-  .teacher-hotspot:hover{ opacity:.25; }
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.75);
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  line-height:28px;
+  text-align:center;
+  border:none;
+  cursor:pointer;
+  z-index: 10000;
+}
+.teacher-hotspot::after{
+  content:"T";
+}
 
   .center,#criteria-container,#scenario-options,.output-container{display:none}
 
@@ -1725,4 +1735,5 @@
 </script>
 </body>
  </html>
+
 
