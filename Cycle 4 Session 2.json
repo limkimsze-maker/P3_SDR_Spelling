@@ -1,0 +1,106 @@
+{
+  "words": [
+    {
+      "word": "hero",
+      "meaning": "a brave person who helps others.",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "e"
+          ]
+        },
+        {
+          "letters": [
+            "r",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "she",
+      "meaning": "a word for a girl or woman.",
+      "syllables": [
+        {
+          "letters": [
+            "sh",
+            "e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "halo",
+      "meaning": "a ring of light, which is often shown above an angel’s head.",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "a"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "logo",
+      "meaning": "a special picture or symbol that shows a brand or company.",
+      "syllables": [
+        {
+          "letters": [
+            "l",
+            "o"
+          ]
+        },
+        {
+          "letters": [
+            "g",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "solo",
+      "meaning": "done by one person",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "o"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "zero",
+      "meaning": "the number zero",
+      "syllables": [
+        {
+          "letters": [
+            "z",
+            "e"
+          ]
+        },
+        {
+          "letters": [
+            "r",
+            "o"
+          ]
+        }
+      ]
+    }
+  ]
+}
