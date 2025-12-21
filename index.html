@@ -889,10 +889,10 @@
     if(selectedIndex<0) return;
     const it = teacherSet[selectedIndex];
     if(!it.word || it.syllables.every(s=>!s.letters.length)){
-      alert('please fill the word and at least one tile.'); return;
+      alert('Please fill the word and at least one tile.'); return;
     }
     words = [deepCopy(it)];
-    setInstruction(`loaded. click “begin”.`);
+    setInstruction(`loaded. click “Begin”.`);
     autoFitDisplayToWord();
   }
 
@@ -900,7 +900,7 @@
     const it=quickBuildItem();
     if(!it) return;
     words=[deepCopy(it)];
-    setInstruction(`loaded. click “begin”.`);
+    setInstruction(`Loaded. click “Begin”.`);
     autoFitDisplayToWord();
   }
   function quickAddToList(){
@@ -921,8 +921,8 @@
       }
       syls.push({letters:arr});
     }
-    if(!word){ alert('please enter the word.'); return null; }
-    if(syls.every(s=>!s.letters.length)){ alert('enter at least one tile.'); return null; }
+    if(!word){ alert('Please enter the word.'); return null; }
+    if(syls.every(s=>!s.letters.length)){ alert('Enter at least one tile.'); return null; }
     return {word,meaning,syllables:syls};
   }
 
@@ -945,7 +945,7 @@
         if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
         teacherSet = normalizeWordSet(obj.words);
         refreshTable();
-        setInstruction(`uploaded set loaded (${teacherSet.length} words). click “begin”.`, false);
+        setInstruction(`Uploaded set loaded (${teacherSet.length} words). click “begin”.`, false);
         words = teacherSet.map(deepCopy);
         wIndex = 0;
         autoFitDisplayToWord();
@@ -1220,7 +1220,7 @@
 
       const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
       if(syll < sylCount){
-        setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+        setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
         startSyllableTrack(syll+1);
       } else {
         finishSoundTracking();
@@ -1472,7 +1472,7 @@
 
         const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
         if(syll < sylCount){
-          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
           startSyllableTrack(syll+1);
         }else{
           finishSoundTracking();
@@ -1490,7 +1490,7 @@
     // ✅ jump so the NEXT click shows the whole word (case 19)
     step = 19;
     setCurrentLine('Le');
-    setInstruction("all syllables done. press “next” to show the whole word.", false);
+    setInstruction("All syllables done. Press “next” to show the whole word.", false);
     exitNoTTSPhase();
     ALLOW_DRAG = false;
     setCountersLocked(true);
@@ -1517,14 +1517,14 @@
         finishSoundTracking();
       }
     }else{
-      setInstruction(`${ordinal(n)} syllable — track the sounds: place counters on the tiles (left→right).`, false);
+      setInstruction(`${ordinal(n)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
     }
   }
 
   function blendWriteSyllable(n){
     setCurrentLine('Ld');
     if (window.speechSynthesis) speechSynthesis.cancel();
-    setInstruction(`i blend and check the ${ordinal(n)} syllable. i write it in the syllable cell.`, false);
+    setInstruction(`I blend and check the ${ordinal(n)} syllable. I write it in the syllable cell.`, false);
     const w=words[wIndex];
     const raw=(w.syllables?.[n-1]?.letters||[]);
     const text = raw.map(displayToken).join('').toLowerCase();
@@ -1571,7 +1571,7 @@
   function restart(){
     document.getElementById('beginBtn').disabled=false; document.getElementById('nextBtn').disabled=true;
     step=0; wIndex=0; activeSyllable=1; resetBoard();
-    setCurrentLine('L0'); setInstruction('open the teacher panel to load a word, or choose a lesson set above, then begin.');
+    setCurrentLine('L0'); setInstruction('Open the teacher panel to load a word, or choose a lesson set above, then begin.');
     if(window.speechSynthesis) speechSynthesis.cancel();
     exitNoTTSPhase();
     ALLOW_DRAG = false; setCountersLocked(true);
@@ -1594,14 +1594,14 @@
     switch(step){
       case 0:
         setCurrentLine('L0');
-        setInstruction("watch me spell some words.");
+        setInstruction("Watch me spell some words.");
         ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
         break;
 
       case 1:
         setCurrentLine('La');
         document.getElementById('nextBtn').disabled=true;
-        setInstruction(`say the word.`, false);
+        setInstruction(`Say the word.`, false);
 
         tts(`say the word ${w.word}`, ()=>{
           if (w.meaning) tts(w.meaning, ()=>{
@@ -1614,7 +1614,7 @@
 
       case 2:
         setCurrentLine('Lb');
-        setInstruction("i track the syllables. put one counter in each syllable box.");
+        setInstruction("I track the syllables. Put one counter in each syllable box.");
         needSyllableDrops=sylCount; syllableDropsDone=0; document.getElementById('nextBtn').disabled=true;
         ALLOW_DRAG = true; setCountersLocked(false);
         lockAllSoundSlots();
@@ -1631,7 +1631,7 @@
             .toLowerCase();
 
         document.getElementById('wholewordText').textContent = fullWord;
-        setInstruction("i blend and check the whole word.", false);
+        setInstruction("I blend and check the whole word.", false);
         tts(fullWord);
         document.getElementById('nextBtn').disabled=false;
         ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
@@ -1640,7 +1640,7 @@
       case 20:
         wIndex++;
         if (wIndex >= words.length){
-          setInstruction("all words completed! load another word in the teacher panel, or choose a lesson set above, then begin.");
+          setInstruction("All words completed! Load another word in the teacher panel, or choose a lesson set above, then begin.");
           document.getElementById('nextBtn').disabled = true;
           document.getElementById('beginBtn').disabled = false;
           ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
@@ -1683,7 +1683,7 @@
     wIndex = 0;
 
     const n = words.length;
-    setInstruction(`loaded ${n} ${n===1?'word':'words'}. click “begin”.`);
+    setInstruction(`Loaded ${n} ${n===1?'word':'words'}. Click “begin”.`);
     autoFitDisplayToWord();
 
     document.getElementById('beginBtn').disabled = false;
@@ -1693,7 +1693,7 @@
   /* ===== ✅ Lesson dropdown loader (GitHub CDN) — stable cache-buster + fallback + prefetch ===== */
   async function onLessonChange(key){
     if(!key){
-      setInstruction("choose a lesson set above, or load words in the teacher panel.", false);
+      setInstruction("Choose a lesson set above, or load words in the teacher panel.", false);
       return;
     }
 
@@ -1711,7 +1711,7 @@
     const urlFallback = RAW_BASE + filename + '?v=' + PAGE_BUST;
 
     try{
-      setInstruction(`loading lesson…`, false);
+      setInstruction(`Loading lesson…`, false);
 
       let res = await fetch(urlPrimary, { cache:'no-store' }).catch(()=>null);
       if(!res || !res.ok){
@@ -1735,10 +1735,10 @@
       // ✅ silent background prefetch of token audio for this lesson (feels instant)
       prefetchLessonAudio(words);
 
-      setInstruction(`lesson loaded (${teacherSet.length} words). click “begin”.`, false);
+      setInstruction(`Lesson loaded (${teacherSet.length} words). click “Begin”.`, false);
     }catch(e){
       alert(e.message);
-      setInstruction("could not load the lesson set. check internet / URL / CORS.", false);
+      setInstruction("Could not load the lesson set. Check internet / URL / CORS.", false);
     }
   }
 
@@ -1781,6 +1781,7 @@
 </script>
 </body>
  </html>
+
 
 
 
