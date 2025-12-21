@@ -1,0 +1,121 @@
+{
+  "words": [
+    {
+      "word": "picnic",
+      "meaning": "a meal eaten outside. Example: “We had a picnic on the grass.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "i__",
+            "c"
+          ]
+        },
+        {
+          "letters": [
+            "n",
+            "i__",
+            "c"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "hello",
+      "meaning": "a greeting word. Example: “Hello! How are you?”",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "e__",
+            "l"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "muffin",
+      "meaning": "a small baked cake or bread",
+      "syllables": [
+        {
+          "letters": [
+            "m",
+            "u__",
+            "f"
+          ]
+        },
+        {
+          "letters": [
+            "f",
+            "i__",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "until",
+      "meaning": "up to a time or before a time ends.\nExample: “Wait until I come back.”",
+      "syllables": [
+        {
+          "letters": [
+            "u__",
+            "n"
+          ]
+        },
+        {
+          "letters": [
+            "t",
+            "i__",
+            "l"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "admit",
+      "meaning": "to say something is true or to allow someone to enter.\nExample: “He admitted he was wrong.” or “They admit visitors at 9.”",
+      "syllables": [
+        {
+          "letters": [
+            "a__",
+            "d"
+          ]
+        },
+        {
+          "letters": [
+            "m",
+            "i__",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "rabbit",
+      "meaning": "a small animal with long ears that hops.",
+      "syllables": [
+        {
+          "letters": [
+            "r",
+            "a__",
+            "b"
+          ]
+        },
+        {
+          "letters": [
+            "b",
+            "i__",
+            "t"
+          ]
+        }
+      ]
+    }
+  ]
+}
