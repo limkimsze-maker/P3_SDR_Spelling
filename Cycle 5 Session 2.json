@@ -1,0 +1,120 @@
+{
+  "words": [
+    {
+      "word": "problem",
+      "meaning": "something hard that needs an answer or fix.\nExample: “Solve the problem.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "r",
+            "o__",
+            "b"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "e_",
+            "m"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "bottom",
+      "meaning": "the lowest part of something.\nExample: “It is hidden at the bottom of the box.”",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "o__",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "t",
+            "o_",
+            "m"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "hidden",
+      "meaning": "kept out of sight; not seen.",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "i__",
+            "d"
+          ]
+        },
+        {
+          "letters": [
+            "d",
+            "e_",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "ago",
+      "meaning": "In the past.\nExample: “I met him two years ago.”",
+      "syllables": [
+        {
+          "letters": [
+            "a_"
+          ]
+        },
+        {
+          "letters": [
+            "g",
+            "o"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "human",
+      "meaning": "a person.",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "u"
+          ]
+        },
+        {
+          "letters": [
+            "m",
+            "a_",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "minus",
+      "meaning": "take away or the subtraction sign. Example: “5 minus 2 equals 3.”",
+      "syllables": [
+        {
+          "letters": [
+            "m",
+            "i"
+          ]
+        },
+        {
+          "letters": [
+            "n",
+            "u_",
+            "s"
+          ]
+        }
+      ]
+    }
+  ]
+}
