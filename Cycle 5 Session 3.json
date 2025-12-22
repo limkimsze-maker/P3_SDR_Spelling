@@ -1,0 +1,113 @@
+{
+  "words": [
+    {
+      "word": "must",
+      "meaning": "it is necessary.\nExample: “You must wear a seat belt.”",
+      "syllables": [
+        {
+          "letters": [
+            "m",
+            "u__",
+            "s",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "suppose",
+      "meaning": "to think something is true (but not 100% sure); or “imagine.”\nExample: “I suppose it will rain.” or “Suppose you could fly…”",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "u__",
+            "p"
+          ]
+        },
+        {
+          "letters": [
+            "p",
+            "o",
+            "se"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "object",
+      "meaning": "a thing you can see or touch; also to disagree (“I object!”).\nExample: “This ball is an object.” or “I object to that rule.”",
+      "syllables": [
+        {
+          "letters": [
+            "o__",
+            "b"
+          ]
+        },
+        {
+          "letters": [
+            "j",
+            "e__",
+            "c",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "himself",
+      "meaning": "the same boy or man.\nExample: “He did it himself.”",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "i__",
+            "m"
+          ]
+        },
+        {
+          "letters": [
+            "s",
+            "e__",
+            "l",
+            "f"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "help",
+      "meaning": "to give support or make it easier.\nExample: “I will help you carry the books.”",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "e__",
+            "l",
+            "p"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "tadpole",
+      "meaning": "a baby frog with a tail.\nExample: “The tadpole swims in the pond.”",
+      "syllables": [
+        {
+          "letters": [
+            "t",
+            "a__",
+            "d"
+          ]
+        },
+        {
+          "letters": [
+            "p",
+            "o",
+            "le"
+          ]
+        }
+      ]
+    }
+  ]
+}
