@@ -1,0 +1,137 @@
+{
+  "words": [
+    {
+      "word": "dry",
+      "meaning": "not wet; without water.\nExample: “Hang the shirt to dry.”",
+      "syllables": [
+        {
+          "letters": [
+            "d",
+            "r",
+            "y_i"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "family",
+      "meaning": "a group of people related to each other.\nExample: “My family eats dinner together.”",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "a__",
+            "m"
+          ]
+        },
+        {
+          "letters": [
+            "i_"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "y_e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "fly",
+      "meaning": "to move in the air, like a bird. A fly is also an insect.\nExample: “Birds can fly.”",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "l",
+            "y_i"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "study",
+      "meaning": "to learn by reading or practising.\nExample: “I study spelling every day.”",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "t",
+            "u__",
+            "d"
+          ]
+        },
+        {
+          "letters": [
+            "y_e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "twenty",
+      "meaning": "the number twenty.\nExample: “There are twenty students.”",
+      "syllables": [
+        {
+          "letters": [
+            "t",
+            "w",
+            "e__",
+            "n"
+          ]
+        },
+        {
+          "letters": [
+            "t",
+            "y_e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "sky",
+      "meaning": "the space above the earth where clouds and the sun are.\nExample: “The sky is blue.”",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "k",
+            "y_i"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "cry",
+      "meaning": "to have tears; to weep.\nExample: “The baby will cry when hungry.”",
+      "syllables": [
+        {
+          "letters": [
+            "c",
+            "r",
+            "y_i"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "baby",
+      "meaning": "a very young child.\nExample: “The baby is sleeping.”",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "a"
+          ]
+        },
+        {
+          "letters": [
+            "b",
+            "y_e"
+          ]
+        }
+      ]
+    }
+  ]
+}
