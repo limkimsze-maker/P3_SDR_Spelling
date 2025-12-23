@@ -1,0 +1,122 @@
+{
+  "words": [
+    {
+      "word": "far",
+      "meaning": "a long distance away.\nExample: “My school is not far.”",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "ar"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "north",
+      "meaning": "a direction.\nExample: “Malaysia is north of Singapore.”",
+      "syllables": [
+        {
+          "letters": [
+            "n",
+            "or",
+            "th"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "dark",
+      "meaning": "with little or no light.\nExample: “It is dark at night.”",
+      "syllables": [
+        {
+          "letters": [
+            "d",
+            "ar",
+            "k"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "sharp",
+      "meaning": "can cut easily; or very pointed.\nExample: “Be careful—the knife is sharp.”",
+      "syllables": [
+        {
+          "letters": [
+            "sh",
+            "ar",
+            "p"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "popcorn",
+      "meaning": "corn that pops into a light snack when heated.\nExample: “We ate popcorn during the movie.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "o__",
+            "p"
+          ]
+        },
+        {
+          "letters": [
+            "c",
+            "or",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "mark",
+      "meaning": "a spot or line or to give a score or grade.\nExample: “There is a mark on my shirt.” or “Teacher will mark my work.”",
+      "syllables": [
+        {
+          "letters": [
+            "m",
+            "ar",
+            "k"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "short",
+      "meaning": "not long or small in length or height.\nExample: “My pencil is short.”",
+      "syllables": [
+        {
+          "letters": [
+            "sh",
+            "or",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "platform",
+      "meaning": "a raised place to stand on, like at a train station.\nExample: “Wait on the platform for the train.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "l",
+            "a__",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "f",
+            "or",
+            "m"
+          ]
+        }
+      ]
+    }
+  ]
+}
