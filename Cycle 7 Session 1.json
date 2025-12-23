@@ -1,0 +1,130 @@
+{
+  "words": [
+    {
+      "word": "turtle",
+      "meaning": "a slow animal with a hard shell.\nExample: “The turtle hid in its shell.”",
+      "syllables": [
+        {
+          "letters": [
+            "t",
+            "ur"
+          ]
+        },
+        {
+          "letters": [
+            "tle"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "corner",
+      "meaning": "the place where two sides meet.\nExample: “He ran to a corner to hide.”",
+      "syllables": [
+        {
+          "letters": [
+            "c",
+            "or"
+          ]
+        },
+        {
+          "letters": [
+            "n",
+            "er"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "third",
+      "meaning": "number three in order.\nExample: “She is the third person from the left.”",
+      "syllables": [
+        {
+          "letters": [
+            "th",
+            "ir",
+            "d"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "church",
+      "meaning": "a place where Christians go to pray and worship.\nExample: “We went to church on Sunday.",
+      "syllables": [
+        {
+          "letters": [
+            "ch",
+            "ur",
+            "ch"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "better",
+      "meaning": "more good than before.\nExample: “I can read better now.",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "e__",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "t",
+            "er"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "girl",
+      "meaning": "a female child.\nExample: “The girl is playing.”",
+      "syllables": [
+        {
+          "letters": [
+            "g",
+            "ir",
+            "l"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "burst",
+      "meaning": "to break open suddenly.\nExample: “The balloon burst!”",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "ur",
+            "s",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "person",
+      "meaning": "a human being.\nExample: “One person helped me.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "er"
+          ]
+        },
+        {
+          "letters": [
+            "s",
+            "o_",
+            "n"
+          ]
+        }
+      ]
+    }
+  ]
+}
