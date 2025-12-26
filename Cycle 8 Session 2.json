@@ -1,0 +1,131 @@
+{
+  "words": [
+    {
+      "word": "away",
+      "meaning": "at a distance; not here.\nExample: “Put the toys away.”",
+      "syllables": [
+        {
+          "letters": [
+            "a_"
+          ]
+        },
+        {
+          "letters": [
+            "w",
+            "ay"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "train",
+      "meaning": "a set of carriages that moves on tracks.\nExample: “We took the train to town.”",
+      "syllables": [
+        {
+          "letters": [
+            "t",
+            "r",
+            "ai",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "stay",
+      "meaning": "to remain; not leave.\nExample: “Please stay here.”",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "t",
+            "ay"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "maybe",
+      "meaning": "perhaps; not sure.\nExample: “Maybe we can go later.”",
+      "syllables": [
+        {
+          "letters": [
+            "m",
+            "ay"
+          ]
+        },
+        {
+          "letters": [
+            "b",
+            "e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "obtain",
+      "meaning": "to get something.\nExample: “You can obtain a book from the library.”",
+      "syllables": [
+        {
+          "letters": [
+            "o__",
+            "b"
+          ]
+        },
+        {
+          "letters": [
+            "t",
+            "ai",
+            "n"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "play",
+      "meaning": "to have fun; do a game or activity.\nExample: “Let’s play after school.”",
+      "syllables": [
+        {
+          "letters": [
+            "p",
+            "l",
+            "ay"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "Friday",
+      "meaning": "the day after Thursday.\nExample: “We have spelling on Friday.”",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "r",
+            "i"
+          ]
+        },
+        {
+          "letters": [
+            "d",
+            "ay"
+          ]
+        }
+      ]
+     },
+    {
+      "word": "gain",
+      "meaning": "to get more; to earn.\nExample: “I gain points when I answer correctly.”",
+      "syllables": [
+        {
+          "letters": [
+            "g",
+            "ai",
+            "n"
+          ]
+        }
+      ]
+    }
+    
+  ]
+}
