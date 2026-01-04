@@ -795,10 +795,10 @@
     hdr.style.gridTemplateColumns = COLS;
     for(let s=1;s<=displaySyl;s++){
       const d=document.createElement('div');
-      d.textContent = (s===1?'first':s===2?'second':s===3?'third':'fourth')+' syllable';
+      d.textContent = (s===1?'First':s===2?'Second':s===3?'Third':'Fourth')+' Syllable';
       hdr.appendChild(d);
     }
-    const wholeHdr=document.createElement('div'); wholeHdr.textContent='whole word';
+    const wholeHdr=document.createElement('div'); wholeHdr.textContent='Whole Word';
     hdr.appendChild(wholeHdr);
     grid.appendChild(hdr);
 
@@ -1813,6 +1813,7 @@
 </script>
 </body>
 </html>
+
 
 
 
