@@ -94,7 +94,17 @@
   .row .cell{min-height:120px;border-top:2px solid #000;border-right:2px solid #000;position:relative;background:#fff}
   .row .cell:last-child{border-right:none}
 
-  .syllableDrop{position:absolute;left:10px;bottom:12px;width:110px;height:74px;background:transparent}
+  /* ✅ syllable drop should cover the WHOLE syllable cell (intuitive) */
+  .syllableDrop{
+    position:absolute;
+    left:0; top:0; right:0; bottom:0;
+    width:auto; height:auto;
+    background:transparent;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
 
   .tiles-row{display:grid;border-top:2px solid #000;background:#fff}
   .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-right:2px solid #000;padding:8px}
@@ -345,7 +355,8 @@
 
     <h3 style="margin:12px 0 6px;font-size:18px">Counters</h3>
     <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
-      <div class="counter locked" id="seedCounter" draggable="true" ondragstart="dragSpawn(event)" title="drag to create a counter"></div>
+      <!-- ✅ template only (hidden). real counters are managed to max=4 -->
+      <div class="counter locked" id="seedCounter" draggable="false" aria-hidden="true" style="display:none"></div>
     </div>
 
     <button id="teacherHotspot" class="teacher-hotspot" aria-label="open teacher panel"></button>
@@ -568,7 +579,10 @@
     let W=0,H=0,stage=document.getElementById('stage');
     function measure(){ stage.style.transform='none'; W=stage.offsetWidth; H=stage.offsetHeight; }
     function fit(){ if(!W||!H) measure(); const s=Math.min((innerWidth-2)/W,(innerHeight-2)/H); stage.style.transform='scale('+s+')'; }
-    addEventListener('load',()=>requestAnimationFrame(()=>{ measure(); fit(); refreshTable(); restoreNotes(); setCountersLocked(true); lockAllSoundSlots(); autoFitDisplayToWord(); }));
+    addEventListener('load',()=>requestAnimationFrame(()=>{ 
+      measure(); fit(); refreshTable(); restoreNotes(); setCountersLocked(true); lockAllSoundSlots(); autoFitDisplayToWord();
+      ensureTrayCounters();
+    }));
     addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,50));
   })();
 
@@ -1096,12 +1110,71 @@
     if(confirm('Clear notes?')){ ta.value=''; saveNotes(); }
   }
 
+  /* =========================================================
+     ✅ Counter tray: max 4 visible + replenish on use
+     ========================================================= */
+  const MAX_TRAY_COUNTERS = 4;
+
+  function _trayCounters(){
+    return Array.from(document.querySelectorAll('#counters .counter'))
+      .filter(c => c.id !== 'seedCounter');
+  }
+
+  function _makeCounter(){
+    const seed = document.getElementById('seedCounter');
+    if(!seed) return null;
+    const c = seed.cloneNode(true);
+    c.id = 'c' + Math.random().toString(36).slice(2,10);
+    c.style.display = '';
+    c.setAttribute('draggable', 'true'); // desktop drag
+    c.classList.remove('locked');
+    c.addEventListener('dragstart', dragStart);
+    return c;
+  }
+
+  function ensureTrayCounters(){
+    const tray = document.getElementById('counters');
+    if(!tray) return;
+
+    // trim extras
+    let list = _trayCounters();
+    while(list.length > MAX_TRAY_COUNTERS){
+      list[list.length-1].remove();
+      list = _trayCounters();
+    }
+
+    // top up missing
+    while(list.length < MAX_TRAY_COUNTERS){
+      const c = _makeCounter();
+      if(!c) break;
+      if(!ALLOW_DRAG) c.classList.add('locked');
+      tray.appendChild(c);
+      list = _trayCounters();
+    }
+  }
+
   /* ===== Drag gating ===== */
   let ALLOW_DRAG = false;
   function setCountersLocked(locked){
     document.querySelectorAll('.counter').forEach(c=>{
       c.classList.toggle('locked', locked);
+      // keep template hidden & non-draggable
+      if(c.id === 'seedCounter'){
+        c.setAttribute('draggable','false');
+        c.style.display = 'none';
+      }
     });
+    ensureTrayCounters();
+  }
+
+  /* ===== Desktop drag (drag existing counter) ===== */
+  function dragStart(ev){
+    if(!ALLOW_DRAG || ev.target.classList.contains('locked')){
+      ev.preventDefault();
+      return;
+    }
+    ev.dataTransfer.setData('text', ev.target.id);
+    ev.dataTransfer.effectAllowed = 'move';
   }
 
   /* ===== Flow state ===== */
@@ -1128,7 +1201,6 @@
      ✅ MOBILE DRAG SYSTEM (Pointer Events)
      - follows finger (scale-aware with #stage scaling)
      - snaps to syllableDrop / allowed sound slots
-     - unlimited counters: seedCounter spawns clones on touch
      ========================================================= */
   function _getStage(){ return document.getElementById('stage'); }
   function _getStageScale(){
@@ -1200,6 +1272,7 @@
     el.style.zIndex='';
     el.style.opacity='';
     tray.appendChild(el);
+    ensureTrayCounters();
   }
 
   function _snapToSyllableDrop(el, host){
@@ -1248,6 +1321,7 @@
     }
 
     soundDropsDone++;
+    ensureTrayCounters();
 
     if(soundDropsDone >= Math.min(6, sylLetters.length)){
       blendWriteSyllable(syll);
@@ -1262,32 +1336,15 @@
     }
   }
 
-  // ✅ unlimited counters: touching seedCounter spawns a clone
-  function _spawnCounterClone(){
-    const seed=document.getElementById('seedCounter');
-    if(!seed) return null;
-    const clone=seed.cloneNode(true);
-    clone.id='c'+Math.random().toString(36).slice(2,10);
-    clone.classList.remove('locked');
-    clone.removeAttribute('draggable'); // mobile uses pointer events
-    document.getElementById('counters')?.appendChild(clone);
-    return clone;
-  }
-
   function _mobileDown(e){
     const t0 = e.target.closest('.counter');
     if(!t0) return;
     if(!ALLOW_DRAG || t0.classList.contains('locked')) return;
+    if(t0.id === 'seedCounter') return;
 
     e.preventDefault();
 
-    // seed spawns a fresh counter on mobile (unlimited)
-    let t = t0;
-    if(t0.id === 'seedCounter'){
-      const clone=_spawnCounterClone();
-      if(!clone) return;
-      t = clone;
-    }
+    const t = t0;
 
     const tr = t.getBoundingClientRect();
     const scale = _getStageScale();
@@ -1349,6 +1406,7 @@
       }
       _snapToSyllableDrop(el, hit.el);
       syllableDropsDone++;
+      ensureTrayCounters();
       if(syllableDropsDone >= needSyllableDrops){
         setInstruction("syllables tracked — start with 1st syllable sounds.", false);
         startSyllableTrack(1);
@@ -1395,20 +1453,6 @@
     document.addEventListener('pointercancel', _mobileUp, true);
   }
 
-  /* ===== Desktop drag (unchanged) ===== */
-  function dragSpawn(ev){
-    if(!ALLOW_DRAG || ev.target.classList.contains('locked')){
-      ev.preventDefault();
-      return;
-    }
-    const seed=ev.target, clone=seed.cloneNode(true);
-    clone.id='c'+Math.random().toString(36).slice(2,8);
-    clone.addEventListener('dragstart',dragSpawn);
-    if(!ALLOW_DRAG) clone.classList.add('locked');
-    document.getElementById('counters').appendChild(clone);
-    ev.dataTransfer.setData('text', clone.id);
-  }
-
   /* ===== drag-over logic ===== */
   function allowDropBasic(ev){
     if (!ALLOW_DRAG) return;
@@ -1439,6 +1483,7 @@
       el.style.position = '';
       el.style.zIndex = '';
       ev.currentTarget.appendChild(el);
+      ensureTrayCounters();
     }
   }
 
@@ -1451,6 +1496,7 @@
     if(!host.hasChildNodes()){
       host.appendChild(document.getElementById(id));
       syllableDropsDone++;
+      ensureTrayCounters();
       if(syllableDropsDone>=needSyllableDrops){
         setInstruction("syllables tracked — start with 1st syllable sounds.", false);
         startSyllableTrack(1);
@@ -1500,6 +1546,7 @@
       }
 
       soundDropsDone++;
+      ensureTrayCounters();
 
       if(soundDropsDone >= Math.min(6, sylLetters.length)){
         blendWriteSyllable(syll);
@@ -1611,6 +1658,7 @@
     ALLOW_DRAG = false; setCountersLocked(true);
     lockAllSoundSlots();
     autoFitDisplayToWord();
+    ensureTrayCounters();
   }
 
   function resetBoard(){
@@ -1652,6 +1700,7 @@
         needSyllableDrops=sylCount; syllableDropsDone=0; document.getElementById('nextBtn').disabled=true;
         ALLOW_DRAG = true; setCountersLocked(false);
         lockAllSoundSlots();
+        ensureTrayCounters();
         break;
 
       case 19:
@@ -1785,7 +1834,6 @@
   window.dropToTray=dropToTray;
   window.dropSyllable=dropSyllable;
   window.dropSound=dropSound;
-  window.dragSpawn=dragSpawn;
 
   window.refreshTable=refreshTable;
   window.addBlankRow=addBlankRow;
@@ -1815,43 +1863,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
