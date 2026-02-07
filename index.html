@@ -363,6 +363,8 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
       <button class="secondary" id="toggleVoiceBtn" onclick="toggleVoice()">Mute Voice</button>
       <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
       <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
+      <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
+      <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
 
     </div>
 
@@ -644,6 +646,95 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     document.getElementById('toggleVoiceBtn').textContent = voiceEnabled ? 'Mute Voice' : 'Unmute Voice';
     if(!voiceEnabled && window.speechSynthesis){ speechSynthesis.cancel(); }
   }
+  /* =========================================================
+   ✅ Repeat controls (ANYTIME)
+   - RepeatWord: replays the "say word + meaning + say again" audio
+   - RepeatSteps: restarts the SAME word from Step 0 so pupils can redo counters
+   ========================================================= */
+
+function repeatWordAudio(){
+  const w = (Array.isArray(words) && words.length) ? (words[wIndex] || words[0]) : null;
+  if(!w){
+    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+    return;
+  }
+
+  const sayWord = String(w.word||"").trim();
+  const meaning = String(w.meaning||"").trim();
+
+  // allow TTS even during counter phases (BLOCK_TTS is used to suppress TTS)
+  const prevBlock = BLOCK_TTS;
+  BLOCK_TTS = false;
+
+  if(window.speechSynthesis) speechSynthesis.cancel();
+
+  // If voice is muted, at least show the word on screen
+  if(!voiceEnabled || !window.speechSynthesis){
+    setInstruction(`Word: ${sayWord}${meaning ? " — " + meaning : ""}`, false);
+    BLOCK_TTS = prevBlock;
+    return;
+  }
+
+  tts(`say the word ${sayWord}`, ()=>{
+    if(meaning){
+      tts(meaning, ()=>{
+        tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
+      });
+    }else{
+      tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
+    }
+  });
+}
+
+function repeatSteps(){
+  if(!Array.isArray(words) || !words.length){
+    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+    return;
+  }
+  if(wIndex >= words.length) wIndex = 0;
+
+  if(window.speechSynthesis) speechSynthesis.cancel();
+
+  // reset flow state (keep SAME wIndex)
+  step = 0;
+  activeSyllable = 1;
+  needSyllableDrops = 0; syllableDropsDone = 0;
+  needSoundDrops = 0;    soundDropsDone = 0;
+
+  resetBoard();
+  autoFitDisplayToWord();
+  setCurrentLine('L0');
+
+  // restore normal mode + lock everything until steps say so
+  exitNoTTSPhase();
+  ALLOW_DRAG = false;
+  setCountersLocked(true);
+  lockAllSoundSlots();
+  ensureTrayCounters();
+
+  // ensure user can continue immediately
+  document.getElementById('beginBtn').disabled = true;
+  document.getElementById('nextBtn').disabled  = false;
+
+  // start again from step 0
+  nextStep();
+}
+
+/* Optional keyboard shortcuts (won’t trigger while typing in inputs)
+   - R : repeat word audio
+   - Shift+R : repeat steps
+*/
+addEventListener('keydown', (e)=>{
+  const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName : "";
+  const typing = /INPUT|TEXTAREA|SELECT/.test(tag);
+  if(typing) return;
+
+  if(!e.ctrlKey && !e.altKey && !e.metaKey){
+    if(e.key === 'r'){ e.preventDefault(); repeatWordAudio(); }
+    if(e.key === 'R'){ e.preventDefault(); repeatSteps(); }
+  }
+});
+
   /* =========================================================
    ✅ Repeat controls (ANYTIME)
    - RepeatWord: replays the "say word + meaning + say again" audio
@@ -1958,6 +2049,8 @@ addEventListener('keydown', (e)=>{
   window.toggleVoice=toggleVoice;
   window.repeatWordAudio = repeatWordAudio;
   window.repeatSteps = repeatSteps;
+  window.repeatWordAudio = repeatWordAudio;
+  window.repeatSteps = repeatSteps;
 
 
   window.copyNotes=copyNotes;
@@ -1971,6 +2064,7 @@ addEventListener('keydown', (e)=>{
 </script>
 </body>
 </html>
+
 
 
 
