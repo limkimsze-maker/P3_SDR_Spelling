@@ -691,41 +691,96 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
       }
     });
   }
+function _clearSyllableSoundRow(s){
+  for(let t=0;t<6;t++){
+    const slot = document.getElementById(`s${s}t${t}`);
+    if(!slot) continue;
 
-  function repeatSteps(){
-    if(!Array.isArray(words) || !words.length){
-      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-      return;
-    }
-    if(wIndex >= words.length) wIndex = 0;
+    // move any counters back to tray first
+    const cs = Array.from(slot.querySelectorAll('.counter'));
+    cs.forEach(c=>{
+      try{ _resetToTray(c); }catch(_){
+        const tray = document.getElementById('counters');
+        if(tray) tray.appendChild(c);
+      }
+    });
 
-    if(window.speechSynthesis) speechSynthesis.cancel();
-
-    // reset flow state (keep SAME wIndex)
-    step = 0;
-    activeSyllable = 1;
-    needSyllableDrops = 0; syllableDropsDone = 0;
-    needSoundDrops = 0;    soundDropsDone = 0;
-
-    resetBoard();
-    autoFitDisplayToWord();
-    setCurrentLine('L0');
-
-    // restore normal mode + lock everything until steps say so
-    exitNoTTSPhase();
-    ALLOW_DRAG = false;
-    setCountersLocked(true);
-    lockAllSoundSlots();
-    ensureTrayCounters();
-
-    // ensure user can continue immediately
-    document.getElementById('beginBtn').disabled = true;
-    document.getElementById('nextBtn').disabled  = false;
-    document.getElementById('backBtn').disabled  = false;
-
-    // start again from step 0
-    nextStep();
+    slot.innerHTML = '';
+    slot.classList.remove('has-counter','span-ghost');
+    slot.dataset.allow = '0';
+    delete slot.dataset.tokenIndex;
+    delete slot.dataset.span;
+    delete slot.dataset.spanGhost;
+    delete slot.dataset.spanParent;
   }
+}
+
+function _clearSyllableText(s){
+  const cell = document.getElementById('syllable'+s);
+  if(!cell) return;
+  const txt = cell.querySelector('.syllableText');
+  if(txt) txt.remove();
+}
+
+function _clearSyllableWork(s){
+  _clearSyllableSoundRow(s);
+  _clearSyllableText(s);
+}
+
+function _clearFromSyllable(s){
+  for(let i=s;i<=4;i++) _clearSyllableWork(i);
+  const ww = document.getElementById('wholewordText');
+  if(ww) ww.textContent = '';
+  ensureTrayCounters();
+}
+
+function repeatSteps(){
+  if(!Array.isArray(words) || !words.length){
+    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+    return;
+  }
+  if(wIndex >= words.length) wIndex = 0;
+  if(window.speechSynthesis) speechSynthesis.cancel();
+
+  const w = words[wIndex];
+  const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+
+  // ✅ If currently in SOUND TRACKING, redo the SAME syllable (redo counters)
+  if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
+    _clearSyllableWork(activeSyllable);
+    step = 3;                // “inside” tracking
+    startSyllableTrack(activeSyllable);
+    return;
+  }
+
+  // ✅ If whole word is shown, redo LAST syllable sound tracking
+  const cur = _logicalStepShown();
+  if(cur === 19){
+    const lastSyl = sylCount;
+    _clearSyllableWork(lastSyl);
+    step = 3;
+    startSyllableTrack(lastSyl);
+    return;
+  }
+
+  // ✅ Otherwise, redo syllable-tracking counters (Step 2)
+  exitNoTTSPhase();
+  ALLOW_DRAG = false;
+  setCountersLocked(true);
+  lockAllSoundSlots();
+
+  resetBoard();
+  autoFitDisplayToWord();
+  ensureTrayCounters();
+
+  document.getElementById('beginBtn').disabled = true;
+  document.getElementById('nextBtn').disabled  = false;
+  document.getElementById('backBtn').disabled  = false;
+
+  step = 2;
+  nextStep(); // enters “track syllables” phase again
+}
+
 
   function setInstruction(text, speakNow=true){
     const el=document.getElementById('instruction');
@@ -1866,33 +1921,59 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   }
 
   function backStep(){
-    if(!Array.isArray(words) || !words.length){
-      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+  if(!Array.isArray(words) || !words.length){
+    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+    return;
+  }
+  if(wIndex >= words.length) wIndex = 0;
+  if(window.speechSynthesis) speechSynthesis.cancel();
+
+  const w = words[wIndex];
+  const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+
+  // ✅ If currently in SOUND TRACKING:
+  // Back 1 Step = go to previous syllable sound tracking (or back to syllable tracking if already syllable 1)
+  if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
+    if(activeSyllable > 1){
+      const prevSyl = activeSyllable - 1;
+      _clearFromSyllable(prevSyl);   // redo prev + everything after
+      step = 3;
+      startSyllableTrack(prevSyl);
+      return;
+    } else {
+      // go back to syllable tracking (Step 2)
+      exitNoTTSPhase();
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
+
+      resetBoard();
+      autoFitDisplayToWord();
+      ensureTrayCounters();
+
+      document.getElementById('beginBtn').disabled = true;
+      document.getElementById('nextBtn').disabled  = false;
+      document.getElementById('backBtn').disabled  = false;
+
+      step = 2;
+      nextStep();
       return;
     }
-    if(wIndex >= words.length) wIndex = 0;
+  }
 
-    if(window.speechSynthesis) speechSynthesis.cancel();
+  const cur = _logicalStepShown();
 
-    // cancel any mobile drag in progress (if present)
-    try{ if(typeof _clearPreview === 'function') _clearPreview(); }catch(_){}
-    try{ _pDrag = null; }catch(_){}
+  // ✅ If whole word is shown: Back 1 Step => last syllable sound tracking
+  if(cur === 19){
+    const lastSyl = sylCount;
+    _clearSyllableWork(lastSyl);
+    step = 3;
+    startSyllableTrack(lastSyl);
+    return;
+  }
 
-    const cur = _logicalStepShown();
-
-    // move back one major phase
-    let target = 0;
-    if(cur <= 0) target = 0;
-    else if(cur === 1) target = 0;
-    else if(cur === 2) target = 1;
-    else if(cur === 19) target = 2;
-    else /* cur >= 20 */ target = 19;
-
-    // reset flow state safely (so pupils can redo counters/tiles cleanly)
-    needSyllableDrops = 0; syllableDropsDone = 0;
-    needSoundDrops    = 0; soundDropsDone    = 0;
-    activeSyllable    = 1;
-
+  // ✅ If in syllable tracking: Back 1 Step => word/meaning step
+  if(cur === 2){
     exitNoTTSPhase();
     ALLOW_DRAG = false;
     setCountersLocked(true);
@@ -1902,45 +1983,38 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     autoFitDisplayToWord();
     ensureTrayCounters();
 
-    // keep the session "in progress"
     document.getElementById('beginBtn').disabled = true;
     document.getElementById('nextBtn').disabled  = false;
     document.getElementById('backBtn').disabled  = false;
 
-    // run the target step
-    step = target;
-    nextStep(); // executes target and advances step internally
+    step = 1;
+    nextStep(); // plays the word/meaning phase again
+    return;
   }
 
-  /* Optional keyboard navigation (won’t trigger while typing)
-     ArrowLeft  = Back 1 Step
-     ArrowRight = Next Step (only if enabled)
-     r          = Repeat Word (Audio)
-     Shift+R    = Repeat Steps
-  */
-  addEventListener('keydown', (e)=>{
-    const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName : "";
-    const typing = /INPUT|TEXTAREA|SELECT/.test(tag);
-    if(typing) return;
+  // ✅ If in word/meaning: Back 1 Step => “watch me” step
+  if(cur === 1){
+    exitNoTTSPhase();
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
 
-    if(e.key === 'ArrowLeft'){
-      e.preventDefault();
-      backStep();
-      return;
-    }
-    if(e.key === 'ArrowRight'){
-      const nb = document.getElementById('nextBtn');
-      if(nb && !nb.disabled){
-        e.preventDefault();
-        nextStep();
-      }
-      return;
-    }
-    if(!e.ctrlKey && !e.altKey && !e.metaKey){
-      if(e.key === 'r'){ e.preventDefault(); repeatWordAudio(); return; }
-      if(e.key === 'R'){ e.preventDefault(); repeatSteps(); return; }
-    }
-  });
+    resetBoard();
+    autoFitDisplayToWord();
+    ensureTrayCounters();
+
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('nextBtn').disabled  = false;
+    document.getElementById('backBtn').disabled  = true;
+
+    step = 0;
+    nextStep();
+    return;
+  }
+
+  // cur === 0
+  document.getElementById('backBtn').disabled = true;
+}
 
   /* ===== Use entire list ===== */
   function useAll(){
@@ -2070,3 +2144,4 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 </script>
 </body>
 </html>
+
