@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
@@ -86,13 +86,16 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 
   #studentLayout{margin-top:12px}
 
-  .grid{border:2px solid #000}
+  /* ✅ MORE NOTICEABLE LIGHT GREY “WORK AREA” */
+  .grid{border:2px solid #000; background:#e9ecef;}
+
   .hdr{display:grid}
   .hdr div{padding:8px 10px;font-weight:800;border-right:2px solid #000;text-align:left;font-size:18px}
   .hdr div:last-child{border-right:none}
   .row{display:grid}
-  .row .cell{min-height:120px;border-top:2px solid #000;bord.row .cell{min-height:120px;border-top:2px solid #000;border-right:2px solid #000;position:relative;background:#f3f4f6}
-er-right:2px solid #000;position:relative;background:#fff}
+
+  /* ✅ cell background changed to light grey */
+  .row .cell{min-height:120px;border-top:2px solid #000;border-right:2px solid #000;position:relative;background:#e9ecef}
   .row .cell:last-child{border-right:none}
 
   /* ✅ syllable drop should cover the WHOLE syllable cell (intuitive) */
@@ -112,8 +115,9 @@ er-right:2px solid #000;position:relative;background:#fff}
     margin-top:40px;
   }
 
-  .tiles-row{display:grid;border.tiles-row{display:grid;border-top:2px solid #000;background:#f3f4f6}
--top:2px solid #000;background:#fff}
+  /* ✅ tiles-row background changed to light grey */
+  .tiles-row{display:grid;border-top:2px solid #000;background:#e9ecef}
+
   .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-right:2px solid #000;padding:8px}
   .tiles:last-child{border-right:none}
 
@@ -1870,6 +1874,3 @@ er-right:2px solid #000;position:relative;background:#fff}
 </script>
 </body>
 </html>
-
-
-
