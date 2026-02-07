@@ -357,15 +357,18 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 
     <div class="controls">
       <button id="beginBtn"  onclick="begin()">Begin</button>
+
+      <!-- ✅ Step navigation -->
+      <button class="secondary" id="backBtn" onclick="backStep()" disabled>Back 1 Step</button>
       <button id="nextBtn"   onclick="nextStep()" disabled>Next Step</button>
+
       <button id="restartBtn"onclick="restart()">Restart</button>
       <button class="secondary" id="toggleInstructionsBtn" onclick="toggleInstructions()">Hide Instructions</button>
       <button class="secondary" id="toggleVoiceBtn" onclick="toggleVoice()">Mute Voice</button>
-      <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
-      <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
-      <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
-      <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
 
+      <!-- ✅ Repeat controls -->
+      <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
+      <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
     </div>
 
     <div id="studentLayout"></div>
@@ -600,6 +603,9 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     addEventListener('load',()=>requestAnimationFrame(()=>{ 
       measure(); fit(); refreshTable(); restoreNotes(); setCountersLocked(true); lockAllSoundSlots(); autoFitDisplayToWord();
       ensureTrayCounters();
+      // initial buttons
+      const bb=document.getElementById('backBtn'); if(bb) bb.disabled=true;
+      const nb=document.getElementById('nextBtn'); if(nb) nb.disabled=true;
     }));
     addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,50));
   })();
@@ -646,184 +652,80 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     document.getElementById('toggleVoiceBtn').textContent = voiceEnabled ? 'Mute Voice' : 'Unmute Voice';
     if(!voiceEnabled && window.speechSynthesis){ speechSynthesis.cancel(); }
   }
-  /* =========================================================
-   ✅ Repeat controls (ANYTIME)
-   - RepeatWord: replays the "say word + meaning + say again" audio
-   - RepeatSteps: restarts the SAME word from Step 0 so pupils can redo counters
-   ========================================================= */
-
-function repeatWordAudio(){
-  const w = (Array.isArray(words) && words.length) ? (words[wIndex] || words[0]) : null;
-  if(!w){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
-  }
-
-  const sayWord = String(w.word||"").trim();
-  const meaning = String(w.meaning||"").trim();
-
-  // allow TTS even during counter phases (BLOCK_TTS is used to suppress TTS)
-  const prevBlock = BLOCK_TTS;
-  BLOCK_TTS = false;
-
-  if(window.speechSynthesis) speechSynthesis.cancel();
-
-  // If voice is muted, at least show the word on screen
-  if(!voiceEnabled || !window.speechSynthesis){
-    setInstruction(`Word: ${sayWord}${meaning ? " — " + meaning : ""}`, false);
-    BLOCK_TTS = prevBlock;
-    return;
-  }
-
-  tts(`say the word ${sayWord}`, ()=>{
-    if(meaning){
-      tts(meaning, ()=>{
-        tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
-      });
-    }else{
-      tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
-    }
-  });
-}
-
-function repeatSteps(){
-  if(!Array.isArray(words) || !words.length){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
-  }
-  if(wIndex >= words.length) wIndex = 0;
-
-  if(window.speechSynthesis) speechSynthesis.cancel();
-
-  // reset flow state (keep SAME wIndex)
-  step = 0;
-  activeSyllable = 1;
-  needSyllableDrops = 0; syllableDropsDone = 0;
-  needSoundDrops = 0;    soundDropsDone = 0;
-
-  resetBoard();
-  autoFitDisplayToWord();
-  setCurrentLine('L0');
-
-  // restore normal mode + lock everything until steps say so
-  exitNoTTSPhase();
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
-  ensureTrayCounters();
-
-  // ensure user can continue immediately
-  document.getElementById('beginBtn').disabled = true;
-  document.getElementById('nextBtn').disabled  = false;
-
-  // start again from step 0
-  nextStep();
-}
-
-/* Optional keyboard shortcuts (won’t trigger while typing in inputs)
-   - R : repeat word audio
-   - Shift+R : repeat steps
-*/
-addEventListener('keydown', (e)=>{
-  const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName : "";
-  const typing = /INPUT|TEXTAREA|SELECT/.test(tag);
-  if(typing) return;
-
-  if(!e.ctrlKey && !e.altKey && !e.metaKey){
-    if(e.key === 'r'){ e.preventDefault(); repeatWordAudio(); }
-    if(e.key === 'R'){ e.preventDefault(); repeatSteps(); }
-  }
-});
 
   /* =========================================================
-   ✅ Repeat controls (ANYTIME)
-   - RepeatWord: replays the "say word + meaning + say again" audio
-   - RepeatSteps: restarts the SAME word from Step 0 so pupils can redo counters
-   ========================================================= */
-
-function repeatWordAudio(){
-  const w = (Array.isArray(words) && words.length) ? (words[wIndex] || words[0]) : null;
-  if(!w){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
-  }
-
-  const sayWord = String(w.word||"").trim();
-  const meaning = String(w.meaning||"").trim();
-
-  // allow TTS even during counter phases (BLOCK_TTS is used to suppress TTS)
-  const prevBlock = BLOCK_TTS;
-  BLOCK_TTS = false;
-
-  if(window.speechSynthesis) speechSynthesis.cancel();
-
-  // If voice is muted, at least show the word on screen
-  if(!voiceEnabled || !window.speechSynthesis){
-    setInstruction(`Word: ${sayWord}${meaning ? " — " + meaning : ""}`, false);
-    BLOCK_TTS = prevBlock;
-    return;
-  }
-
-  tts(`say the word ${sayWord}`, ()=>{
-    if(meaning){
-      tts(meaning, ()=>{
-        tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
-      });
-    }else{
-      tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
+     ✅ Repeat controls (ANYTIME)
+     - RepeatWord: replays the "say word + meaning + say again" audio
+     - RepeatSteps: restarts the SAME word from Step 0 so pupils can redo counters
+     ========================================================= */
+  function repeatWordAudio(){
+    const w = (Array.isArray(words) && words.length) ? (words[wIndex] || words[0]) : null;
+    if(!w){
+      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+      return;
     }
-  });
-}
 
-function repeatSteps(){
-  if(!Array.isArray(words) || !words.length){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
+    const sayWord = String(w.word||"").trim();
+    const meaning = String(w.meaning||"").trim();
+
+    // allow TTS even during counter phases (BLOCK_TTS is used to suppress TTS)
+    const prevBlock = BLOCK_TTS;
+    BLOCK_TTS = false;
+
+    if(window.speechSynthesis) speechSynthesis.cancel();
+
+    // If voice is muted, at least show the word on screen
+    if(!voiceEnabled || !window.speechSynthesis){
+      setInstruction(`Word: ${sayWord}${meaning ? " — " + meaning : ""}`, false);
+      BLOCK_TTS = prevBlock;
+      return;
+    }
+
+    tts(`say the word ${sayWord}`, ()=>{
+      if(meaning){
+        tts(meaning, ()=>{
+          tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
+        });
+      }else{
+        tts(`say again ${sayWord}`, ()=>{ BLOCK_TTS = prevBlock; });
+      }
+    });
   }
-  if(wIndex >= words.length) wIndex = 0;
 
-  if(window.speechSynthesis) speechSynthesis.cancel();
+  function repeatSteps(){
+    if(!Array.isArray(words) || !words.length){
+      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+      return;
+    }
+    if(wIndex >= words.length) wIndex = 0;
 
-  // reset flow state (keep SAME wIndex)
-  step = 0;
-  activeSyllable = 1;
-  needSyllableDrops = 0; syllableDropsDone = 0;
-  needSoundDrops = 0;    soundDropsDone = 0;
+    if(window.speechSynthesis) speechSynthesis.cancel();
 
-  resetBoard();
-  autoFitDisplayToWord();
-  setCurrentLine('L0');
+    // reset flow state (keep SAME wIndex)
+    step = 0;
+    activeSyllable = 1;
+    needSyllableDrops = 0; syllableDropsDone = 0;
+    needSoundDrops = 0;    soundDropsDone = 0;
 
-  // restore normal mode + lock everything until steps say so
-  exitNoTTSPhase();
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
-  ensureTrayCounters();
+    resetBoard();
+    autoFitDisplayToWord();
+    setCurrentLine('L0');
 
-  // ensure user can continue immediately
-  document.getElementById('beginBtn').disabled = true;
-  document.getElementById('nextBtn').disabled  = false;
+    // restore normal mode + lock everything until steps say so
+    exitNoTTSPhase();
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
+    ensureTrayCounters();
 
-  // start again from step 0
-  nextStep();
-}
+    // ensure user can continue immediately
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('nextBtn').disabled  = false;
+    document.getElementById('backBtn').disabled  = false;
 
-/* Optional keyboard shortcuts (won’t trigger while typing in inputs)
-   - R : repeat word audio
-   - Shift+R : repeat steps
-*/
-addEventListener('keydown', (e)=>{
-  const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName : "";
-  const typing = /INPUT|TEXTAREA|SELECT/.test(tag);
-  if(typing) return;
-
-  if(!e.ctrlKey && !e.altKey && !e.metaKey){
-    if(e.key === 'r'){ e.preventDefault(); repeatWordAudio(); }
-    if(e.key === 'R'){ e.preventDefault(); repeatSteps(); }
+    // start again from step 0
+    nextStep();
   }
-});
-
 
   function setInstruction(text, speakNow=true){
     const el=document.getElementById('instruction');
@@ -1195,6 +1097,7 @@ addEventListener('keydown', (e)=>{
         autoFitDisplayToWord();
         document.getElementById('beginBtn').disabled = false;
         document.getElementById('nextBtn').disabled  = true;
+        document.getElementById('backBtn').disabled  = true;
       }catch(e){ alert('could not parse json: '+e.message); }
       ev.target.value = '';
     };
@@ -1773,6 +1676,7 @@ addEventListener('keydown', (e)=>{
     setCountersLocked(true);
     lockAllSoundSlots();
     document.getElementById('nextBtn').disabled = false;
+    document.getElementById('backBtn').disabled = false;
   }
 
   function startSyllableTrack(n){
@@ -1835,6 +1739,8 @@ addEventListener('keydown', (e)=>{
 
     document.getElementById('beginBtn').disabled=true;
     document.getElementById('nextBtn').disabled=false;
+    document.getElementById('backBtn').disabled=false;
+
     step=0; activeSyllable=1;
 
     autoFitDisplayToWord();
@@ -1846,7 +1752,10 @@ addEventListener('keydown', (e)=>{
   }
 
   function restart(){
-    document.getElementById('beginBtn').disabled=false; document.getElementById('nextBtn').disabled=true;
+    document.getElementById('beginBtn').disabled=false; 
+    document.getElementById('nextBtn').disabled=true;
+    document.getElementById('backBtn').disabled=true;
+
     step=0; wIndex=0; activeSyllable=1; resetBoard();
     setCurrentLine('L0'); setInstruction('Open the teacher panel to load a word, or choose a lesson set above, then begin.');
     if(window.speechSynthesis) speechSynthesis.cancel();
@@ -1921,6 +1830,7 @@ addEventListener('keydown', (e)=>{
         if (wIndex >= words.length){
           setInstruction("All words completed! Load another word in the teacher panel, or choose a lesson set above, then begin.");
           document.getElementById('nextBtn').disabled = true;
+          document.getElementById('backBtn').disabled = true;
           document.getElementById('beginBtn').disabled = false;
           ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
         } else {
@@ -1931,11 +1841,106 @@ addEventListener('keydown', (e)=>{
           setInstruction("");
           autoFitDisplayToWord();
           ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+          document.getElementById('backBtn').disabled = false;
         }
         break;
     }
     step++;
   }
+
+  /* =========================================================
+     ✅ Back 1 Step (major phases only)
+     Phases: 0 -> 1 -> 2 -> (counter tracking internal) -> 19 -> 20
+     Treat steps 3..18 as "inside Step 2" (tracking sounds).
+     ========================================================= */
+  function _logicalStepShown(){
+    // step = "next case to execute"
+    // so last executed/shown is step-1
+    let last = Math.max(0, (step|0) - 1);
+
+    // the app doesn’t have button-driven cases 3..18; they’re counter-tracking phase.
+    if(last >= 3 && last <= 18) last = 2;
+
+    if(last > 20) last = 20;
+    return last;
+  }
+
+  function backStep(){
+    if(!Array.isArray(words) || !words.length){
+      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+      return;
+    }
+    if(wIndex >= words.length) wIndex = 0;
+
+    if(window.speechSynthesis) speechSynthesis.cancel();
+
+    // cancel any mobile drag in progress (if present)
+    try{ if(typeof _clearPreview === 'function') _clearPreview(); }catch(_){}
+    try{ _pDrag = null; }catch(_){}
+
+    const cur = _logicalStepShown();
+
+    // move back one major phase
+    let target = 0;
+    if(cur <= 0) target = 0;
+    else if(cur === 1) target = 0;
+    else if(cur === 2) target = 1;
+    else if(cur === 19) target = 2;
+    else /* cur >= 20 */ target = 19;
+
+    // reset flow state safely (so pupils can redo counters/tiles cleanly)
+    needSyllableDrops = 0; syllableDropsDone = 0;
+    needSoundDrops    = 0; soundDropsDone    = 0;
+    activeSyllable    = 1;
+
+    exitNoTTSPhase();
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
+
+    resetBoard();
+    autoFitDisplayToWord();
+    ensureTrayCounters();
+
+    // keep the session "in progress"
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('nextBtn').disabled  = false;
+    document.getElementById('backBtn').disabled  = false;
+
+    // run the target step
+    step = target;
+    nextStep(); // executes target and advances step internally
+  }
+
+  /* Optional keyboard navigation (won’t trigger while typing)
+     ArrowLeft  = Back 1 Step
+     ArrowRight = Next Step (only if enabled)
+     r          = Repeat Word (Audio)
+     Shift+R    = Repeat Steps
+  */
+  addEventListener('keydown', (e)=>{
+    const tag = (document.activeElement && document.activeElement.tagName) ? document.activeElement.tagName : "";
+    const typing = /INPUT|TEXTAREA|SELECT/.test(tag);
+    if(typing) return;
+
+    if(e.key === 'ArrowLeft'){
+      e.preventDefault();
+      backStep();
+      return;
+    }
+    if(e.key === 'ArrowRight'){
+      const nb = document.getElementById('nextBtn');
+      if(nb && !nb.disabled){
+        e.preventDefault();
+        nextStep();
+      }
+      return;
+    }
+    if(!e.ctrlKey && !e.altKey && !e.metaKey){
+      if(e.key === 'r'){ e.preventDefault(); repeatWordAudio(); return; }
+      if(e.key === 'R'){ e.preventDefault(); repeatSteps(); return; }
+    }
+  });
 
   /* ===== Use entire list ===== */
   function useAll(){
@@ -1967,6 +1972,7 @@ addEventListener('keydown', (e)=>{
 
     document.getElementById('beginBtn').disabled = false;
     document.getElementById('nextBtn').disabled  = true;
+    document.getElementById('backBtn').disabled  = true;
   }
 
   /* ===== ✅ Lesson dropdown loader (GitHub CDN) — stable cache-buster + fallback + prefetch ===== */
@@ -2010,6 +2016,7 @@ addEventListener('keydown', (e)=>{
 
       document.getElementById('beginBtn').disabled = false;
       document.getElementById('nextBtn').disabled  = true;
+      document.getElementById('backBtn').disabled  = true;
 
       // ✅ silent background prefetch of token audio for this lesson (feels instant)
       prefetchLessonAudio(words);
@@ -2043,15 +2050,14 @@ addEventListener('keydown', (e)=>{
 
   window.begin=begin;
   window.nextStep=nextStep;
+  window.backStep=backStep;
   window.restart=restart;
 
   window.toggleInstructions=toggleInstructions;
   window.toggleVoice=toggleVoice;
-  window.repeatWordAudio = repeatWordAudio;
-  window.repeatSteps = repeatSteps;
-  window.repeatWordAudio = repeatWordAudio;
-  window.repeatSteps = repeatSteps;
 
+  window.repeatWordAudio = repeatWordAudio;
+  window.repeatSteps = repeatSteps;
 
   window.copyNotes=copyNotes;
   window.downloadNotes=downloadNotes;
@@ -2064,7 +2070,3 @@ addEventListener('keydown', (e)=>{
 </script>
 </body>
 </html>
-
-
-
-
