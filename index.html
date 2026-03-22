@@ -215,8 +215,8 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   .wordlist th{background:#f7f7f7; position:sticky; top:0; z-index:1}
   .wordlist tr.selected{outline:2px solid #1e9e47}
 
-  .teacher-hotspot{
-  position: fixed;
+ .teacher-hotspot{
+  position: fixed !important;
   right: 10px;
   bottom: 10px;
   width: 28px;
@@ -230,7 +230,8 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   text-align:center;
   border:none;
   cursor:pointer;
-  z-index: 10000;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
 }
 .teacher-hotspot::after{
   content:"T";
@@ -276,10 +277,20 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
 
-  .credits{position:fixed;right:12px;bottom:8px;font-size:11px;line-height:1.3;color:#555;pointer-events:none}
-  .credits a{pointer-events:auto}
-  .credits p{margin:2px 0}.credits p:first-child{color:#000;font-weight:bold}
-
+ .credits{
+  position: fixed;
+  left: 12px;
+  right: auto;
+  bottom: 8px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: #555;
+  pointer-events: none;
+  max-width: calc(100vw - 90px);
+}
+.credits a{pointer-events:auto}
+.credits p{margin:2px 0}
+.credits p:first-child{color:#000;font-weight:bold}
   /* ================================
      ✅ MOBILE DRAG FIX (IMPORTANT)
      Prevents page scroll/zoom stealing the drag gesture.
