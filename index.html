@@ -6,60 +6,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <title>Spelling Worksheet — 1–4 Syllables + Unified Sounds Folder</title>
 <style>
-  /* keep borders/padding from shifting grid math */
   *, *::before, *::after { box-sizing: border-box; }
-  /* ✅ Teacher panel sticky close button (always reachable on mobile) */
-.teacher-panel .panel-topbar{
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 0 8px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-}
 
-.teacher-panel .panel-topbar h4{
-  margin: 0;
-}
+  .teacher-panel .panel-topbar{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 0 8px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+  }
 
-.teacher-panel .panel-toggle-btn{
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,.25);
-  background: rgba(0,0,0,.85);
-  color: #fff;
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 32px;
-  padding: 0;
-  cursor: pointer;
-}
-.tcher-panel .panel-toggle-btn:active{ transform: scale(.98); }
+  .teacher-panel .panel-topbar h4{
+    margin: 0;
+  }
 
-  /* hide spelling steps panel */
+  .teacher-panel .panel-toggle-btn{
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.25);
+    background: rgba(0,0,0,.85);
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 32px;
+    padding: 0;
+    cursor: pointer;
+  }
+  .teacher-panel .panel-toggle-btn:active{ transform: scale(.98); }
+
   #stepsPanel { display: none !important; }
 
-html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
+  html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   body{font-family:Arial,Helvetica,sans-serif;display:flex;align-items:flex-start;justify-content:center}
   #stage{transform-origin:top center;will-change:transform}
 
-  .sheet{width:1100px;background:#fff;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.12);
-         margin-top:10px;padding:12px 12px 16px}
-.title{text-align:center;font-size:17px;font-weight:800;margin:8px 0 8px}
+  .sheet{width:1100px;background:#fff;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.12);margin-top:10px;padding:12px 12px 16px}
+  .title{text-align:center;font-size:17px;font-weight:800;margin:8px 0 8px}
 
   .steps{border:2px solid #000;margin:6px 0 10px}
- .steps h3{margin:0;padding:6px 10px;border-bottom:2px solid #000;text-align:center;font-size:11px;font-weight:800}
-.steps .script{margin:10px 14px;line-height:1.55;font-size:9px}
+  .steps h3{margin:0;padding:6px 10px;border-bottom:2px solid #000;text-align:center;font-size:11px;font-weight:800}
+  .steps .script{margin:10px 14px;line-height:1.55;font-size:9px}
   .steps .line{margin:4px 0}
   .steps .em{font-weight:700;text-decoration:underline}
   .steps .current{background:#fff8cc;border-radius:4px;padding:2px 4px}
 
- #instruction{font-size:9px;margin:10px 0 8px;min-height:28px}
+  #instruction{font-size:9px;margin:10px 0 8px;min-height:28px}
 
   .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   button{padding:7px 10px;font-size:14px;border:1px solid #cfcfcf;border-radius:5px;background:#1e9e47;color:#fff;cursor:pointer}
@@ -69,7 +66,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   .secondary{background:#495057}
   .secondary:hover{background:#3e464c}
 
-  /* top lesson selector */
   .lessonbar{
     display:flex; gap:10px; align-items:center; flex-wrap:wrap;
     padding:6px 0 2px;
@@ -86,7 +82,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 
   #studentLayout{margin-top:12px}
 
-  /* ✅ MORE NOTICBLE LIGHT GREY “WORK AREA” */
   .grid{border:2px solid #000; background:#e9ecef;}
 
   .hdr{display:grid}
@@ -94,34 +89,28 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   .hdr div:last-child{border-right:none}
   .row{display:grid}
 
-  /* ✅ cell background changed to light grey */
   .row .cell{min-height:120px;border-top:2px solid #000;border-right:2px solid #000;position:relative;background:#e9ecef}
   .row .cell:last-child{border-right:none}
 
-  /* ✅ syllable drop should cover the WHOLE syllable cell (intuitive) */
   .syllableDrop{
     position:absolute;
     left:0; top:0; right:0; bottom:0;
     width:auto; height:auto;
     background:transparent;
-
     display:flex;
     align-items:center;
     justify-content:center;
   }
 
-  /* ✅ move counter LOWER in syllable box to avoid overlapping syllable text */
   .syllableDrop .counter{
     margin-top:40px;
   }
 
-  /* ✅ tiles-row background changed to light grey */
   .tiles-row{display:grid;border-top:2px solid #000;background:#e9ecef}
 
   .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-right:2px solid #000;padding:8px}
   .tiles:last-child{border-right:none}
 
-  /* ===== Sound slots (aligned counter row + aligned letter row) ===== */
   .counter-slot{
     position:relative;
     height:64px;
@@ -140,14 +129,11 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   }
   .counter-slot.has-counter::after{ color:#6b7280 }
 
-  /* Disabled: keep visible; JS gates drops. (IMPORTANT: must still receive drag/drop events) */
-  .counter-slot.disabled{ /* disabled visually; drop is gated in JS */ opacity:0.65; }
+  .counter-slot.disabled{ opacity:0.65; }
 
-  /* ghost slot for span-2 token (x) */
   .counter-slot.span-ghost{ pointer-events:none; }
   .counter-slot.span-ghost::after{ opacity:.15; }
 
-  /* COUNTER: fixed row */
   .counter.in-slot{
     position:absolute;
     top:26px;
@@ -156,7 +142,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     z-index:4;
   }
 
-  /* LABEL: fixed row */
   .tile-label{
     position:absolute;
     bottom:6px;
@@ -174,7 +159,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     z-index:3;
   }
 
-  /* x label spans 2 boxes: centered at the boundary between 2 slots */
   .tile-label.span2{
     left:100%;
     width:200%;
@@ -215,27 +199,27 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   .wordlist th{background:#f7f7f7; position:sticky; top:0; z-index:1}
   .wordlist tr.selected{outline:2px solid #1e9e47}
 
- .teacher-hotspot{
-  position: fixed !important;
-  right: 10px;
-  bottom: 10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(0,0,0,.75);
-  color:#fff;
-  font-weight:700;
-  font-size:14px;
-  line-height:28px;
-  text-align:center;
-  border:none;
-  cursor:pointer;
-  z-index: 2147483647 !important;
-  pointer-events: auto !important;
-}
-.teacher-hotspot::after{
-  content:"T";
-}
+  .teacher-hotspot{
+    position: fixed !important;
+    right: 10px;
+    bottom: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.75);
+    color:#fff;
+    font-weight:700;
+    font-size:14px;
+    line-height:28px;
+    text-align:center;
+    border:none;
+    cursor:pointer;
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+  }
+  .teacher-hotspot::after{
+    content:"T";
+  }
 
   .center,#criteria-container,#scenario-options,.output-container{display:none}
 
@@ -277,26 +261,23 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   }
 
-.credits{
-  position: fixed;
-  top: 8px;
-  left: 12px;
-  right: auto;
-  bottom: auto;
-  font-size: 11px;
-  line-height: 1.3;
-  color: #555;
-  pointer-events: none;
-  z-index: 20;
-  max-width: calc(100vw - 24px);
-}
-.credits a{pointer-events:auto}
-.credits p{margin:2px 0}
-.credits p:first-child{color:#000;font-weight:bold}
-  /* ================================
-     ✅ MOBILE DRAG FIX (IMPORTANT)
-     Prevents page scroll/zoom stealing the drag gesture.
-     ================================ */
+  .credits{
+    position: fixed;
+    top: 8px;
+    left: 12px;
+    right: auto;
+    bottom: auto;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #555;
+    pointer-events: none;
+    z-index: 20;
+    max-width: calc(100vw - 24px);
+  }
+  .credits a{pointer-events:auto}
+  .credits p{margin:2px 0}
+  .credits p:first-child{color:#000;font-weight:bold}
+
   .counter,
   .counter-slot,
   .syllableDrop,
@@ -305,7 +286,7 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     -webkit-user-select:none;
     user-select:none;
     -webkit-touch-callout:none;
-    }
+  }
 </style>
 <script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
 </head>
@@ -315,7 +296,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   <div class="sheet">
     <div class="title">Spelling Worksheet</div>
 
-    <!-- ✅ Lesson dropdown (loads JSON sets from GitHub CDN) -->
     <div class="lessonbar">
       <label for="lessonSelect">Lesson set</label>
       <select id="lessonSelect" onchange="onLessonChange(this.value)">
@@ -349,7 +329,7 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
         <option value="c9s3">Cycle 9 Session 3</option>
         <option value="c10s1">Cycle 10 Session 1</option>
         <option value="c10s2">Cycle 10 Session 2</option>
-        </select>
+      </select>
       <span class="hint">Select a set to auto-load the Word List.</span>
     </div>
 
@@ -369,23 +349,18 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
       </div>
     </div>
 
-   <div id="instruction" aria-live="polite">
-  Open teacher panel (<span class="kbd">ctrl</span>+<span class="kbd">alt</span>+<span class="kbd">t</span> or the tiny T). Load tiles (or choose a lesson set above), then “Begin”.<br>
-  Want to try one word again? Click T, pick your word, click Use Selected, then press T again and begin.
-</div>
+    <div id="instruction" aria-live="polite">
+      Open teacher panel (<span class="kbd">ctrl</span>+<span class="kbd">alt</span>+<span class="kbd">t</span> or the tiny T). Load tiles (or choose a lesson set above), then “Begin”.<br>
+      Want to try one word again? Click T, pick your word, click Use Selected, then press T again and begin.
+    </div>
 
     <div class="controls">
       <button id="beginBtn"  onclick="begin()">Begin</button>
-
-      <!-- ✅ Step navigation -->
       <button class="secondary" id="backBtn" onclick="backStep()" disabled>Back 1 Step</button>
       <button id="nextBtn"   onclick="nextStep()" disabled>Next Step</button>
-
       <button id="restartBtn"onclick="restart()">Restart</button>
       <button class="secondary" id="toggleInstructionsBtn" onclick="toggleInstructions()">Hide Instructions</button>
       <button class="secondary" id="toggleVoiceBtn" onclick="toggleVoice()">Mute Voice</button>
-
-      <!-- ✅ Repeat controls -->
       <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
       <button class="secondary" id="repeatStepsBtn" onclick="repeatSteps()">Repeat Steps (Redo Counters)</button>
     </div>
@@ -394,7 +369,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 
     <h3 style="margin:12px 0 6px;font-size:18px">Counters</h3>
     <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
-      <!-- ✅ template only (hidden). real counters are managed to max=4 -->
       <div class="counter locked" id="seedCounter" draggable="false" aria-hidden="true" style="display:none"></div>
     </div>
 
@@ -402,7 +376,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
   </div>
 </div>
 
-<!-- Teacher Panel -->
 <div class="teacher-panel" id="teacherPanel" aria-hidden="true">
   <div class="panel-topbar">
     <h4>Teacher tools</h4>
@@ -572,16 +545,11 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
 </div>
 
 <script>
-  /* =========================================================
-     ✅ GitHub-permalink → USABLE URL CHOICE (jsDelivr)
-     ========================================================= */
   const ASSET_BASE = "https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@main/";
   const SOUND_BASE = ASSET_BASE + "sounds/";
-  // ✅ fallback (if jsDelivr fails): GitHub raw
   const RAW_BASE   = "https://raw.githubusercontent.com/limkimsze-maker/P3_SDR_Spelling/main/";
   const RAW_SOUND_BASE = RAW_BASE + "sounds/";
 
-  // ✅ one cache-bust token per page load (stable during the session)
   const PAGE_BUST = Date.now().toString(36);
 
   const LESSON_URLS = {
@@ -614,15 +582,13 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     c9s3: ASSET_BASE + "Cycle%209%20Session%203.json",
     c10s1: ASSET_BASE + "Cycle%2010%20Session%201.json",
     c10s2: ASSET_BASE + "Cycle%2010%20Session%202.json",
-    };
+  };
 
-  /* ===== Span rules ===== */
   function tokenSpan(tok){
     const k = String(tok||"").trim().toLowerCase();
-    return (k === 'x') ? 2 : 1;   // only x spans 2 boxes
+    return (k === 'x') ? 2 : 1;
   }
 
-  /* ===== Fit stage ===== */
   (function(){
     let W=0,H=0,stage=document.getElementById('stage');
     function measure(){ stage.style.transform='none'; W=stage.offsetWidth; H=stage.offsetHeight; }
@@ -630,14 +596,12 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     addEventListener('load',()=>requestAnimationFrame(()=>{ 
       measure(); fit(); refreshTable(); restoreNotes(); setCountersLocked(true); lockAllSoundSlots(); autoFitDisplayToWord();
       ensureTrayCounters();
-      // initial buttons
       const bb=document.getElementById('backBtn'); if(bb) bb.disabled=true;
       const nb=document.getElementById('nextBtn'); if(nb) nb.disabled=true;
     }));
     addEventListener('resize',fit); addEventListener('orientationchange',()=>setTimeout(fit,50));
   })();
 
-  /* ===== Teacher panel toggle + keyboard shortcut ===== */
   function toggleTeacherPanel(force){
     const panel=document.getElementById('teacherPanel');
     const show=(typeof force==='boolean')?force:panel.style.display!=='block';
@@ -656,11 +620,8 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     if (notes) notes.addEventListener('input', saveNotes);
   });
 
-  /* ===== Instructions visibility + voice ===== */
   let instructionsHidden=false;
   let voiceEnabled=true;
-
-  // Guard: true = suppress ALL TTS (speech synthesis). Token audio still plays.
   let BLOCK_TTS = false;
 
   function toggleInstructions(){
@@ -680,11 +641,6 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     if(!voiceEnabled && window.speechSynthesis){ speechSynthesis.cancel(); }
   }
 
-  /* =========================================================
-     ✅ Repeat controls (ANYTIME)
-     - RepeatWord: replays the "say word + meaning + say again" audio
-     - RepeatSteps: restarts the SAME word from Step 0 so pupils can redo counters
-     ========================================================= */
   function repeatWordAudio(){
     const w = (Array.isArray(words) && words.length) ? (words[wIndex] || words[0]) : null;
     if(!w){
@@ -695,13 +651,11 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
     const sayWord = String(w.word||"").trim();
     const meaning = String(w.meaning||"").trim();
 
-    // allow TTS even during counter phases (BLOCK_TTS is used to suppress TTS)
     const prevBlock = BLOCK_TTS;
     BLOCK_TTS = false;
 
     if(window.speechSynthesis) speechSynthesis.cancel();
 
-    // If voice is muted, at least show the word on screen
     if(!voiceEnabled || !window.speechSynthesis){
       setInstruction(`Word: ${sayWord}${meaning ? " — " + meaning : ""}`, false);
       BLOCK_TTS = prevBlock;
@@ -718,96 +672,90 @@ html,body{height:100vh;margin:0;overflow:hidden;background:#d9d9d9}
       }
     });
   }
-function _clearSyllableSoundRow(s){
-  for(let t=0;t<6;t++){
-    const slot = document.getElementById(`s${s}t${t}`);
-    if(!slot) continue;
 
-    // move any counters back to tray first
-    const cs = Array.from(slot.querySelectorAll('.counter'));
-    cs.forEach(c=>{
-      try{ _resetToTray(c); }catch(_){
-        const tray = document.getElementById('counters');
-        if(tray) tray.appendChild(c);
-      }
-    });
-
-    slot.innerHTML = '';
-    slot.classList.remove('has-counter','span-ghost');
-    slot.dataset.allow = '0';
-    delete slot.dataset.tokenIndex;
-    delete slot.dataset.span;
-    delete slot.dataset.spanGhost;
-    delete slot.dataset.spanParent;
-  }
-}
-
-function _clearSyllableText(s){
-  const cell = document.getElementById('syllable'+s);
-  if(!cell) return;
-  const txt = cell.querySelector('.syllableText');
-  if(txt) txt.remove();
-}
-
-function _clearSyllableWork(s){
-  _clearSyllableSoundRow(s);
-  _clearSyllableText(s);
-}
-
-function _clearFromSyllable(s){
-  for(let i=s;i<=4;i++) _clearSyllableWork(i);
-  const ww = document.getElementById('wholewordText');
-  if(ww) ww.textContent = '';
-  ensureTrayCounters();
-}
-
-function repeatSteps(){
-  if(!Array.isArray(words) || !words.length){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
-  }
-  if(wIndex >= words.length) wIndex = 0;
-  if(window.speechSynthesis) speechSynthesis.cancel();
-
-  const w = words[wIndex];
-  const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
-
-  // ✅ If currently in SOUND TRACKING, redo the SAME syllable (redo counters)
-  if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
-    _clearSyllableWork(activeSyllable);
-    step = 3;                // “inside” tracking
-    startSyllableTrack(activeSyllable);
-    return;
+  function _clearSyllableSoundRow(s){
+    for(let t=0;t<6;t++){
+      const slot = document.getElementById(`s${s}t${t}`);
+      if(!slot) continue;
+      const cs = Array.from(slot.querySelectorAll('.counter'));
+      cs.forEach(c=>{
+        try{ _resetToTray(c); }catch(_){
+          const tray = document.getElementById('counters');
+          if(tray) tray.appendChild(c);
+        }
+      });
+      slot.innerHTML = '';
+      slot.classList.remove('has-counter','span-ghost');
+      slot.dataset.allow = '0';
+      delete slot.dataset.tokenIndex;
+      delete slot.dataset.span;
+      delete slot.dataset.spanGhost;
+      delete slot.dataset.spanParent;
+    }
   }
 
-  // ✅ If whole word is shown, redo LAST syllable sound tracking
-  const cur = _logicalStepShown();
-  if(cur === 19){
-    const lastSyl = sylCount;
-    _clearSyllableWork(lastSyl);
-    step = 3;
-    startSyllableTrack(lastSyl);
-    return;
+  function _clearSyllableText(s){
+    const cell = document.getElementById('syllable'+s);
+    if(!cell) return;
+    const txt = cell.querySelector('.syllableText');
+    if(txt) txt.remove();
   }
 
-  // ✅ Otherwise, redo syllable-tracking counters (Step 2)
-  exitNoTTSPhase();
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
+  function _clearSyllableWork(s){
+    _clearSyllableSoundRow(s);
+    _clearSyllableText(s);
+  }
 
-  resetBoard();
-  autoFitDisplayToWord();
-  ensureTrayCounters();
+  function _clearFromSyllable(s){
+    for(let i=s;i<=4;i++) _clearSyllableWork(i);
+    const ww = document.getElementById('wholewordText');
+    if(ww) ww.textContent = '';
+    ensureTrayCounters();
+  }
 
-  document.getElementById('beginBtn').disabled = true;
-  document.getElementById('nextBtn').disabled  = false;
-  document.getElementById('backBtn').disabled  = false;
+  function repeatSteps(){
+    if(!Array.isArray(words) || !words.length){
+      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
+      return;
+    }
+    if(wIndex >= words.length) wIndex = 0;
+    if(window.speechSynthesis) speechSynthesis.cancel();
 
-  step = 2;
-  nextStep(); // enters “track syllables” phase again
-}
+    const w = words[wIndex];
+    const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
+    if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
+      _clearSyllableWork(activeSyllable);
+      step = 3;
+      startSyllableTrack(activeSyllable);
+      return;
+    }
+
+    const cur = _logicalStepShown();
+    if(cur === 19){
+      const lastSyl = sylCount;
+      _clearSyllableWork(lastSyl);
+      step = 3;
+      startSyllableTrack(lastSyl);
+      return;
+    }
+
+    exitNoTTSPhase();
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
+
+    resetBoard();
+    autoFitDisplayToWord();
+    ensureTrayCounters();
+
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('nextBtn').disabled  = false;
+    document.getElementById('backBtn').disabled  = false;
+
+    step = 2;
+    nextStep();
+  }
 
   function setInstruction(text, speakNow=true){
     const el=document.getElementById('instruction');
@@ -819,9 +767,9 @@ function repeatSteps(){
     document.querySelectorAll('.steps .line').forEach(el=>el.classList.remove('current'));
     const el=document.getElementById(id); if(el) el.classList.add('current');
   }
-  /* ===== TTS voice settings for dyslexic-friendly spelling pace ===== */
-  const TTS_RATE = 0.62;   // slower, spelling-test friendly
-  const TTS_PITCH = 1.0;   // gentle, natural
+
+  const TTS_RATE = 0.62;
+  const TTS_PITCH = 1.0;
   const TTS_VOLUME = 1.0;
 
   let preferredVoice = null;
@@ -856,8 +804,8 @@ function repeatSteps(){
     pickPreferredVoice();
     window.speechSynthesis.onvoiceschanged = () => { pickPreferredVoice(); };
   }
-  /* ===== TTS & token audio ===== */
-   function tts(text, cb){
+
+  function tts(text, cb){
     if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
       cb && cb();
       return;
@@ -897,7 +845,6 @@ function repeatSteps(){
     const audio = new Audio(urlPrimary);
     audio.onended = ()=> cb && cb();
     audio.onerror = ()=> {
-      // try fallback URL once (e.g., raw.githubusercontent)
       if(urlFallback){
         const audio2 = new Audio(urlFallback);
         audio2.onended = ()=> cb && cb();
@@ -915,7 +862,6 @@ function repeatSteps(){
       else cb && cb();
     };
     audio.play().catch(()=> {
-      // if primary play() rejected, try fallback
       if(urlFallback){
         const audio2 = new Audio(urlFallback);
         audio2.onended = ()=> cb && cb();
@@ -938,7 +884,6 @@ function repeatSteps(){
     const k = (token || '').toLowerCase().trim();
     if(!k){ cb && cb(); return; }
 
-    // ✅ use ONE stable cache-buster per page load (so prefetch can be reused)
     const file = `${encodeURIComponent(k)}.m4a`;
     const urlCdn = `${SOUND_BASE}${file}?v=${PAGE_BUST}`;
     const urlRaw = `${RAW_SOUND_BASE}${file}?v=${PAGE_BUST}`;
@@ -958,25 +903,21 @@ function repeatSteps(){
         });
       });
 
-      // keep it light (avoid spamming network)
       const list = Array.from(toks).slice(0,120);
       list.forEach(k=>{
         const file = `${encodeURIComponent(k)}.m4a`;
         const urlCdn = `${SOUND_BASE}${file}?v=${PAGE_BUST}`;
         const urlRaw = `${RAW_SOUND_BASE}${file}?v=${PAGE_BUST}`;
 
-        // create audio objects to warm cache silently
         const a = new Audio();
         a.preload = 'auto';
         a.src = urlCdn;
         a.onerror = ()=>{ a.src = urlRaw; };
-        // calling load() nudges prefetch on some browsers
         try{ a.load(); }catch(_){}
       });
     }catch(_){}
   }
 
-  /* ===== EXACT UI DISPLAY MAP (filename → shown text) ===== */
   const TOKEN_DISPLAY_MAP = {
     "a_":"a","a__":"a",
     "ai_":"ai",
@@ -1016,7 +957,6 @@ function repeatSteps(){
     return k.replace(/_/g,"");
   }
 
-  /* ===== Lesson data (defaults) ===== */
   let words = [
     { word:"map", meaning:"a map shows places. i see a map on the wall.",
       syllables:[{letters:["m","a__","p"]}] }
@@ -1026,7 +966,6 @@ function repeatSteps(){
       syllables:[{letters:["m","a__","p"]}] }
   ];
 
-  /* ===== Student layout: auto-fit columns to CURRENT WORD syllable count ===== */
   let DISPLAY_SYL = 1;
 
   function renderLayout(){
@@ -1094,7 +1033,6 @@ function repeatSteps(){
     renderLayout();
   }
 
-  /* ===== Word list UI ===== */
   function refreshTable(){
     const tbody=document.getElementById('wordTBody');
     tbody.innerHTML='';
@@ -1164,71 +1102,76 @@ function repeatSteps(){
     if(selectedIndex<0) return;
     teacherSet.splice(selectedIndex,1); selectedIndex=-1; refreshTable();
   }
- function useSelected(){
-  if(selectedIndex < 0) return;
 
-  const it = teacherSet[selectedIndex];
-  if(!it.word || it.syllables.every(s => !s.letters.length)){
-    alert('Please fill the word and at least one tile.');
-    return;
+  function useSelected(){
+    if(selectedIndex < 0) return;
+
+    const it = teacherSet[selectedIndex];
+    if(!it.word || it.syllables.every(s => !s.letters.length)){
+      alert('Please fill the word and at least one tile.');
+      return;
+    }
+
+    PLAY_SCOPE = 'single';
+    words = [deepCopy(it)];
+    wIndex = 0;
+    step = 0;
+    activeSyllable = 1;
+
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    exitNoTTSPhase();
+
+    resetBoard();
+    ensureTrayCounters();
+    autoFitDisplayToWord();
+
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
+
+    document.getElementById('beginBtn').disabled = false;
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('backBtn').disabled = true;
+
+    setCurrentLine('L0');
+    setInstruction(`Loaded "${it.word}". Click "Begin".`, false);
   }
-
-  words = [deepCopy(it)];
-  wIndex = 0;
-  step = 0;
-  activeSyllable = 1;
-
-  if(window.speechSynthesis) speechSynthesis.cancel();
-  exitNoTTSPhase();
-
-  resetBoard();
-  ensureTrayCounters();
-  autoFitDisplayToWord();
-
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
-
-  document.getElementById('beginBtn').disabled = false;
-  document.getElementById('nextBtn').disabled = true;
-  document.getElementById('backBtn').disabled = true;
-
-  setCurrentLine('L0');
-  setInstruction(`Loaded "${it.word}". Click "Begin".`, false);
-}
  
   function quickUse(){
-  const it = quickBuildItem();
-  if(!it) return;
+    const it = quickBuildItem();
+    if(!it) return;
 
-  words = [deepCopy(it)];
-  wIndex = 0;
-  step = 0;
-  activeSyllable = 1;
+    PLAY_SCOPE = 'single';
+    words = [deepCopy(it)];
+    wIndex = 0;
+    step = 0;
+    activeSyllable = 1;
 
-  if(window.speechSynthesis) speechSynthesis.cancel();
-  exitNoTTSPhase();
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    exitNoTTSPhase();
 
-  resetBoard();
-  ensureTrayCounters();
-  autoFitDisplayToWord();
+    resetBoard();
+    ensureTrayCounters();
+    autoFitDisplayToWord();
 
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
 
-  document.getElementById('beginBtn').disabled = false;
-  document.getElementById('nextBtn').disabled = true;
-  document.getElementById('backBtn').disabled = true;
+    document.getElementById('beginBtn').disabled = false;
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('backBtn').disabled = true;
 
-  setCurrentLine('L0');
-  setInstruction(`Loaded "${it.word}". Click "Begin".`, false);
-}
+    setCurrentLine('L0');
+    setInstruction(`Loaded "${it.word}". Click "Begin".`, false);
+  }
+
   function quickAddToList(){
     const it=quickBuildItem();
     if(!it) return;
     teacherSet.push(it); refreshTable();
   }
+
   function quickBuildItem(){
     const word=(document.getElementById('qWord').value||'').trim();
     const meaning=(document.getElementById('qMeaning').value||'').trim();
@@ -1256,43 +1199,57 @@ function repeatSteps(){
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   }
- function uploadSet(ev){
-  const file = ev.target.files?.[0];
-  if(!file) return;
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const obj = JSON.parse(reader.result);
-      if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
+  function uploadSet(ev){
+    const file = ev.target.files?.[0];
+    if(!file) return;
 
-      teacherSet = normalizeWordSet(obj.words);
-      words = teacherSet.map(deepCopy);
-      wIndex = 0;
-      step = 0;
-      activeSyllable = 1;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const obj = JSON.parse(reader.result);
+        if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
 
-      if(window.speechSynthesis) speechSynthesis.cancel();
-      exitNoTTSPhase();
+        teacherSet = normalizeWordSet(obj.words);
+        if(!teacherSet.length) throw new Error('uploaded file has no usable words.');
 
-      resetBoard();
-      ensureTrayCounters();
-      autoFitDisplayToWord();
-      refreshTable();
+        PLAY_SCOPE = 'set';
+        words = teacherSet.map(deepCopy);
+        wIndex = 0;
+        step = 0;
+        activeSyllable = 1;
+        selectedIndex = -1;
 
-      document.getElementById('beginBtn').disabled = false;
-      document.getElementById('nextBtn').disabled  = true;
-      document.getElementById('backBtn').disabled  = true;
+        Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r=>r.classList.remove('selected'));
 
-      setCurrentLine('L0');
-      setInstruction(`Uploaded set loaded (${teacherSet.length} words). Click "Begin".`, false);
-    }catch(e){
-      alert('could not parse json: ' + e.message);
-    }
-    ev.target.value = '';
-  };
-  reader.readAsText(file);
-}
+        const lessonSel = document.getElementById('lessonSelect');
+        if(lessonSel) lessonSel.value = '';
+
+        if(window.speechSynthesis) speechSynthesis.cancel();
+        exitNoTTSPhase();
+
+        resetBoard();
+        refreshTable();
+        ensureTrayCounters();
+        autoFitDisplayToWord();
+
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
+
+        document.getElementById('beginBtn').disabled = false;
+        document.getElementById('nextBtn').disabled  = true;
+        document.getElementById('backBtn').disabled  = true;
+
+        setCurrentLine('L0');
+        setInstruction(`Uploaded set loaded (${teacherSet.length} words). First word: "${teacherSet[0].word}". Click "Begin".`, false);
+      }catch(e){
+        alert('could not parse json: ' + e.message);
+      }
+      ev.target.value = '';
+    };
+    reader.readAsText(file);
+  }
 
   function shuffleTeacherSet(){
     for (let i = teacherSet.length - 1; i > 0; i--){
@@ -1316,7 +1273,6 @@ function repeatSteps(){
     })).filter(w => w.word);
   }
 
-  /* ===== Slot guards for sounds (span-aware) ===== */
   function lockAllSoundSlots(){
     document.querySelectorAll('.counter-slot').forEach(s=>{
       s.classList.add('disabled');
@@ -1362,7 +1318,6 @@ function repeatSteps(){
     }
   }
 
-  /* ===== Notes ===== */
   const NOTES_KEY = 'devNotesV1';
   function restoreNotes(){
     const ta = document.getElementById('devNotes');
@@ -1399,9 +1354,6 @@ function repeatSteps(){
     if(confirm('Clear notes?')){ ta.value=''; saveNotes(); }
   }
 
-  /* =========================================================
-     ✅ Counter tray: max 4 visible + replenish on use
-     ========================================================= */
   const MAX_TRAY_COUNTERS = 4;
 
   function _trayCounters(){
@@ -1415,7 +1367,7 @@ function repeatSteps(){
     const c = seed.cloneNode(true);
     c.id = 'c' + Math.random().toString(36).slice(2,10);
     c.style.display = '';
-    c.setAttribute('draggable', 'true'); // desktop drag
+    c.setAttribute('draggable', 'true');
     c.classList.remove('locked');
     c.addEventListener('dragstart', dragStart);
     return c;
@@ -1425,14 +1377,12 @@ function repeatSteps(){
     const tray = document.getElementById('counters');
     if(!tray) return;
 
-    // trim extras
     let list = _trayCounters();
     while(list.length > MAX_TRAY_COUNTERS){
       list[list.length-1].remove();
       list = _trayCounters();
     }
 
-    // top up missing
     while(list.length < MAX_TRAY_COUNTERS){
       const c = _makeCounter();
       if(!c) break;
@@ -1442,12 +1392,10 @@ function repeatSteps(){
     }
   }
 
-  /* ===== Drag gating ===== */
   let ALLOW_DRAG = false;
   function setCountersLocked(locked){
     document.querySelectorAll('.counter').forEach(c=>{
       c.classList.toggle('locked', locked);
-      // keep template hidden & non-draggable
       if(c.id === 'seedCounter'){
         c.setAttribute('draggable','false');
         c.style.display = 'none';
@@ -1456,7 +1404,6 @@ function repeatSteps(){
     ensureTrayCounters();
   }
 
-  /* ===== Desktop drag (drag existing counter) ===== */
   function dragStart(ev){
     if(!ALLOW_DRAG || ev.target.classList.contains('locked')){
       ev.preventDefault();
@@ -1466,8 +1413,8 @@ function repeatSteps(){
     ev.dataTransfer.effectAllowed = 'move';
   }
 
-  /* ===== Flow state ===== */
   let step=0, wIndex=0, activeSyllable=1;
+  let PLAY_SCOPE = 'set';
   let needSyllableDrops=0, syllableDropsDone=0;
   let needSoundDrops=0, soundDropsDone=0;
 
@@ -1486,11 +1433,6 @@ function repeatSteps(){
     slotEl.appendChild(lbl);
   }
 
-  /* =========================================================
-     ✅ MOBILE DRAG SYSTEM (Pointer Events)
-     - follows finger (scale-aware with #stage scaling)
-     - snaps to syllableDrop / allowed sound slots
-     ========================================================= */
   function _getStage(){ return document.getElementById('stage'); }
   function _getStageScale(){
     const stage=_getStage();
@@ -1507,7 +1449,7 @@ function repeatSteps(){
   function _rect(el){ return el.getBoundingClientRect(); }
   function _inside(x,y,r){ return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; }
 
-  let _pDrag=null;   // {el,pid,offX,offY}
+  let _pDrag=null;
   let _preview=null;
 
   function _clearPreview(){
@@ -1515,19 +1457,16 @@ function repeatSteps(){
   }
 
   function _findDropTarget(clientX, clientY){
-    // allowed sound slots first
     const allowed = Array.from(document.querySelectorAll('.counter-slot[data-allow="1"]'));
     for(const s of allowed){
       const r=_rect(s);
       if(_inside(clientX,clientY,r)) return {type:'sound', el:s};
     }
-    // syllable drop areas
     const sylDrops = Array.from(document.querySelectorAll('.syllableDrop'));
     for(const s of sylDrops){
       const r=_rect(s);
       if(_inside(clientX,clientY,r)) return {type:'syllable', el:s};
     }
-    // tray
     const tray=document.getElementById('counters');
     if(tray){
       const r=_rect(tray);
@@ -1575,7 +1514,6 @@ function repeatSteps(){
     host.appendChild(el);
   }
 
-  // mobile snap to sound slot: reuse your same logic (soundDropsDone, span, audio, label)
   function _snapToSoundSlot(el, host, syll, tile){
     el.style.opacity='';
     el.style.position='';
@@ -1673,7 +1611,6 @@ function repeatSteps(){
 
     const hit=_findDropTarget(e.clientX, e.clientY);
 
-    // no hit => back to tray
     if(!hit){
       _resetToTray(el);
       _pDrag=null;
@@ -1687,7 +1624,6 @@ function repeatSteps(){
     }
 
     if(hit.type === 'syllable'){
-      // enforce your syllable gating rules
       if(needSyllableDrops<=0 || hit.el.hasChildNodes()){
         _resetToTray(el);
         _pDrag=null;
@@ -1706,7 +1642,6 @@ function repeatSteps(){
 
     if(hit.type === 'sound'){
       const host=hit.el;
-      // enforce your sound gating rules
       if(needSoundDrops<=0 || host.dataset.allow !== '1' || host.hasChildNodes()){
         _resetToTray(el);
         _pDrag=null;
@@ -1733,7 +1668,6 @@ function repeatSteps(){
     _pDrag=null;
   }
 
-  // enable only for touch/coarse pointers
   const _isTouch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   if(_isTouch){
     document.addEventListener('pointerdown', _mobileDown, true);
@@ -1742,7 +1676,6 @@ function repeatSteps(){
     document.addEventListener('pointercancel', _mobileUp, true);
   }
 
-  /* ===== drag-over logic ===== */
   function allowDropBasic(ev){
     if (!ALLOW_DRAG) return;
     ev.preventDefault();
@@ -1857,7 +1790,6 @@ function repeatSteps(){
   function exitNoTTSPhase(){ BLOCK_TTS = false; }
 
   function finishSoundTracking(){
-    // ✅ jump so the NEXT click shows the whole word (case 19)
     step = 19;
     setCurrentLine('Le');
     setInstruction("All syllables done. Press “next” to show the whole word.", false);
@@ -1907,37 +1839,42 @@ function repeatSteps(){
     }
   }
 
-  /* ===== Begin / Restart / Next ===== */
   function begin(){
-    if(!words || !words.length){
-      if (teacherSet && teacherSet.length){
-        const valid = teacherSet.filter(it =>
-          it && it.word && (it.syllables||[]).some(s => (s.letters||[]).length)
-        );
-        if (valid.length){
-          words = valid.map(deepCopy);
-          wIndex = 0;
-        } else {
-          alert('Your Word List has no usable items yet. Fill in at least one word with tiles.');
-          return;
-        }
-      } else {
+    if (PLAY_SCOPE === 'set'){
+      const valid = (Array.isArray(teacherSet) ? teacherSet : []).filter(it =>
+        it && it.word &&
+        Array.isArray(it.syllables) &&
+        it.syllables.some(s => Array.isArray(s.letters) && s.letters.length)
+      );
+
+      if (!valid.length){
         alert('Load words in the teacher panel first.');
+        return;
+      }
+
+      words = valid.map(deepCopy);
+    } else {
+      if(!words || !words.length){
+        alert('Load a word first.');
         return;
       }
     }
 
-    document.getElementById('beginBtn').disabled=true;
-    document.getElementById('nextBtn').disabled=false;
-    document.getElementById('backBtn').disabled=false;
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('backBtn').disabled = false;
 
-  wIndex = 0;
-step = 0;
-activeSyllable = 1;
+    wIndex = 0;
+    step = 0;
+    activeSyllable = 1;
 
     autoFitDisplayToWord();
-    resetBoard(); setCurrentLine('L0'); setInstruction("");
-    ALLOW_DRAG = false; setCountersLocked(true);
+    resetBoard();
+    setCurrentLine('L0');
+    setInstruction("");
+
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
     lockAllSoundSlots();
 
     nextStep();
@@ -2040,45 +1977,62 @@ activeSyllable = 1;
     step++;
   }
 
-  /* =========================================================
-     ✅ Back 1 Step (major phases only)
-     Phases: 0 -> 1 -> 2 -> (counter tracking internal) -> 19 -> 20
-     Treat steps 3..18 as "inside Step 2" (tracking sounds).
-     ========================================================= */
   function _logicalStepShown(){
-    // step = "next case to execute"
-    // so last executed/shown is step-1
     let last = Math.max(0, (step|0) - 1);
-
-    // the app doesn’t have button-driven cases 3..18; they’re counter-tracking phase.
     if(last >= 3 && last <= 18) last = 2;
-
     if(last > 20) last = 20;
     return last;
   }
 
   function backStep(){
-  if(!Array.isArray(words) || !words.length){
-    setInstruction("No word loaded yet. Load a word, then click Begin.", false);
-    return;
-  }
-  if(wIndex >= words.length) wIndex = 0;
-  if(window.speechSynthesis) speechSynthesis.cancel();
-
-  const w = words[wIndex];
-  const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
-
-  // ✅ If currently in SOUND TRACKING:
-  // Back 1 Step = go to previous syllable sound tracking (or back to syllable tracking if already syllable 1)
-  if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
-    if(activeSyllable > 1){
-      const prevSyl = activeSyllable - 1;
-      _clearFromSyllable(prevSyl);   // redo prev + everything after
-      step = 3;
-      startSyllableTrack(prevSyl);
+    if(!Array.isArray(words) || !words.length){
+      setInstruction("No word loaded yet. Load a word, then click Begin.", false);
       return;
-    } else {
-      // go back to syllable tracking (Step 2)
+    }
+    if(wIndex >= words.length) wIndex = 0;
+    if(window.speechSynthesis) speechSynthesis.cancel();
+
+    const w = words[wIndex];
+    const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+
+    if (ALLOW_DRAG && needSoundDrops>0 && BLOCK_TTS){
+      if(activeSyllable > 1){
+        const prevSyl = activeSyllable - 1;
+        _clearFromSyllable(prevSyl);
+        step = 3;
+        startSyllableTrack(prevSyl);
+        return;
+      } else {
+        exitNoTTSPhase();
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
+
+        resetBoard();
+        autoFitDisplayToWord();
+        ensureTrayCounters();
+
+        document.getElementById('beginBtn').disabled = true;
+        document.getElementById('nextBtn').disabled  = false;
+        document.getElementById('backBtn').disabled  = false;
+
+        step = 2;
+        nextStep();
+        return;
+      }
+    }
+
+    const cur = _logicalStepShown();
+
+    if(cur === 19){
+      const lastSyl = sylCount;
+      _clearSyllableWork(lastSyl);
+      step = 3;
+      startSyllableTrack(lastSyl);
+      return;
+    }
+
+    if(cur === 2){
       exitNoTTSPhase();
       ALLOW_DRAG = false;
       setCountersLocked(true);
@@ -2092,101 +2046,74 @@ activeSyllable = 1;
       document.getElementById('nextBtn').disabled  = false;
       document.getElementById('backBtn').disabled  = false;
 
-      step = 2;
+      step = 1;
       nextStep();
       return;
     }
+
+    if(cur === 1){
+      exitNoTTSPhase();
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
+
+      resetBoard();
+      autoFitDisplayToWord();
+      ensureTrayCounters();
+
+      document.getElementById('beginBtn').disabled = true;
+      document.getElementById('nextBtn').disabled  = false;
+      document.getElementById('backBtn').disabled  = true;
+
+      step = 0;
+      nextStep();
+      return;
+    }
+
+    document.getElementById('backBtn').disabled = true;
   }
 
-  const cur = _logicalStepShown();
-
-  // ✅ If whole word is shown: Back 1 Step => last syllable sound tracking
-  if(cur === 19){
-    const lastSyl = sylCount;
-    _clearSyllableWork(lastSyl);
-    step = 3;
-    startSyllableTrack(lastSyl);
-    return;
-  }
-
-  // ✅ If in syllable tracking: Back 1 Step => word/meaning step
-  if(cur === 2){
-    exitNoTTSPhase();
-    ALLOW_DRAG = false;
-    setCountersLocked(true);
-    lockAllSoundSlots();
-
-    resetBoard();
-    autoFitDisplayToWord();
-    ensureTrayCounters();
-
-    document.getElementById('beginBtn').disabled = true;
-    document.getElementById('nextBtn').disabled  = false;
-    document.getElementById('backBtn').disabled  = false;
-
-    step = 1;
-    nextStep(); // plays the word/meaning phase again
-    return;
-  }
-
-  // ✅ If in word/meaning: Back 1 Step => “watch me” step
-  if(cur === 1){
-    exitNoTTSPhase();
-    ALLOW_DRAG = false;
-    setCountersLocked(true);
-    lockAllSoundSlots();
-
-    resetBoard();
-    autoFitDisplayToWord();
-    ensureTrayCounters();
-
-    document.getElementById('beginBtn').disabled = true;
-    document.getElementById('nextBtn').disabled  = false;
-    document.getElementById('backBtn').disabled  = true;
-
-    step = 0;
-    nextStep();
-    return;
-  }
-
-  // cur === 0
-  document.getElementById('backBtn').disabled = true;
-}
-
-  /* ===== Use entire list ===== */
   function useAll(){
     const src = Array.isArray(teacherSet) ? teacherSet : [];
     const valid = src.filter(it =>
       it && it.word &&
-      Array.isArray(it.syllables) && it.syllables.length > 0
+      Array.isArray(it.syllables) &&
+      it.syllables.some(s => Array.isArray(s.letters) && s.letters.length)
     );
+
     if (!valid.length){
       alert('Your Word List has no usable items yet. Add a word and at least one syllable.');
       return;
     }
 
-    words = valid.map(v => ({
-      word: String(v.word || '').trim(),
-      meaning: String(v.meaning || ''),
-      syllables: (v.syllables || []).slice(0,4).map(s => ({
-        letters: Array.isArray(s.letters)
-          ? s.letters.slice(0,6).map(t => String(t || '').toLowerCase())
-          : []
-      }))
-    }));
-
+    PLAY_SCOPE = 'set';
+    words = valid.map(deepCopy);
     wIndex = 0;
+    step = 0;
+    activeSyllable = 1;
+    selectedIndex = -1;
 
-    const n = words.length;
-    setInstruction(`Loaded ${n} ${n===1?'word':'words'}. Click “begin”.`);
+    Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r=>r.classList.remove('selected'));
+
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    exitNoTTSPhase();
+
+    resetBoard();
+    ensureTrayCounters();
     autoFitDisplayToWord();
+
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
+    lockAllSoundSlots();
 
     document.getElementById('beginBtn').disabled = false;
     document.getElementById('nextBtn').disabled  = true;
     document.getElementById('backBtn').disabled  = true;
+
+    setCurrentLine('L0');
+    setInstruction(`Loaded ${words.length} ${words.length===1?'word':'words'}. Click "Begin".`, false);
   }
 
-  /* ===== ✅ Lesson dropdown loader (GitHub CDN) — stable cache-buster + fallback + prefetch ===== */
   async function onLessonChange(key){
     if(!key){
       setInstruction("Choose a lesson set above, or load words in the teacher panel.", false);
@@ -2199,10 +2126,7 @@ activeSyllable = 1;
       return;
     }
 
-    // ✅ cache-bust JSON ONCE per page load
     const urlPrimary = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + PAGE_BUST;
-
-    // ✅ fallback URL (raw) if jsDelivr ever fails
     const filename = decodeURIComponent(url0.split('/').pop() || '');
     const urlFallback = RAW_BASE + filename + '?v=' + PAGE_BUST;
 
@@ -2219,27 +2143,38 @@ activeSyllable = 1;
       if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
 
       teacherSet = normalizeWordSet(obj.words);
-      refreshTable();
+      if(!teacherSet.length) throw new Error('lesson has no usable words');
 
+      PLAY_SCOPE = 'set';
       words = teacherSet.map(deepCopy);
       wIndex = 0;
+      step = 0;
+      activeSyllable = 1;
+      selectedIndex = -1;
+
+      refreshTable();
+      resetBoard();
+      ensureTrayCounters();
       autoFitDisplayToWord();
+
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
 
       document.getElementById('beginBtn').disabled = false;
       document.getElementById('nextBtn').disabled  = true;
       document.getElementById('backBtn').disabled  = true;
 
-      // ✅ silent background prefetch of token audio for this lesson (feels instant)
       prefetchLessonAudio(words);
 
-      setInstruction(`Lesson loaded (${teacherSet.length} words). click “Begin”.`, false);
+      setCurrentLine('L0');
+      setInstruction(`Lesson loaded (${teacherSet.length} words). First word: "${teacherSet[0].word}". Click "Begin".`, false);
     }catch(e){
       alert(e.message);
       setInstruction("Could not load the lesson set. Check internet / URL / CORS.", false);
     }
   }
 
-  /* ===== Expose ===== */
   window.renderLayout=renderLayout;
   window.autoFitDisplayToWord=autoFitDisplayToWord;
 
@@ -2277,8 +2212,7 @@ activeSyllable = 1;
   window.useAll=useAll;
   window.shuffleTeacherSet=shuffleTeacherSet;
 
-  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, ASSET_BASE, SOUND_BASE, LESSON_URLS });
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, PLAY_SCOPE, ASSET_BASE, SOUND_BASE, LESSON_URLS });
 </script>
 </body>
 </html>
-
