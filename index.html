@@ -792,13 +792,63 @@ function repeatSteps(){
     document.querySelectorAll('.steps .line').forEach(el=>el.classList.remove('current'));
     const el=document.getElementById(id); if(el) el.classList.add('current');
   }
+  /* ===== TTS voice settings for dyslexic-friendly spelling pace ===== */
+  const TTS_RATE = 0.62;   // slower, spelling-test friendly
+  const TTS_PITCH = 1.0;   // gentle, natural
+  const TTS_VOLUME = 1.0;
 
+  let preferredVoice = null;
+
+  function pickPreferredVoice(){
+    if(!window.speechSynthesis) return null;
+    const voices = speechSynthesis.getVoices() || [];
+    if(!voices.length) return null;
+
+    const femaleHints = [
+      'female','woman','samantha','serena','libby','sonia','hazel',
+      'susan','kate','zira','aria','jenny'
+    ];
+
+    preferredVoice =
+      voices.find(v =>
+        /^en[-_]?GB$/i.test(v.lang) &&
+        femaleHints.some(h => (v.name || '').toLowerCase().includes(h))
+      ) ||
+      voices.find(v =>
+        (v.lang || '').toLowerCase().startsWith('en-gb')
+      ) ||
+      voices.find(v =>
+        (v.lang || '').toLowerCase().startsWith('en')
+      ) ||
+      null;
+
+    return preferredVoice;
+  }
+
+  if (window.speechSynthesis) {
+    pickPreferredVoice();
+    window.speechSynthesis.onvoiceschanged = () => { pickPreferredVoice(); };
+  }
   /* ===== TTS & token audio ===== */
-  function tts(text, cb){
-    if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) { cb && cb(); return; }
+   function tts(text, cb){
+    if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
+      cb && cb();
+      return;
+    }
+
     const u = new SpeechSynthesisUtterance(text);
-    u.onend = ()=> cb && cb();
-    u.onerror = ()=> cb && cb();
+    const v = preferredVoice || pickPreferredVoice();
+
+    u.lang = 'en-GB';
+    if (v) u.voice = v;
+
+    u.rate = TTS_RATE;
+    u.pitch = TTS_PITCH;
+    u.volume = TTS_VOLUME;
+
+    u.onend = () => cb && cb();
+    u.onerror = () => cb && cb();
+
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
   }
