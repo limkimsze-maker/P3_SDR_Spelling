@@ -46,7 +46,10 @@
   body{font-family:Arial,Helvetica,sans-serif;display:flex;align-items:flex-start;justify-content:center}
   #stage{transform-origin:top center;will-change:transform}
 
-  .sheet{width:1100px;background:#fff;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.12);margin-top:10px;padding:12px 12px 16px}
+  .sheet{
+    width:1100px;background:#fff;border-radius:8px;box-shadow:0 0 6px rgba(0,0,0,.12);
+    margin-top:10px;padding:12px 12px 16px
+  }
   .title{text-align:center;font-size:17px;font-weight:800;margin:8px 0 8px}
 
   .steps{border:2px solid #000;margin:6px 0 10px}
@@ -217,9 +220,7 @@
     z-index: 2147483647 !important;
     pointer-events: auto !important;
   }
-  .teacher-hotspot::after{
-    content:"T";
-  }
+  .teacher-hotspot::after{ content:"T"; }
 
   .center,#criteria-container,#scenario-options,.output-container{display:none}
 
@@ -330,6 +331,7 @@
         <option value="c10s1">Cycle 10 Session 1</option>
         <option value="c10s2">Cycle 10 Session 2</option>
       </select>
+      <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
       <span class="hint">Select a set to auto-load the Word List.</span>
     </div>
 
@@ -355,10 +357,10 @@
     </div>
 
     <div class="controls">
-      <button id="beginBtn"  onclick="begin()">Begin</button>
+      <button id="beginBtn" onclick="begin()">Begin</button>
       <button class="secondary" id="backBtn" onclick="backStep()" disabled>Back 1 Step</button>
-      <button id="nextBtn"   onclick="nextStep()" disabled>Next Step</button>
-      <button id="restartBtn"onclick="restart()">Restart</button>
+      <button id="nextBtn" onclick="nextStep()" disabled>Next Step</button>
+      <button id="restartBtn" onclick="restart()">Restart</button>
       <button class="secondary" id="toggleInstructionsBtn" onclick="toggleInstructions()">Hide Instructions</button>
       <button class="secondary" id="toggleVoiceBtn" onclick="toggleVoice()">Mute Voice</button>
       <button class="secondary" id="repeatWordBtn" onclick="repeatWordAudio()">Repeat Word (Audio)</button>
@@ -549,8 +551,6 @@
   const SOUND_BASE = ASSET_BASE + "sounds/";
   const RAW_BASE   = "https://raw.githubusercontent.com/limkimsze-maker/P3_SDR_Spelling/main/";
   const RAW_SOUND_BASE = RAW_BASE + "sounds/";
-
-  const PAGE_BUST = Date.now().toString(36);
 
   const LESSON_URLS = {
     c1s1: ASSET_BASE + "Cycle%201%20Session%201.json",
@@ -828,19 +828,6 @@
     speechSynthesis.speak(u);
   }
 
-  function playAudio(url, cb, fallbackToken){
-    const audio = new Audio(url);
-    audio.onended = ()=> cb && cb();
-    audio.onerror = ()=> {
-      if (fallbackToken && !BLOCK_TTS) tts('/' + fallbackToken + '/', cb);
-      else cb && cb();
-    };
-    audio.play().catch(()=> {
-      if (fallbackToken && !BLOCK_TTS) tts('/' + fallbackToken + '/', cb);
-      else cb && cb();
-    });
-  }
-
   function playAudioWithFallback(urlPrimary, urlFallback, cb, fallbackToken){
     const audio = new Audio(urlPrimary);
     audio.onended = ()=> cb && cb();
@@ -884,9 +871,10 @@
     const k = (token || '').toLowerCase().trim();
     if(!k){ cb && cb(); return; }
 
+    const pageBust = Date.now().toString(36);
     const file = `${encodeURIComponent(k)}.m4a`;
-    const urlCdn = `${SOUND_BASE}${file}?v=${PAGE_BUST}`;
-    const urlRaw = `${RAW_SOUND_BASE}${file}?v=${PAGE_BUST}`;
+    const urlCdn = `${SOUND_BASE}${file}?v=${pageBust}`;
+    const urlRaw = `${RAW_SOUND_BASE}${file}?v=${pageBust}`;
 
     playAudioWithFallback(urlCdn, urlRaw, cb, k);
   }
@@ -894,6 +882,7 @@
   function prefetchLessonAudio(wordArr){
     try{
       const toks = new Set();
+      const pageBust = Date.now().toString(36);
       (wordArr||[]).forEach(w=>{
         (w.syllables||[]).forEach(s=>{
           (s.letters||[]).forEach(t=>{
@@ -906,8 +895,8 @@
       const list = Array.from(toks).slice(0,120);
       list.forEach(k=>{
         const file = `${encodeURIComponent(k)}.m4a`;
-        const urlCdn = `${SOUND_BASE}${file}?v=${PAGE_BUST}`;
-        const urlRaw = `${RAW_SOUND_BASE}${file}?v=${PAGE_BUST}`;
+        const urlCdn = `${SOUND_BASE}${file}?v=${pageBust}`;
+        const urlRaw = `${RAW_SOUND_BASE}${file}?v=${pageBust}`;
 
         const a = new Audio();
         a.preload = 'auto';
@@ -958,12 +947,10 @@
   }
 
   let words = [
-    { word:"map", meaning:"a map shows places. i see a map on the wall.",
-      syllables:[{letters:["m","a__","p"]}] }
+    { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
   ];
   let teacherSet = [
-    { word:"map", meaning:"a map shows places. i see a map on the wall.",
-      syllables:[{letters:["m","a__","p"]}] }
+    { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
   ];
 
   let DISPLAY_SYL = 1;
@@ -1067,18 +1054,21 @@
       tbody.appendChild(tr);
     });
   }
+
   function cellInput(val,onchange){
     const td=document.createElement('td');
     const inp=document.createElement('input'); inp.type='text'; inp.value=val||'';
     inp.onchange=e=>onchange(e.target.value.trim());
     td.appendChild(inp); return td;
   }
+
   function cellTextarea(val,onchange){
     const td=document.createElement('td');
     const ta=document.createElement('textarea'); ta.value=val||'';
     ta.onchange=e=>onchange(e.target.value.trim());
     td.appendChild(ta); return td;
   }
+
   function cellSelect(options, value, onchange){
     const td=document.createElement('td');
     const sel=document.createElement('select');
@@ -1087,6 +1077,7 @@
     sel.onchange=e=>onchange(e.target.value);
     td.appendChild(sel); return td;
   }
+
   function csvToTokens(v){ return (v||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).slice(0,6); }
 
   let selectedIndex = -1;
@@ -1094,13 +1085,17 @@
     Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r=>r.classList.remove('selected'));
     tr.classList.add('selected'); selectedIndex=idx;
   }
+
   function addBlankRow(){
     teacherSet.push({word:'',meaning:'',syllables:[{letters:[]}]});
     refreshTable();
   }
+
   function deleteSelected(){
     if(selectedIndex<0) return;
-    teacherSet.splice(selectedIndex,1); selectedIndex=-1; refreshTable();
+    teacherSet.splice(selectedIndex,1);
+    selectedIndex=-1;
+    refreshTable();
   }
 
   function useSelected(){
@@ -1136,7 +1131,7 @@
     setCurrentLine('L0');
     setInstruction(`Loaded "${it.word}". Click "Begin".`, false);
   }
- 
+
   function quickUse(){
     const it = quickBuildItem();
     if(!it) return;
@@ -1169,7 +1164,8 @@
   function quickAddToList(){
     const it=quickBuildItem();
     if(!it) return;
-    teacherSet.push(it); refreshTable();
+    teacherSet.push(it);
+    refreshTable();
   }
 
   function quickBuildItem(){
@@ -1327,11 +1323,13 @@
       if(saved!==null) ta.value = saved;
     }catch(_){}
   }
+
   function saveNotes(){
     const ta = document.getElementById('devNotes');
     if(!ta) return;
     try{ localStorage.setItem(NOTES_KEY, ta.value||''); }catch(_){}
   }
+
   function copyNotes(){
     const ta = document.getElementById('devNotes');
     if(!ta) return;
@@ -1339,6 +1337,7 @@
     document.execCommand('copy');
     ta.setSelectionRange(ta.value.length, ta.value.length);
   }
+
   function downloadNotes(){
     const ta = document.getElementById('devNotes');
     const blob = new Blob([ta?.value||''], {type:'text/plain'});
@@ -1348,6 +1347,7 @@
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   }
+
   function clearNotes(){
     const ta = document.getElementById('devNotes');
     if(!ta) return;
@@ -1572,7 +1572,6 @@
     e.preventDefault();
 
     const t = t0;
-
     const tr = t.getBoundingClientRect();
     const scale = _getStageScale();
     const offX = (e.clientX - tr.left) / scale;
@@ -1681,6 +1680,7 @@
     ev.preventDefault();
     ev.dataTransfer.dropEffect = 'move';
   }
+
   function allowDropSound(ev){
     if (!ALLOW_DRAG) return;
     const ok = ev.currentTarget?.dataset?.allow === '1';
@@ -1816,9 +1816,7 @@
       blendWriteSyllable(n);
       const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
       if(n < sylCount){ startSyllableTrack(n+1); }
-      else{
-        finishSoundTracking();
-      }
+      else{ finishSoundTracking(); }
     }else{
       setInstruction(`${ordinal(n)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
     }
@@ -1886,10 +1884,12 @@
     document.getElementById('backBtn').disabled=true;
 
     step=0; wIndex=0; activeSyllable=1; resetBoard();
-    setCurrentLine('L0'); setInstruction('Open the teacher panel to load a word, or choose a lesson set above, then begin.');
+    setCurrentLine('L0');
+    setInstruction('Open the teacher panel to load a word, or choose a lesson set above, then begin.');
     if(window.speechSynthesis) speechSynthesis.cancel();
     exitNoTTSPhase();
-    ALLOW_DRAG = false; setCountersLocked(true);
+    ALLOW_DRAG = false;
+    setCountersLocked(true);
     lockAllSoundSlots();
     autoFitDisplayToWord();
     ensureTrayCounters();
@@ -1911,7 +1911,9 @@
       case 0:
         setCurrentLine('L0');
         setInstruction("Watch me spell a word.");
-        ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
         break;
 
       case 1:
@@ -1920,9 +1922,11 @@
         setInstruction(`Say the word.`, false);
 
         tts(`say the word ${w.word}`, ()=>{
-          if (w.meaning) tts(w.meaning, ()=>{
-            tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
-          }); else {
+          if (w.meaning) {
+            tts(w.meaning, ()=>{
+              tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
+            });
+          } else {
             tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled=false);
           }
         });
@@ -1931,8 +1935,11 @@
       case 2:
         setCurrentLine('Lb');
         setInstruction("I track the syllables. Put one counter in each syllable box.");
-        needSyllableDrops=sylCount; syllableDropsDone=0; document.getElementById('nextBtn').disabled=true;
-        ALLOW_DRAG = true; setCountersLocked(false);
+        needSyllableDrops=sylCount;
+        syllableDropsDone=0;
+        document.getElementById('nextBtn').disabled=true;
+        ALLOW_DRAG = true;
+        setCountersLocked(false);
         lockAllSoundSlots();
         ensureTrayCounters();
         break;
@@ -1941,17 +1948,15 @@
         setCurrentLine('Lf');
         const fullWord =
           (w.word && String(w.word).toLowerCase()) ||
-          (w.syllables||[])
-            .flatMap(s => s.letters || [])
-            .map(displayToken)
-            .join("")
-            .toLowerCase();
+          (w.syllables||[]).flatMap(s => s.letters || []).map(displayToken).join("").toLowerCase();
 
         document.getElementById('wholewordText').textContent = fullWord;
         setInstruction("I blend and check the whole word.", false);
         tts(fullWord);
         document.getElementById('nextBtn').disabled=false;
-        ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+        ALLOW_DRAG = false;
+        setCountersLocked(true);
+        lockAllSoundSlots();
         break;
 
       case 20:
@@ -1961,7 +1966,9 @@
           document.getElementById('nextBtn').disabled = true;
           document.getElementById('backBtn').disabled = true;
           document.getElementById('beginBtn').disabled = false;
-          ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+          ALLOW_DRAG = false;
+          setCountersLocked(true);
+          lockAllSoundSlots();
         } else {
           step = -1;
           resetBoard();
@@ -1969,7 +1976,9 @@
           setCurrentLine('L0');
           setInstruction("");
           autoFitDisplayToWord();
-          ALLOW_DRAG = false; setCountersLocked(true); lockAllSoundSlots();
+          ALLOW_DRAG = false;
+          setCountersLocked(true);
+          lockAllSoundSlots();
           document.getElementById('backBtn').disabled = false;
         }
         break;
@@ -2114,6 +2123,11 @@
     setInstruction(`Loaded ${words.length} ${words.length===1?'word':'words'}. Click "Begin".`, false);
   }
 
+  function reloadCurrentLesson(){
+    const sel = document.getElementById('lessonSelect');
+    if(sel && sel.value) onLessonChange(sel.value);
+  }
+
   async function onLessonChange(key){
     if(!key){
       setInstruction("Choose a lesson set above, or load words in the teacher panel.", false);
@@ -2126,9 +2140,11 @@
       return;
     }
 
-    const urlPrimary = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + PAGE_BUST;
     const filename = decodeURIComponent(url0.split('/').pop() || '');
-    const urlFallback = RAW_BASE + filename + '?v=' + PAGE_BUST;
+    const bust = Date.now().toString(36);
+
+    const urlPrimary  = RAW_BASE + filename + '?v=' + bust;
+    const urlFallback = url0 + (url0.includes('?') ? '&' : '?') + 'v=' + bust;
 
     try{
       setInstruction(`Loading lesson…`, false);
@@ -2137,7 +2153,7 @@
       if(!res || !res.ok){
         res = await fetch(urlFallback, { cache:'no-store' });
       }
-      if(!res.ok) throw new Error(`could not load lesson (status ${res.status})`);
+      if(!res || !res.ok) throw new Error(`could not load lesson (status ${res ? res.status : 'no response'})`);
 
       const obj = await res.json();
       if(!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
@@ -2151,6 +2167,11 @@
       step = 0;
       activeSyllable = 1;
       selectedIndex = -1;
+
+      Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r=>r.classList.remove('selected'));
+
+      if(window.speechSynthesis) speechSynthesis.cancel();
+      exitNoTTSPhase();
 
       refreshTable();
       resetBoard();
@@ -2211,8 +2232,8 @@
 
   window.useAll=useAll;
   window.shuffleTeacherSet=shuffleTeacherSet;
-
-  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, PLAY_SCOPE, ASSET_BASE, SOUND_BASE, LESSON_URLS });
+  window.reloadCurrentLesson=reloadCurrentLesson;
+  window.debugList = () => ({ teacherSet, words, wIndex, DISPLAY_SYL, PLAY_SCOPE, ASSET_BASE, SOUND_BASE, LESSON_URLS, RAW_BASE });
 </script>
 </body>
 </html>
