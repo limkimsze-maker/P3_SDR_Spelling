@@ -1256,28 +1256,43 @@ function repeatSteps(){
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   }
-  function uploadSet(ev){
-    const file = ev.target.files?.[0];
-    if(!file) return;
-    const reader=new FileReader();
-    reader.onload=()=>{
-      try{
-        const obj=JSON.parse(reader.result);
-        if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
-        teacherSet = normalizeWordSet(obj.words);
-        refreshTable();
-        setInstruction(`Uploaded set loaded (${teacherSet.length} words). click “begin”.`, false);
-        words = teacherSet.map(deepCopy);
-        wIndex = 0;
-        autoFitDisplayToWord();
-        document.getElementById('beginBtn').disabled = false;
-        document.getElementById('nextBtn').disabled  = true;
-        document.getElementById('backBtn').disabled  = true;
-      }catch(e){ alert('could not parse json: '+e.message); }
-      ev.target.value = '';
-    };
-    reader.readAsText(file);
-  }
+ function uploadSet(ev){
+  const file = ev.target.files?.[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const obj = JSON.parse(reader.result);
+      if(!obj || !Array.isArray(obj.words)) throw new Error('invalid format: missing "words" array.');
+
+      teacherSet = normalizeWordSet(obj.words);
+      words = teacherSet.map(deepCopy);
+      wIndex = 0;
+      step = 0;
+      activeSyllable = 1;
+
+      if(window.speechSynthesis) speechSynthesis.cancel();
+      exitNoTTSPhase();
+
+      resetBoard();
+      ensureTrayCounters();
+      autoFitDisplayToWord();
+      refreshTable();
+
+      document.getElementById('beginBtn').disabled = false;
+      document.getElementById('nextBtn').disabled  = true;
+      document.getElementById('backBtn').disabled  = true;
+
+      setCurrentLine('L0');
+      setInstruction(`Uploaded set loaded (${teacherSet.length} words). Click "Begin".`, false);
+    }catch(e){
+      alert('could not parse json: ' + e.message);
+    }
+    ev.target.value = '';
+  };
+  reader.readAsText(file);
+}
 
   function shuffleTeacherSet(){
     for (let i = teacherSet.length - 1; i > 0; i--){
