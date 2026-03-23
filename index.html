@@ -919,17 +919,19 @@
     });
   }
 
-  function playSoundForToken(token, cb){
-    const k = (token || '').toLowerCase().trim();
-    if(!k){ cb && cb(); return; }
+ function playSoundForToken(token, cb){
+  const k = (token || '').toLowerCase().trim();
+  if(!k){ cb && cb(); return; }
 
-    const pageBust = Date.now().toString(36);
-    const file = `${encodeURIComponent(k)}.m4a`;
-    const urlCdn = `${SOUND_BASE}${file}?v=${pageBust}`;
-    const urlRaw = `${RAW_SOUND_BASE}${file}?v=${pageBust}`;
+  const bust = Date.now().toString(36);
+  const file = `${encodeURIComponent(k)}.m4a`;
 
-    playAudioWithFallback(urlCdn, urlRaw, cb, k);
-  }
+  // RAW first, CDN second
+  const urlPrimary  = `${RAW_SOUND_BASE}${file}?v=${bust}`;
+  const urlFallback = `${SOUND_BASE}${file}?v=${bust}`;
+
+  playAudioWithFallback(urlPrimary, urlFallback, cb, k);
+}
 
   function prefetchLessonAudio(wordArr){
     try{
