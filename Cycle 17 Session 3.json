@@ -1,0 +1,116 @@
+{
+  "words": [
+    {
+      "word": "brighter",
+      "meaning": "Meaning: more bright than another.\nSentence: The lamp is brighter than the candle.",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "r",
+            "igh",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "er_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "brightest",
+      "meaning": "Meaning: the most bright.\nSentence: Venus is the brightest star tonight.",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "r",
+            "igh",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "est"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "greater",
+      "meaning": "Meaning: more great than another.\nSentence: Five is greater than three.",
+      "syllables": [
+        {
+          "letters": [
+            "g",
+            "r",
+            "ea",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "er_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "greatest",
+      "meaning": "Meaning: the most great.\nSentence: That was his greatest achievement.",
+      "syllables": [
+        {
+          "letters": [
+            "g",
+            "r",
+            "ea",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "est"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "longer",
+      "meaning": "Meaning: more long than another.\nSentence: This rope is longer.",
+      "syllables": [
+        {
+          "letters": [
+            "l",
+            "o__",
+            "ng"
+          ]
+        },
+        {
+          "letters": [
+            "er_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "longest",
+      "meaning": "Meaning: the most long.\nSentence: This is the longest line.",
+      "syllables": [
+        {
+          "letters": [
+            "l",
+            "o__",
+            "ng"
+          ]
+        },
+        {
+          "letters": [
+            "est"
+          ]
+        }
+      ]
+    }
+  ]
+}

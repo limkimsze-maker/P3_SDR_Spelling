@@ -1,0 +1,147 @@
+{
+  "words": [
+    {
+      "word": "strawberry",
+      "meaning": "Meaning: a small red fruit with tiny seeds on the outside.\nSentence: I ate a strawberry.",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "t",
+            "r",
+            "aw"
+          ]
+        },
+        {
+          "letters": [
+            "b",
+            "er_"
+          ]
+        },
+        {
+          "letters": [
+            "r",
+            "y_e"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "shadow",
+      "meaning": "Meaning: a dark shape made when light is blocked.\nSentence: My shadow moved with me.",
+      "syllables": [
+        {
+          "letters": [
+            "sh",
+            "a__",
+            "d"
+          ]
+        },
+        {
+          "letters": [
+            "ow_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "suitable",
+      "meaning": "Meaning: right for a purpose or situation.\nSentence: This book is suitable for children.",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "ui",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "a_"
+          ]
+        },
+        {
+          "letters": [
+            "ble"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "hollow",
+      "meaning": "Meaning: empty inside.\nSentence: The tree trunk was hollow.",
+      "syllables": [
+        {
+          "letters": [
+            "h",
+            "o__",
+            "l"
+          ]
+        },
+        {
+          "letters": [
+            "l",
+            "ow_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "jewel",
+      "meaning": "Meaning: a precious stone used in jewellery.\nSentence: The ring had a red jewel.",
+      "syllables": [
+        {
+          "letters": [
+            "j",
+            "ew"
+          ]
+        },
+        {
+          "letters": [
+            "e__",
+            "l"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "sailboat",
+      "meaning": "Meaning: a boat that moves using sails.\nSentence: The sailboat crossed the lake.",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "ai",
+            "l"
+          ]
+        },
+        {
+          "letters": [
+            "b",
+            "oa",
+            "t"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "shampoo",
+      "meaning": "Meaning: soap for washing hair.\nSentence: I need shampoo to wash my hair.",
+      "syllables": [
+        {
+          "letters": [
+            "sh",
+            "a__",
+            "m"
+          ]
+        },
+        {
+          "letters": [
+            "p",
+            "oo_"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "words": [
+    {
+      "word": "true",
+      "meaning": "Meaning: correct; not false.\nSentence: It is true that the sky looks blue on a clear day.",
+      "syllables": [
+        {
+          "letters": [
+            "t",
+            "r",
+            "ue"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "flew",
+      "meaning": "Meaning: moved through the air; the past tense of fly.\nSentence: The bird flew over the tree.",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "l",
+            "ew_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "suitcase",
+      "meaning": "Meaning: a case used for carrying clothes and other things when travelling.\nSentence: I packed my clothes in the suitcase.",
+      "syllables": [
+        {
+          "letters": [
+            "s",
+            "ui",
+            "t"
+          ]
+        },
+        {
+          "letters": [
+            "k",
+            "a",
+            "se"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "clue",
+      "meaning": "Meaning: something that helps you find an answer.\nSentence: The first clue helped us solve the puzzle.",
+      "syllables": [
+        {
+          "letters": [
+            "c",
+            "l",
+            "ue"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "grew",
+      "meaning": "Meaning: became bigger or taller; the past tense of grow.\nSentence: The plant grew quickly after the rain.",
+      "syllables": [
+        {
+          "letters": [
+            "g",
+            "r",
+            "ew_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "juice",
+      "meaning": "Meaning: a drink made from fruit.\nSentence: I drank a glass of orange juice.",
+      "syllables": [
+        {
+          "letters": [
+            "j",
+            "ui",
+            "ce"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "blue",
+      "meaning": "Meaning: a colour like the sky on a clear day.\nSentence: She wore a blue dress.",
+      "syllables": [
+        {
+          "letters": [
+            "b",
+            "l",
+            "ue"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "threw",
+      "meaning": "Meaning: tossed something; the past tense of throw.\nSentence: He threw the ball to his friend.",
+      "syllables": [
+        {
+          "letters": [
+            "th",
+            "r",
+            "ew_"
+          ]
+        }
+      ]
+    },
+    {
+      "word": "fruit",
+      "meaning": "Meaning: a part of a plant that we can eat, such as an apple or banana.\nSentence: We eat fruit every day.",
+      "syllables": [
+        {
+          "letters": [
+            "f",
+            "r",
+            "ui",
+            "t"
+          ]
+        }
+      ]
+    }
+  ]
+}
