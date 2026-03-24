@@ -1129,11 +1129,11 @@ function rerenderMagicELabel(slotEl) {
 
     const path = document.createElementNS(ns, 'path');
     path.setAttribute('class', 'magic-e-arrow-path');
-    path.setAttribute('d', 'M146 42 L146 50 Q146 48 136 48 L58 48 Q46 48 42 36 L42 22');
+    path.setAttribute('d', 'M143 42 L143 50 Q146 48 136 48 L58 48 Q46 48 42 36 L50 30');
 
     const head = document.createElementNS(ns, 'polyline');
     head.setAttribute('class', 'magic-e-arrow-head');
-    head.setAttribute('points', '34,28 42,20 50,28');
+    head.setAttribute('points', '34,28 50,30 50,28');
     svg.appendChild(path);
     svg.appendChild(head);
     wrap.appendChild(svg);
