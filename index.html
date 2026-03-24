@@ -277,25 +277,37 @@
       font-weight: 900;
     }
 
-    .tile-label.magic-e-label {
+  .tile-label.magic-e-label{
   overflow: visible;
 }
 
-.magic-e-arrow{
+.magic-e-arrow-wrap{
   position:absolute;
-  left:50%;
-  bottom:2px;
-  transform:translateX(-65%);
-  color:#d11f1f;
-  font-size:24px;
-  font-weight:900;
-  line-height:1;
+  right:2px;
+  bottom:-18px;
+  width:44px;
+  height:18px;
   z-index:12;
   pointer-events:none;
   user-select:none;
-  text-shadow:
-    0 0 2px rgba(255,255,255,1),
-    0 0 4px rgba(255,255,255,1);
+  overflow:visible;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,1))
+          drop-shadow(0 0 4px rgba(255,255,255,1));
+}
+
+.magic-e-arrow-svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.magic-e-arrow-path,
+.magic-e-arrow-head{
+  stroke:#d11f1f;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  fill:none;
 }
     .wholeword-write {
       padding: 8px;
@@ -1102,14 +1114,31 @@ function rerenderMagicELabel(slotEl) {
   lbl.innerHTML = renderTileLabelHTML(token, on);
   lbl.classList.toggle('magic-e-label', on);
 
-  const oldArrow = slotEl.querySelector('.magic-e-arrow');
+  const oldArrow = slotEl.querySelector('.magic-e-arrow-wrap');
   if (oldArrow) oldArrow.remove();
 
   if (on) {
-    const arrow = document.createElement('div');
-    arrow.className = 'magic-e-arrow';
-    arrow.textContent = '←';
-    slotEl.appendChild(arrow);
+    const wrap = document.createElement('div');
+    wrap.className = 'magic-e-arrow-wrap';
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 44 18');
+    svg.setAttribute('class', 'magic-e-arrow-svg');
+    svg.setAttribute('aria-hidden', 'true');
+
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('class', 'magic-e-arrow-path');
+    path.setAttribute('d', 'M38 4 C34 14, 19 16, 7 10');
+
+    const head = document.createElementNS(ns, 'polyline');
+    head.setAttribute('class', 'magic-e-arrow-head');
+    head.setAttribute('points', '11,6 7,10 12,12');
+
+    svg.appendChild(path);
+    svg.appendChild(head);
+    wrap.appendChild(svg);
+    slotEl.appendChild(wrap);
   }
 }
     function refreshMagicETargets() {
