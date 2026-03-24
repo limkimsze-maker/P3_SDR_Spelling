@@ -282,8 +282,8 @@
 
 .magic-e-arrow-wrap{
   position:absolute;
-  left:-112px;
-  bottom:-8px;
+  left:-110px;
+  bottom:-6px;
   width:190px;
   height:58px;
   z-index:12;
@@ -1122,18 +1122,19 @@ function rerenderMagicELabel(slotEl) {
     wrap.className = 'magic-e-arrow-wrap';
 
     const ns = 'http://www.w3.org/2000/svg';
-   const svg = document.createElementNS(ns, 'svg');
-svg.setAttribute('viewBox', '0 0 240 42');
-svg.setAttribute('class', 'magic-e-arrow-svg');
-svg.setAttribute('aria-hidden', 'true');
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 190 58');
+    svg.setAttribute('class', 'magic-e-arrow-svg');
+    svg.setAttribute('aria-hidden', 'true');
 
-const path = document.createElementNS(ns, 'path');
-path.setAttribute('class', 'magic-e-arrow-path');
-path.setAttribute('d', 'M218 10 C210 34, 150 40, 74 24');
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('class', 'magic-e-arrow-path');
+    path.setAttribute('d', 'M150 10 L150 40 Q150 50 140 50 L54 50 Q40 50 36 36 L36 28');
 
-const head = document.createElementNS(ns, 'polyline');
-head.setAttribute('class', 'magic-e-arrow-head');
-head.setAttribute('points', '84,15 72,24 86,31');
+    const head = document.createElementNS(ns, 'polyline');
+    head.setAttribute('class', 'magic-e-arrow-head');
+    head.setAttribute('points', '28,34 36,26 44,34');
+
     svg.appendChild(path);
     svg.appendChild(head);
     wrap.appendChild(svg);
