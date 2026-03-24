@@ -7,9 +7,6 @@
   <title>Spelling Worksheet — 1–4 Syllables + Unified Sounds Folder</title>
 
   <style>
-    /* =========================================================
-       Base
-       ========================================================= */
     *, *::before, *::after { box-sizing: border-box; }
 
     html, body {
@@ -31,9 +28,6 @@
       will-change: transform;
     }
 
-    /* =========================================================
-       Main sheet
-       ========================================================= */
     .sheet {
       width: 1100px;
       background: #fff;
@@ -50,9 +44,6 @@
       margin: 8px 0 8px;
     }
 
-    /* =========================================================
-       Instructions
-       ========================================================= */
     #stepsPanel { display: none !important; }
 
     .steps {
@@ -89,9 +80,6 @@
       min-height: 28px;
     }
 
-    /* =========================================================
-       Controls
-       ========================================================= */
     .controls {
       display: flex;
       gap: 8px;
@@ -111,17 +99,11 @@
 
     button:hover { background: #17883c; }
     button[disabled] { opacity: .6; cursor: not-allowed; }
-
     #restartBtn { background: #e33; }
 
     .secondary { background: #495057; }
     .secondary:hover { background: #3e464c; }
 
-    .magic-e-mode-on { background: #b42318 !important; }
-
-    /* =========================================================
-       Lesson bar
-       ========================================================= */
     .lessonbar {
       display: flex;
       gap: 10px;
@@ -149,9 +131,6 @@
       color: #555;
     }
 
-    /* =========================================================
-       Student layout / grid
-       ========================================================= */
     #studentLayout { margin-top: 12px; }
 
     .grid {
@@ -170,7 +149,6 @@
     }
 
     .hdr div:last-child { border-right: none; }
-
     .row { display: grid; }
 
     .row .cell {
@@ -194,33 +172,6 @@
 
     .syllableDrop .counter { margin-top: 40px; }
 
-    .wholeword-write {
-      padding: 8px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
-
-    #wholewordText {
-      font-size: 42px;
-      font-weight: 700;
-      margin-top: 6px;
-    }
-
-    .syllableText {
-      position: absolute;
-      top: 14px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 40px;
-      font-weight: 700;
-      pointer-events: none;
-    }
-
-    /* =========================================================
-       Sound tiles
-       ========================================================= */
     .tiles-row {
       display: grid;
       border-top: 2px solid #000;
@@ -229,7 +180,7 @@
 
     .tiles {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(6,1fr);
       gap: 0;
       border-right: 2px solid #000;
       padding: 8px;
@@ -261,7 +212,6 @@
 
     .counter-slot.has-counter::after { color: #6b7280; }
     .counter-slot.disabled { opacity: .65; }
-
     .counter-slot.span-ghost { pointer-events: none; }
     .counter-slot.span-ghost::after { opacity: .15; }
 
@@ -301,59 +251,52 @@
       transform: translateX(-50%);
     }
 
-  .tile-badge{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  bottom:30px;
-  font-size:26px;
-  font-weight:900;
-  line-height:1;
-  z-index:6;
-  pointer-events:none;
-  user-select:none;
-}
+    .tile-badge {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 28px;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+      z-index: 6;
+      pointer-events: none;
+      user-select: none;
+    }
 
-.schwa-badge{
-  color:#d11f1f;
-  text-shadow:
-    0 0 1px rgba(255,255,255,1),
-    0 0 4px rgba(255,255,255,1);
-}
-
-  .schwa-badge{
-  color:#d11f1f;
-  font-size:22px;
-  font-weight:900;
-  bottom:28px;
-  text-shadow:
-    0 0 1px rgba(255,255,255,.9),
-    0 0 3px rgba(255,255,255,.9);
-}
+    .schwa-badge {
+      color: #d11f1f;
+      text-shadow:
+        0 0 1px rgba(255,255,255,1),
+        0 0 4px rgba(255,255,255,1);
+    }
 
     .magic-e-e {
       color: #d11f1f;
       font-weight: 900;
     }
 
+    .tile-label.magic-e-label {
+      overflow: visible;
+    }
+
     .tile-label.magic-e-label::before {
       content: "";
       position: absolute;
-      left: 50%;
-      top: -18px;
-      width: 42px;
-      height: 16px;
-      border-top: 2px solid #d11f1f;
-      border-left: 2px solid #d11f1f;
-      border-top-left-radius: 16px;
-      transform: translateX(-70%);
+      right: 18%;
+      bottom: -12px;
+      width: 34px;
+      height: 10px;
+      border-bottom: 2px solid #d11f1f;
+      border-right: 2px solid #d11f1f;
+      border-bottom-right-radius: 14px;
     }
 
     .tile-label.magic-e-label::after {
       content: "";
       position: absolute;
-      left: calc(50% - 23px);
-      top: -7px;
+      left: 33%;
+      bottom: -13px;
       width: 7px;
       height: 7px;
       border-left: 2px solid #d11f1f;
@@ -361,9 +304,19 @@
       transform: rotate(45deg);
     }
 
-    /* =========================================================
-       Counter tray
-       ========================================================= */
+    .wholeword-write {
+      padding: 8px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    #wholewordText {
+      font-size: 42px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
     .counter-tray {
       display: flex;
       gap: 8px;
@@ -382,9 +335,43 @@
 
     .counter.locked { cursor: not-allowed; }
 
-    /* =========================================================
-       Teacher panel
-       ========================================================= */
+    .syllableText {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 40px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .bottom-tools {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .magic-e-panel {
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .magic-e-help {
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
+
+    .magic-e-mode-on {
+      background: #b42318 !important;
+    }
+
     .teacher-panel {
       position: fixed;
       right: 12px;
@@ -486,6 +473,32 @@
 
     .wordlist tr.selected { outline: 2px solid #1e9e47; }
 
+    .teacher-hotspot {
+      position: fixed !important;
+      right: 10px;
+      bottom: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      z-index: 2147483647 !important;
+      pointer-events: auto !important;
+    }
+
+    .teacher-hotspot::after { content: "T"; }
+
+    .center,
+    #criteria-container,
+    #scenario-options,
+    .output-container { display: none; }
+
     .notes-card {
       border: 1px dashed #bbb;
       border-radius: 8px;
@@ -497,75 +510,46 @@
 
     .notes-card textarea { min-height: 120px; }
 
-    /* =========================================================
-       Teacher hotspot / glossary / misc
-       ========================================================= */
-    .teacher-hotspot {
-      position: fixed !important;
-      right: 10px;
-      bottom: 10px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(0,0,0,.75);
-      color:#fff;
-      font-weight:700;
-      font-size:14px;
-      line-height:28px;
-      text-align:center;
-      border:none;
-      cursor:pointer;
-      z-index:2147483647 !important;
-      pointer-events:auto !important;
-    }
-
-    .teacher-hotspot::after { content:"T"; }
-
-    .center,
-    #criteria-container,
-    #scenario-options,
-    .output-container { display:none; }
-
-    .corner-glossary{
+    .corner-glossary {
       position: sticky;
       top: 8px;
       margin-left: auto;
       max-width: 320px;
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:8px;
-      box-shadow:0 2px 8px rgba(0,0,0,.06);
-      padding:10px 12px;
-      font-size:12px;
-      line-height:1.35;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.35;
     }
 
-    .corner-glossary h5{
-      margin:0 0 6px;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.03em;
+    .corner-glossary h5 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
     }
 
-    .corner-glossary ul{
-      list-style:disc;
-      padding-left:18px;
-      margin:6px 0 0;
-      max-height:38vh;
-      overflow:auto;
+    .corner-glossary ul {
+      list-style: disc;
+      padding-left: 18px;
+      margin: 6px 0 0;
+      max-height: 38vh;
+      overflow: auto;
     }
 
-    .corner-glossary li{ margin:2px 0; }
+    .corner-glossary li { margin: 2px 0; }
 
-    .corner-glossary code{
-      background:#f6f8fa;
-      border:1px solid #e5e7eb;
-      border-radius:4px;
-      padding:0 4px;
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    .corner-glossary code {
+      background: #f6f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 0 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
-    .credits{
+    .credits {
       position: fixed;
       top: 8px;
       left: 12px;
@@ -579,18 +563,18 @@
       max-width: calc(100vw - 24px);
     }
 
-    .credits a{ pointer-events:auto; }
-    .credits p{ margin:2px 0; }
-    .credits p:first-child{ color:#000; font-weight:bold; }
+    .credits a { pointer-events: auto; }
+    .credits p { margin: 2px 0; }
+    .credits p:first-child { color: #000; font-weight: bold; }
 
     .counter,
     .counter-slot,
     .syllableDrop,
-    #counters{
-      touch-action:none;
-      -webkit-user-select:none;
-      user-select:none;
-      -webkit-touch-callout:none;
+    #counters {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
   </style>
 
@@ -602,9 +586,6 @@
     <div class="sheet">
       <div class="title">Spelling Worksheet</div>
 
-      <!-- =====================================================
-           Lesson selector
-           ===================================================== -->
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
         <select id="lessonSelect" onchange="onLessonChange(this.value)">
@@ -669,9 +650,6 @@
         <span class="hint">Select a set to auto-load the Word List.</span>
       </div>
 
-      <!-- =====================================================
-           Hidden step script
-           ===================================================== -->
       <div class="steps" id="stepsPanel">
         <h3>Spelling Steps</h3>
         <div id="script" class="script">
@@ -693,9 +671,6 @@
         Want to try one word again? Click T, pick your word, click Use Selected, then press T again and begin.
       </div>
 
-      <!-- =====================================================
-           Main controls
-           ===================================================== -->
       <div class="controls">
         <button id="beginBtn" onclick="begin()">Begin</button>
         <button class="secondary" id="backBtn" onclick="backStep()" disabled>Back 1 Step</button>
@@ -710,17 +685,22 @@
       <div id="studentLayout"></div>
 
       <h3 style="margin:12px 0 6px;font-size:18px">Counters</h3>
-      <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
-        <div class="counter locked" id="seedCounter" draggable="false" aria-hidden="true" style="display:none"></div>
+
+      <div class="bottom-tools">
+        <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
+          <div class="counter locked" id="seedCounter" draggable="false" aria-hidden="true" style="display:none"></div>
+        </div>
+
+        <div class="magic-e-panel">
+          <button type="button" class="secondary" id="magicEModeBtn" onclick="toggleMagicEMode()">Magic E: Off</button>
+          <div class="magic-e-help">Turn on, then click a carrier tile like <span class="kbd">be</span> or <span class="kbd">ce</span>.</div>
+        </div>
       </div>
 
       <button id="teacherHotspot" class="teacher-hotspot" aria-label="open teacher panel"></button>
     </div>
   </div>
 
-  <!-- =======================================================
-       Teacher panel
-       ======================================================= -->
   <div class="teacher-panel" id="teacherPanel" aria-hidden="true">
     <div class="panel-topbar">
       <h4>Teacher tools</h4>
@@ -832,7 +812,6 @@
         <div class="row">
           <button type="button" onclick="quickUse()">Use tiles above</button>
           <button type="button" onclick="quickAddToList()">Add to Word List</button>
-          <button type="button" class="secondary" id="magicEModeBtn" onclick="toggleMagicEMode()">Magic E Mode: Off</button>
         </div>
       </div>
 
@@ -893,17 +872,11 @@
   </div>
 
   <script>
-    /* =========================================================
-       Asset paths
-       ========================================================= */
     const ASSET_BASE = "https://cdn.jsdelivr.net/gh/limkimsze-maker/P3_SDR_Spelling@main/";
     const SOUND_BASE = ASSET_BASE + "sounds/";
     const RAW_BASE = "https://raw.githubusercontent.com/limkimsze-maker/P3_SDR_Spelling/main/";
     const RAW_SOUND_BASE = RAW_BASE + "sounds/";
 
-    /* =========================================================
-       Lesson URLs
-       ========================================================= */
     const LESSON_URLS = {
       c1s1: ASSET_BASE + "Cycle%201%20Session%201.json",
       c1s2: ASSET_BASE + "Cycle%201%20Session%202.json",
@@ -961,27 +934,16 @@
       c18s3: ASSET_BASE + "Cycle%2018%20Session%203.json",
     };
 
-    /* =========================================================
-       Globals
-       ========================================================= */
     let instructionsHidden = false;
     let voiceEnabled = true;
     let BLOCK_TTS = false;
 
     let words = [
-      {
-        word: "map",
-        meaning: "a map shows places. i see a map on the wall.",
-        syllables: [{ letters: ["m", "a__", "p"] }]
-      }
+      { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
     ];
 
     let teacherSet = [
-      {
-        word: "map",
-        meaning: "a map shows places. i see a map on the wall.",
-        syllables: [{ letters: ["m", "a__", "p"] }]
-      }
+      { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
     ];
 
     let DISPLAY_SYL = 1;
@@ -999,9 +961,6 @@
     let ALLOW_DRAG = false;
     let MAGIC_E_EDIT_MODE = false;
 
-    /* =========================================================
-       Token rules
-       ========================================================= */
     function tokenSpan(tok) {
       const k = String(tok || "").trim().toLowerCase();
       return (k === "x") ? 2 : 1;
@@ -1072,18 +1031,12 @@
       const shown = displayToken(raw);
 
       if (magicE && /e$/i.test(shown)) {
-        return (
-          escapeHtml(shown.slice(0, -1)) +
-          '<span class="magic-e-e">e</span>'
-        );
+        return escapeHtml(shown.slice(0, -1)) + '<span class="magic-e-e">e</span>';
       }
 
       return escapeHtml(shown);
     }
 
-    /* =========================================================
-       Stage fit
-       ========================================================= */
     (function(){
       let W = 0;
       let H = 0;
@@ -1121,10 +1074,7 @@
       addEventListener('orientationchange', () => setTimeout(fit, 50));
     })();
 
-    /* =========================================================
-       Teacher panel
-       ========================================================= */
-    function toggleTeacherPanel(force){
+    function toggleTeacherPanel(force) {
       const panel = document.getElementById('teacherPanel');
       const show = (typeof force === 'boolean') ? force : panel.style.display !== 'block';
       panel.style.display = show ? 'block' : 'none';
@@ -1149,9 +1099,6 @@
       if (notes) notes.addEventListener('input', saveNotes);
     });
 
-    /* =========================================================
-       Magic E mode
-       ========================================================= */
     function rerenderMagicELabel(slotEl) {
       const lbl = slotEl.querySelector('.tile-label');
       if (!lbl) return;
@@ -1176,7 +1123,7 @@
 
       const btn = document.getElementById('magicEModeBtn');
       if (btn) {
-        btn.textContent = `Magic E Mode: ${MAGIC_E_EDIT_MODE ? 'On' : 'Off'}`;
+        btn.textContent = `Magic E: ${MAGIC_E_EDIT_MODE ? 'On' : 'Off'}`;
         btn.classList.toggle('magic-e-mode-on', MAGIC_E_EDIT_MODE);
       }
 
@@ -1199,9 +1146,6 @@
       e.stopPropagation();
     }, true);
 
-    /* =========================================================
-       Instruction toggles
-       ========================================================= */
     function toggleInstructions() {
       instructionsHidden = !instructionsHidden;
       const steps = document.getElementById('stepsPanel');
@@ -1231,9 +1175,6 @@
       if (el) el.classList.add('current');
     }
 
-    /* =========================================================
-       TTS
-       ========================================================= */
     const TTS_RATE = 0.62;
     const TTS_PITCH = 1.0;
     const TTS_VOLUME = 1.0;
@@ -1297,9 +1238,6 @@
       BLOCK_TTS = false;
     }
 
-    /* =========================================================
-       Audio
-       ========================================================= */
     function playAudioWithFallback(urlPrimary, urlFallback, cb, fallbackToken) {
       const audio = new Audio(urlPrimary);
       audio.onended = () => cb && cb();
@@ -1413,9 +1351,6 @@
       });
     }
 
-    /* =========================================================
-       Layout rendering
-       ========================================================= */
     function renderLayout() {
       const container = document.getElementById('studentLayout');
       container.innerHTML = '';
@@ -1511,9 +1446,6 @@
       renderLayout();
     }
 
-    /* =========================================================
-       Table / word list
-       ========================================================= */
     function refreshTable() {
       const tbody = document.getElementById('wordTBody');
       tbody.innerHTML = '';
@@ -1848,9 +1780,6 @@
         .filter(w => w.word);
     }
 
-    /* =========================================================
-       Notes
-       ========================================================= */
     const NOTES_KEY = 'devNotesV1';
 
     function restoreNotes() {
@@ -1898,9 +1827,6 @@
       }
     }
 
-    /* =========================================================
-       Counters
-       ========================================================= */
     const MAX_TRAY_COUNTERS = 4;
 
     function _trayCounters() {
@@ -1960,9 +1886,6 @@
       ev.dataTransfer.effectAllowed = 'move';
     }
 
-    /* =========================================================
-       Sound slot guards
-       ========================================================= */
     function lockAllSoundSlots() {
       document.querySelectorAll('.counter-slot').forEach(s => {
         s.classList.add('disabled');
@@ -2008,9 +1931,6 @@
       }
     }
 
-    /* =========================================================
-       Tile labels
-       ========================================================= */
     function addTileLabel(slotEl, text) {
       if (slotEl.querySelector('.tile-label')) return;
 
@@ -2040,9 +1960,6 @@
       refreshMagicETargets();
     }
 
-    /* =========================================================
-       Pointer / mobile drag helpers
-       ========================================================= */
     function _getStage(){ return document.getElementById('stage'); }
 
     function _getStageScale(){
@@ -2302,9 +2219,6 @@
       document.addEventListener('pointercancel', _mobileUp, true);
     }
 
-    /* =========================================================
-       Desktop drag / drop
-       ========================================================= */
     function allowDropBasic(ev){
       if (!ALLOW_DRAG) return;
       ev.preventDefault();
@@ -2416,9 +2330,6 @@
       }
     }
 
-    /* =========================================================
-       Spelling flow helpers
-       ========================================================= */
     function ordinal(n) {
       return n===1 ? '1st' : n===2 ? '2nd' : n===3 ? '3rd' : '4th';
     }
@@ -2839,9 +2750,6 @@
       ensureTrayCounters();
     }
 
-    /* =========================================================
-       Lesson loading
-       ========================================================= */
     function reloadCurrentLesson(){
       const sel = document.getElementById('lessonSelect');
       if (sel && sel.value) onLessonChange(sel.value);
@@ -2915,9 +2823,6 @@
       }
     }
 
-    /* =========================================================
-       Exports
-       ========================================================= */
     window.renderLayout = renderLayout;
     window.autoFitDisplayToWord = autoFitDisplayToWord;
     window.allowDropBasic = allowDropBasic;
