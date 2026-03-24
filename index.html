@@ -1236,27 +1236,31 @@ head.setAttribute('points', '49,58 57,50 65,58');
     }
 
     function tts(text, cb) {
-      if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
-        cb && cb();
-        return;
-      }
+  if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
+    cb && cb();
+    return;
+  }
 
-      const u = new SpeechSynthesisUtterance(text);
-      const v = preferredVoice || pickPreferredVoice();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = preferredVoice || pickPreferredVoice();
 
-      u.lang = 'en-GB';
-      if (v) u.voice = v;
-      u.rate = TTS_RATE;
-      u.pitch = TTS_PITCH;
-      u.volume = TTS_VOLUME;
+  u.lang = 'en-GB';
+  if (v) u.voice = v;
+  u.rate = TTS_RATE;
+  u.pitch = TTS_PITCH;
+  u.volume = TTS_VOLUME;
 
-      u.onend = () => cb && cb();
-      u.onerror = () => cb && cb();
+  u.onend = () => cb && cb();
+  u.onerror = () => cb && cb();
 
-      speechSynthesis.cancel();
-      speechSynthesis.speak(u);
-    }
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
+    speechSynthesis.cancel();
+  }
 
+  setTimeout(() => {
+    speechSynthesis.speak(u);
+  }, 120);
+}
     function enterNoTTSPhase() {
       BLOCK_TTS = true;
       if (window.speechSynthesis) speechSynthesis.cancel();
@@ -2500,13 +2504,14 @@ head.setAttribute('points', '49,58 57,50 65,58');
       const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
       switch(step){
-        case 0:
-          setCurrentLine('L0');
-          setInstruction("Watch me spell a word.");
-          ALLOW_DRAG = false;
-          setCountersLocked(true);
-          lockAllSoundSlots();
-          break;
+       case 0:
+  setCurrentLine('L0');
+  setInstruction("Watch me spell a word.", false);
+  setTimeout(() => tts("Watch me spell a word."), 150);
+  ALLOW_DRAG = false;
+  setCountersLocked(true);
+  lockAllSoundSlots();
+  break;
 
         case 1:
           setCurrentLine('La');
