@@ -216,10 +216,9 @@
     .counter-slot.span-ghost::after { opacity: .15; }
 
     .counter-slot.magic-e-target {
-  outline: 3px dashed #d11f1f;
-  outline-offset: 2px;
-  background: rgba(209,31,31,.05);
-}
+      outline: none;
+      background: transparent;
+    }
 
     .counter.in-slot {
       position: absolute;
@@ -325,9 +324,11 @@
     .counter-tray {
       display: flex;
       gap: 8px;
-      margin: 12px 0 0;
+      margin: 0;
       align-items: center;
       flex-wrap: wrap;
+      flex: 1 1 auto;
+      min-height: 30px;
     }
 
     .counter {
@@ -353,24 +354,26 @@
 
     .bottom-tools {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-top: 4px;
+      gap: 12px;
+      margin-top: 8px;
+      padding-right: 44px;
     }
 
     .magic-e-panel {
-      min-width: 280px;
+      flex: 0 0 auto;
+      min-width: auto;
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
+      align-items: center;
+      justify-content: flex-end;
     }
 
-    .magic-e-help {
-      font-size: 12px;
-      color: #666;
-      text-align: right;
+    .magic-e-help { display: none; }
+
+    #magicEModeBtn {
+      white-space: nowrap;
+      padding: 7px 12px;
     }
 
     .magic-e-mode-on {
@@ -698,7 +701,6 @@
 
         <div class="magic-e-panel">
           <button type="button" class="secondary" id="magicEModeBtn" onclick="toggleMagicEMode()">Magic E: Off</button>
-          <div class="magic-e-help">Turn on, then click a carrier tile like <span class="kbd">be</span> or <span class="kbd">ce</span>.</div>
         </div>
       </div>
 
@@ -1127,13 +1129,13 @@ function rerenderMagicELabel(slotEl) {
     svg.setAttribute('class', 'magic-e-arrow-svg');
     svg.setAttribute('aria-hidden', 'true');
 
-  const path = document.createElementNS(ns, 'path');
-path.setAttribute('class', 'magic-e-arrow-path');
-path.setAttribute('d', 'M143 48 L143 56 Q143 64 135 64 L72 64 Q58 64 55 56 L55 48');
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('class', 'magic-e-arrow-path');
+    path.setAttribute('d', 'M146 8 L146 38 Q146 48 136 48 L58 48 Q46 48 42 36 L42 22');
 
-const head = document.createElementNS(ns, 'polyline');
-head.setAttribute('class', 'magic-e-arrow-head');
-head.setAttribute('points', '47,56 55,48 63,56');
+    const head = document.createElementNS(ns, 'polyline');
+    head.setAttribute('class', 'magic-e-arrow-head');
+    head.setAttribute('points', '34,28 42,20 50,28');
     svg.appendChild(path);
     svg.appendChild(head);
     wrap.appendChild(svg);
@@ -1142,9 +1144,21 @@ head.setAttribute('points', '47,56 55,48 63,56');
 }
     function refreshMagicETargets() {
       document.querySelectorAll('.counter-slot').forEach(slot => {
-        const token = String(slot.dataset.rawToken || "").trim().toLowerCase();
-        const active = MAGIC_E_EDIT_MODE && MAGIC_E_CARRIERS.has(token) && !!slot.querySelector('.tile-label');
-        slot.classList.toggle('magic-e-target', active);
+        slot.classList.remove('magic-e-target');
+      });
+    }
+
+    function applyMagicEStateToVisibleSlots() {
+      document.querySelectorAll('.counter-slot').forEach(slot => {
+        const token = String(slot.dataset.rawToken || '').trim().toLowerCase();
+        if (!slot.querySelector('.tile-label')) return;
+
+        if (MAGIC_E_EDIT_MODE && MAGIC_E_CARRIERS.has(token)) {
+          slot.dataset.magicE = '1';
+        } else {
+          delete slot.dataset.magicE;
+        }
+        rerenderMagicELabel(slot);
       });
     }
 
@@ -1157,24 +1171,9 @@ head.setAttribute('points', '47,56 55,48 63,56');
         btn.classList.toggle('magic-e-mode-on', MAGIC_E_EDIT_MODE);
       }
 
+      applyMagicEStateToVisibleSlots();
       refreshMagicETargets();
     }
-
-    document.addEventListener('click', function(e) {
-      const slot = e.target.closest('.counter-slot');
-      if (!slot || !MAGIC_E_EDIT_MODE) return;
-      if (!slot.querySelector('.tile-label')) return;
-
-      const token = String(slot.dataset.rawToken || "").trim().toLowerCase();
-      if (!MAGIC_E_CARRIERS.has(token)) return;
-
-      slot.dataset.magicE = (slot.dataset.magicE === '1') ? '0' : '1';
-      rerenderMagicELabel(slot);
-      refreshMagicETargets();
-
-      e.preventDefault();
-      e.stopPropagation();
-    }, true);
 
     function toggleInstructions() {
       instructionsHidden = !instructionsHidden;
@@ -1972,18 +1971,23 @@ head.setAttribute('points', '47,56 55,48 63,56');
       const span = Math.max(spanByToken, spanByDataset);
       if (span === 2) lbl.classList.add('span2');
 
-      slotEl.dataset.rawToken = String(text || "").trim().toLowerCase();
-slotEl.appendChild(lbl);
-rerenderMagicELabel(slotEl);
+      slotEl.dataset.rawToken = String(text || '').trim().toLowerCase();
+      if (MAGIC_E_EDIT_MODE && MAGIC_E_CARRIERS.has(slotEl.dataset.rawToken)) {
+        slotEl.dataset.magicE = '1';
+      } else {
+        delete slotEl.dataset.magicE;
+      }
+      slotEl.appendChild(lbl);
+      rerenderMagicELabel(slotEl);
 
-if (isSchwaToken(text) && !slotEl.querySelector('.schwa-badge')) {
-  const badge = document.createElement('div');
-  badge.className = 'tile-badge schwa-badge';
-  badge.textContent = 'ə';
-  slotEl.appendChild(badge);
-}
+      if (isSchwaToken(text) && !slotEl.querySelector('.schwa-badge')) {
+        const badge = document.createElement('div');
+        badge.className = 'tile-badge schwa-badge';
+        badge.textContent = 'ə';
+        slotEl.appendChild(badge);
+      }
 
-refreshMagicETargets();
+      refreshMagicETargets();
     }
 
     function _getStage(){ return document.getElementById('stage'); }
