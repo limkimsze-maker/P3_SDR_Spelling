@@ -292,17 +292,28 @@
       border-bottom-right-radius: 14px;
     }
 
-    .tile-label.magic-e-label::after {
-      content: "";
-      position: absolute;
-      left: 33%;
-      bottom: -13px;
-      width: 7px;
-      height: 7px;
-      border-left: 2px solid #d11f1f;
-      border-bottom: 2px solid #d11f1f;
-      transform: rotate(45deg);
-    }
+   .tile-label.magic-e-label {
+  overflow: visible;
+}
+
+.tile-label.magic-e-label::before {
+  content: none;
+}
+
+.tile-label.magic-e-label::after {
+  content: "↶";
+  position: absolute;
+  right: 8px;
+  bottom: -22px;
+  color: #d11f1f;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  z-index: 10;
+  text-shadow:
+    0 0 2px rgba(255,255,255,1),
+    0 0 4px rgba(255,255,255,1);
+}
 
     .wholeword-write {
       padding: 8px;
