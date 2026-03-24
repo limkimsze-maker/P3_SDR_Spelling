@@ -1128,10 +1128,9 @@ function rerenderMagicELabel(slotEl) {
     svg.setAttribute('viewBox', '0 0 170 62');
     svg.setAttribute('class', 'magic-e-arrow-svg');
     svg.setAttribute('aria-hidden', 'true');
-
-   const path = document.createElementNS(ns, 'path');
+const path = document.createElementNS(ns, 'path');
 path.setAttribute('class', 'magic-e-arrow-path');
-path.setAttribute('d', 'M146 50 L146 80 Q146 90 136 90 L73 90 Q61 90 57 78 L57 50');
+path.setAttribute('d', 'M142 50 L142 65 Q142 70 132 70 L73 70 Q61 70 57 62 L57 50');
 
 const head = document.createElementNS(ns, 'polyline');
 head.setAttribute('class', 'magic-e-arrow-head');
