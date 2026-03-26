@@ -281,10 +281,7 @@
 
 .magic-e-arrow-wrap{
   position:absolute;
-  left:-98px;
-  bottom:-14px;
-  width:170px;
-  height:62px;
+  bottom:-18px;
   z-index:12;
   pointer-events:none;
   user-select:none;
@@ -298,6 +295,7 @@
   width:100%;
   height:100%;
   overflow:visible;
+  display:block;
 }
 
 .magic-e-arrow-path,
@@ -355,18 +353,14 @@
     .bottom-tools {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 12px;
       margin-top: 8px;
-      padding-right: 44px;
+      padding-right: 0;
     }
 
     .magic-e-panel {
-      flex: 0 0 auto;
-      min-width: auto;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      display: none !important;
     }
 
     .magic-e-help { display: none; }
@@ -699,9 +693,6 @@
           <div class="counter locked" id="seedCounter" draggable="false" aria-hidden="true" style="display:none"></div>
         </div>
 
-        <div class="magic-e-panel">
-          <button type="button" class="secondary" id="magicEModeBtn" onclick="toggleMagicEMode()">Magic E: Off</button>
-        </div>
       </div>
 
       <button id="teacherHotspot" class="teacher-hotspot" aria-label="open teacher panel"></button>
@@ -966,7 +957,7 @@
     let soundDropsDone = 0;
 
     let ALLOW_DRAG = false;
-    let MAGIC_E_EDIT_MODE = false;
+    let MAGIC_E_EDIT_MODE = true;
 
     function tokenSpan(tok) {
       const k = String(tok || "").trim().toLowerCase();
@@ -1015,6 +1006,92 @@
     const MAGIC_E_CARRIERS = new Set([
       "be","ce","de","fe","ge","ke","le","me","ne","pe","re","se","te","ve","ze"
     ]);
+
+    const LONG_VOWEL_NAME_TOKENS = new Set(["a", "e", "i", "o", "u"]);
+
+ const MAGIC_E_ARROW_CONFIG = {
+  startY: 65,
+  endY: 65,
+  laneY: 100,
+  stemDrop: 15,
+  headSize: 8,
+  leftPadding: 14,
+  rightPadding: 14,
+  bendInset: 12,
+  minWidth: 96,
+  bottomOffset: -48
+};
+
+    function getMagicEPreviousSlot(slotEl) {
+      if (!slotEl) return null;
+
+      const m = /^s(\d+)t(\d+)$/.exec(String(slotEl.id || ''));
+      if (!m) return null;
+
+      const syllableNo = parseInt(m[1], 10);
+      const tileNo = parseInt(m[2], 10);
+      if (tileNo < 1) return null;
+
+      const prevSlot = document.getElementById(`s${syllableNo}t${tileNo - 1}`);
+      if (!prevSlot || !prevSlot.querySelector('.tile-label')) return null;
+      if (prevSlot.classList.contains('span-ghost')) return null;
+      return prevSlot;
+    }
+
+    function getStageScaleX() {
+      const stage = document.getElementById('stage');
+      if (!stage) return 1;
+      const renderedWidth = stage.getBoundingClientRect().width || stage.offsetWidth || 1;
+      const layoutWidth = stage.offsetWidth || 1;
+      return renderedWidth / layoutWidth || 1;
+    }
+
+    function buildMagicEArrowMetrics(slotEl) {
+      const prevSlot = getMagicEPreviousSlot(slotEl);
+      if (!prevSlot) return null;
+
+      const cfg = MAGIC_E_ARROW_CONFIG;
+      const scaleX = getStageScaleX();
+      const slotRect = slotEl.getBoundingClientRect();
+      const prevRect = prevSlot.getBoundingClientRect();
+      const dx = ((slotRect.left + slotRect.width / 2) - (prevRect.left + prevRect.width / 2)) / scaleX;
+
+      const tipX = cfg.leftPadding;
+      const startX = Math.max(tipX + dx, tipX + 24);
+      const width = Math.max(cfg.minWidth, Math.ceil(startX + cfg.rightPadding));
+      const stemY = cfg.startY + cfg.stemDrop;
+      const laneY = Math.max(cfg.laneY, stemY + 5);
+      const bendX = tipX + cfg.bendInset;
+      const height = Math.max(laneY + cfg.headSize + 8, cfg.endY + cfg.headSize + 10, 82);
+      const wrapLeft = Math.round(slotEl.offsetWidth / 2 - startX);
+
+      return { startX, tipX, stemY, laneY, bendX, width, height, wrapLeft };
+    }
+
+    function shouldShowMagicEForSlot(slotEl) {
+      if (!slotEl || !slotEl.querySelector('.tile-label')) return false;
+
+      const token = String(slotEl.dataset.rawToken || '').trim().toLowerCase();
+      if (!MAGIC_E_CARRIERS.has(token)) return false;
+
+      const prevSlot = getMagicEPreviousSlot(slotEl);
+      if (!prevSlot) return false;
+
+      const prevToken = String(prevSlot.dataset.rawToken || '').trim().toLowerCase();
+      return LONG_VOWEL_NAME_TOKENS.has(prevToken);
+    }
+
+    function syncMagicEStateForSlot(slotEl) {
+      if (!slotEl || !slotEl.querySelector('.tile-label')) return;
+
+      if (shouldShowMagicEForSlot(slotEl)) {
+        slotEl.dataset.magicE = '1';
+      } else {
+        delete slotEl.dataset.magicE;
+      }
+
+      rerenderMagicELabel(slotEl);
+    }
 
     function displayToken(t) {
       const k = String(t || "").trim().toLowerCase();
@@ -1077,8 +1154,14 @@
         if (nb) nb.disabled = true;
       }));
 
-      addEventListener('resize', fit);
-      addEventListener('orientationchange', () => setTimeout(fit, 50));
+      addEventListener('resize', () => {
+        fit();
+        requestAnimationFrame(() => applyMagicEStateToVisibleSlots());
+      });
+      addEventListener('orientationchange', () => setTimeout(() => {
+        fit();
+        applyMagicEStateToVisibleSlots();
+      }, 50));
     })();
 
     function toggleTeacherPanel(force) {
@@ -1120,21 +1203,45 @@ function rerenderMagicELabel(slotEl) {
   if (oldArrow) oldArrow.remove();
 
   if (on) {
+    const metrics = buildMagicEArrowMetrics(slotEl);
+    if (!metrics) return;
+
+    const cfg = MAGIC_E_ARROW_CONFIG;
     const wrap = document.createElement('div');
     wrap.className = 'magic-e-arrow-wrap';
+    wrap.style.left = metrics.wrapLeft + 'px';
+    wrap.style.width = metrics.width + 'px';
+    wrap.style.height = metrics.height + 'px';
+    wrap.style.bottom = cfg.bottomOffset + 'px';
 
     const ns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('viewBox', '0 0 170 62');
+    svg.setAttribute('viewBox', `0 0 ${metrics.width} ${metrics.height}`);
     svg.setAttribute('class', 'magic-e-arrow-svg');
     svg.setAttribute('aria-hidden', 'true');
-const path = document.createElementNS(ns, 'path');
-path.setAttribute('class', 'magic-e-arrow-path');
-path.setAttribute('d', 'M142 50 L142 65 Q142 70 132 70 L73 70 Q61 70 57 62 L57 50');
 
-const head = document.createElementNS(ns, 'polyline');
-head.setAttribute('class', 'magic-e-arrow-head');
-head.setAttribute('points', '49,58 57,50 65,58');
+    const curveStartX = Math.max(metrics.startX - 12, metrics.bendX + 8);
+
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('class', 'magic-e-arrow-path');
+    path.setAttribute(
+      'd',
+      `M${metrics.startX} ${cfg.startY} ` +
+      `L${metrics.startX} ${metrics.stemY} ` +
+      `Q${metrics.startX} ${metrics.laneY} ${curveStartX} ${metrics.laneY} ` +
+      `L${metrics.bendX + 8} ${metrics.laneY} ` +
+      `Q${metrics.tipX + 4} ${metrics.laneY} ${metrics.tipX} ${cfg.endY}`
+    );
+
+    const head = document.createElementNS(ns, 'polyline');
+    head.setAttribute('class', 'magic-e-arrow-head');
+    head.setAttribute(
+      'points',
+      `${metrics.tipX - cfg.headSize},${cfg.endY + cfg.headSize} ` +
+      `${metrics.tipX},${cfg.endY} ` +
+      `${metrics.tipX + cfg.headSize},${cfg.endY + cfg.headSize}`
+    );
+
     svg.appendChild(path);
     svg.appendChild(head);
     wrap.appendChild(svg);
@@ -1149,27 +1256,13 @@ head.setAttribute('points', '49,58 57,50 65,58');
 
     function applyMagicEStateToVisibleSlots() {
       document.querySelectorAll('.counter-slot').forEach(slot => {
-        const token = String(slot.dataset.rawToken || '').trim().toLowerCase();
         if (!slot.querySelector('.tile-label')) return;
-
-        if (MAGIC_E_EDIT_MODE && MAGIC_E_CARRIERS.has(token)) {
-          slot.dataset.magicE = '1';
-        } else {
-          delete slot.dataset.magicE;
-        }
-        rerenderMagicELabel(slot);
+        syncMagicEStateForSlot(slot);
       });
     }
 
     function toggleMagicEMode(force) {
-      MAGIC_E_EDIT_MODE = (typeof force === 'boolean') ? force : !MAGIC_E_EDIT_MODE;
-
-      const btn = document.getElementById('magicEModeBtn');
-      if (btn) {
-        btn.textContent = `Magic E: ${MAGIC_E_EDIT_MODE ? 'On' : 'Off'}`;
-        btn.classList.toggle('magic-e-mode-on', MAGIC_E_EDIT_MODE);
-      }
-
+      MAGIC_E_EDIT_MODE = true;
       applyMagicEStateToVisibleSlots();
       refreshMagicETargets();
     }
@@ -1236,31 +1329,27 @@ head.setAttribute('points', '49,58 57,50 65,58');
     }
 
     function tts(text, cb) {
-  if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
-    cb && cb();
-    return;
-  }
+      if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
+        cb && cb();
+        return;
+      }
 
-  const u = new SpeechSynthesisUtterance(text);
-  const v = preferredVoice || pickPreferredVoice();
+      const u = new SpeechSynthesisUtterance(text);
+      const v = preferredVoice || pickPreferredVoice();
 
-  u.lang = 'en-GB';
-  if (v) u.voice = v;
-  u.rate = TTS_RATE;
-  u.pitch = TTS_PITCH;
-  u.volume = TTS_VOLUME;
+      u.lang = 'en-GB';
+      if (v) u.voice = v;
+      u.rate = TTS_RATE;
+      u.pitch = TTS_PITCH;
+      u.volume = TTS_VOLUME;
 
-  u.onend = () => cb && cb();
-  u.onerror = () => cb && cb();
+      u.onend = () => cb && cb();
+      u.onerror = () => cb && cb();
 
-  if (speechSynthesis.speaking || speechSynthesis.pending) {
-    speechSynthesis.cancel();
-  }
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
 
-  setTimeout(() => {
-    speechSynthesis.speak(u);
-  }, 120);
-}
     function enterNoTTSPhase() {
       BLOCK_TTS = true;
       if (window.speechSynthesis) speechSynthesis.cancel();
@@ -1975,13 +2064,8 @@ head.setAttribute('points', '49,58 57,50 65,58');
       if (span === 2) lbl.classList.add('span2');
 
       slotEl.dataset.rawToken = String(text || '').trim().toLowerCase();
-      if (MAGIC_E_EDIT_MODE && MAGIC_E_CARRIERS.has(slotEl.dataset.rawToken)) {
-        slotEl.dataset.magicE = '1';
-      } else {
-        delete slotEl.dataset.magicE;
-      }
       slotEl.appendChild(lbl);
-      rerenderMagicELabel(slotEl);
+      applyMagicEStateToVisibleSlots();
 
       if (isSchwaToken(text) && !slotEl.querySelector('.schwa-badge')) {
         const badge = document.createElement('div');
@@ -2504,14 +2588,13 @@ head.setAttribute('points', '49,58 57,50 65,58');
       const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
       switch(step){
-       case 0:
-  setCurrentLine('L0');
-  setInstruction("Watch me spell a word.", false);
-  setTimeout(() => tts("Watch me spell a word."), 150);
-  ALLOW_DRAG = false;
-  setCountersLocked(true);
-  lockAllSoundSlots();
-  break;
+        case 0:
+          setCurrentLine('L0');
+          setInstruction("Watch me spell a word.");
+          ALLOW_DRAG = false;
+          setCountersLocked(true);
+          lockAllSoundSlots();
+          break;
 
         case 1:
           setCurrentLine('La');
