@@ -44,13 +44,13 @@
     },
     {
       "word": "magic",
-      "meaning": "an empty area; also the space outside Earth.\nExample: “Leave a space between the words.”",
+      "meaning": "something special that seems impossible or makes surprising things happen, like in stories or tricks.\nExample: “The magician used magic to make the rabbit disappear.”",
       "syllables": [
         {
           "letters": ["m", "a__", "g_"]
         },
         {
-          "letters": ["i__", "c"]
+          "letters": ["i_", "c"]
         }
       ]
     },
@@ -71,7 +71,7 @@
           "letters": ["p", "e__", "n"]
         },
         {
-          "letters": ["c_", "i__", "l"]
+          "letters": ["c_", "i_", "l"]
         }
       ]
     },
