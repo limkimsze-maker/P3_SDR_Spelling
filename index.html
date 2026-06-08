@@ -1776,6 +1776,85 @@ function rerenderMagicELabel(slotEl) {
       speechSynthesis.speak(u);
     }
 
+    function playAudioUrlSequence(urls, cb, fallbackText) {
+      const queue = (urls || []).filter(Boolean);
+      let i = 0;
+      let done = false;
+      let audio = null;
+      let failTimer = null;
+      let maxTimer = null;
+
+      function clearTimers() {
+        if (failTimer) clearTimeout(failTimer);
+        if (maxTimer) clearTimeout(maxTimer);
+        failTimer = null;
+        maxTimer = null;
+      }
+
+      function finish() {
+        if (done) return;
+        done = true;
+        clearTimers();
+        try { if (audio) audio.pause(); } catch (_) {}
+        cb && cb();
+      }
+
+      function tryNext() {
+        if (done) return;
+        clearTimers();
+
+        if (i >= queue.length) {
+          if (fallbackText && !BLOCK_TTS) {
+            playTtsSoundOverride(fallbackText, finish);
+          } else {
+            finish();
+          }
+          return;
+        }
+
+        audio = new Audio(queue[i++]);
+        audio.preload = 'auto';
+
+        // Do not let a missing or hanging sound file block the next counter.
+        // Short SDR sound tiles should either start quickly or move to the next candidate.
+        failTimer = setTimeout(() => {
+          try { audio.pause(); } catch (_) {}
+          tryNext();
+        }, 1200);
+
+        // Even if a browser does not fire 'ended', release the programme shortly.
+        maxTimer = setTimeout(finish, 3500);
+
+        audio.onplaying = () => {
+          if (failTimer) clearTimeout(failTimer);
+          failTimer = null;
+        };
+        audio.oncanplay = () => {
+          if (failTimer) clearTimeout(failTimer);
+          failTimer = null;
+        };
+        audio.onended = finish;
+        audio.onerror = tryNext;
+        audio.play().catch(tryNext);
+      }
+
+      tryNext();
+    }
+
+    function soundCandidateUrls(file, bust) {
+      const safeFile = String(file || '').trim();
+      return [
+        `./sounds/${safeFile}?v=${bust}`,
+        `sounds/${safeFile}?v=${bust}`,
+        `${RAW_SOUND_BASE}${safeFile}?v=${bust}`,
+        `${SOUND_BASE}${safeFile}?v=${bust}`
+      ];
+    }
+
+    function soundCandidateUrlsForFiles(files, bust) {
+      return (files || []).flatMap(file => soundCandidateUrls(file, bust));
+    }
+
     function playSoundForToken(token, cb) {
       const k = (token || '').toLowerCase().trim();
       if (!k) { cb && cb(); return; }
@@ -1786,12 +1865,27 @@ function rerenderMagicELabel(slotEl) {
       }
 
       const bust = Date.now().toString(36);
-      const file = `${encodeURIComponent(k)}.m4a`;
 
-      const urlPrimary = `${RAW_SOUND_BASE}${file}?v=${bust}`;
-      const urlFallback = `${SOUND_BASE}${file}?v=${bust}`;
+      // Schwa-marked phonograms must use ONLY their matching .mp4 files.
+      // Do not fall back to the unmarked sound or to another extension.
+      const SCHWA_MP4_ONLY = new Set([
+        'a_', 'e_', 'i_', 'o_', 'u_',
+        'ai_', 'ar_', 'ay_', 'ea_', 'er_', 'ir_', 'or_', 'ur_'
+      ]);
 
-      playAudioWithFallback(urlPrimary, urlFallback, cb, k);
+      if (SCHWA_MP4_ONLY.has(k)) {
+        const file = `${encodeURIComponent(k)}.mp4`;
+        playAudioUrlSequence(
+          soundCandidateUrlsForFiles([file], bust),
+          cb,
+          null
+        );
+        return;
+      }
+
+      const encoded = encodeURIComponent(k);
+      const files = ['m4a', 'mp4', 'mp3', 'wav', 'ogg', 'aac', 'webm'].map(ext => `${encoded}.${ext}`);
+      playAudioUrlSequence(soundCandidateUrlsForFiles(files, bust), cb, k);
     }
 
     function prefetchLessonAudio(wordArr) {
@@ -1810,14 +1904,23 @@ function rerenderMagicELabel(slotEl) {
 
         const list = Array.from(toks).slice(0, 120);
         list.forEach(k => {
-          const file = `${encodeURIComponent(k)}.m4a`;
-          const urlRaw = `${RAW_SOUND_BASE}${file}?v=${bust}`;
-          const urlCdn = `${SOUND_BASE}${file}?v=${bust}`;
+          const encoded = encodeURIComponent(k);
+          const SCHWA_MP4_ONLY = new Set([
+            'a_', 'e_', 'i_', 'o_', 'u_',
+            'ai_', 'ar_', 'ay_', 'ea_', 'er_', 'ir_', 'or_', 'ur_'
+          ]);
+          const files = SCHWA_MP4_ONLY.has(k)
+            ? [`${encoded}.mp4`]
+            : ['m4a', 'mp4', 'mp3', 'wav', 'ogg', 'aac', 'webm'].map(ext => `${encoded}.${ext}`);
+          const urls = soundCandidateUrlsForFiles(files, bust);
 
           const a = new Audio();
           a.preload = 'auto';
-          a.src = urlRaw;
-          a.onerror = () => { a.src = urlCdn; };
+          a.src = urls[0];
+          let idx = 1;
+          a.onerror = () => {
+            if (idx < urls.length) a.src = urls[idx++];
+          };
           try { a.load(); } catch (_) {}
         });
       } catch (_) {}
