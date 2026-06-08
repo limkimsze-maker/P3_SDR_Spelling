@@ -4,7 +4,7 @@
   <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
   <link rel="shortcut icon" href="./kimsze_sharp16.ico?v=20260111a">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-  <title>Cycle 19 Level 1 — Spelling Worksheet</title>
+  <title>Cycle 19 Level 2 — Spelling Worksheet</title>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -586,7 +586,7 @@
 <body>
   <div id="stage">
     <div class="sheet">
-      <div class="title">Spelling Worksheet — Cycle 19 Level 1</div>
+      <div class="title">Spelling Worksheet — Cycle 19 Level 2</div>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
@@ -647,6 +647,7 @@
           <option value="c18s2">Cycle 18 Session 2</option>
           <option value="c18s3">Cycle 18 Session 3</option>
           <option value="c19l1">Cycle 19 Level 1</option>
+          <option value="c19l2">Cycle 19 Level 2</option>
         </select>
 
         <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
@@ -719,6 +720,7 @@
           <li><code>e__</code> is short sound for e.</li>
           <li><code>ea</code> is short sound for e.</li>
           <li><code>ea__</code> is long e sound.</li>
+	  <li><code>ed</code> is schwa followed by /d/ sound.</li>
           <li><code>ed_</code> is /d/ sound.</li>
           <li><code>ed__</code> is /t/ sound.</li>
           <li><code>ei</code> is long a sound.</li>
@@ -759,6 +761,7 @@
           <li><code>ur_</code> is schwa sound.</li>
           <li><code>y_e</code> is y sounding as long e sound.</li>
           <li><code>y_i</code> is y sounding as long i sound.</li>
+          <li><code>en</code> is 'en' sound.</li>
         </ul>
       </div>
     </div>
@@ -931,7 +934,8 @@
       c18s1: ASSET_BASE + "Cycle%2018%20Session%201.json",
       c18s2: ASSET_BASE + "Cycle%2018%20Session%202.json",
       c18s3: ASSET_BASE + "Cycle%2018%20Session%203.json",
-      c19l1: ASSET_BASE + "Cycle%2019%20Level%201.json"
+      c19l1: ASSET_BASE + "Cycle%2019%20Level%201.json",
+      c19l2: ASSET_BASE + "Cycle%2019%20Level%202.json",
     };
 
     const LOCAL_LESSON_SETS = {
@@ -1043,8 +1047,107 @@
                         ]
                   }
             ]
+      },
+      "c19l2": {
+            "words": [
+                  {
+                        "word": "shouted",
+                        "meaning": "Shouted means said something very loudly. He shouted when the chocolate milk spilled.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "sh",
+                                          "ou",
+                                          "t"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ed"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "complained",
+                        "meaning": "Complained means said that something was wrong or not good. I complained when the chocolate milk was warm.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "l",
+                                          "ai",
+                                          "n",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "enjoying",
+                        "meaning": "Enjoying means liking what you are doing. She is enjoying her chocolate milk.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "en"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "j",
+                                          "oy"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ing"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "snatched",
+                        "meaning": "Snatched means took something quickly and suddenly. He snatched the cup from the table.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "s",
+                                          "n",
+                                          "a__",
+                                          "tch",
+                                          "ed__"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "sighed",
+                        "meaning": "Sighed means breathed out because you were tired, sad, or relieved. He sighed after the long walk.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "s",
+                                          "igh",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
       }
 };
+
+    const LOCAL_LESSON_LABELS = {
+      c19l1: "Cycle 19 Level 1",
+      c19l2: "Cycle 19 Level 2"
+    };
 
     let instructionsHidden = false;
     let voiceEnabled = true;
@@ -1084,6 +1187,13 @@
       "ay":"ay",
       "igh":"igh",
       "watch":"watch",
+      "en":"en",
+      "ed":"ed",
+      "ing":"ing",
+      "ou":"ou",
+      "oy":"oy",
+      "sh":"sh",
+      "tch":"tch",
       "ai_":"ai",
       "ar_":"ar",
       "ay_":"ay",
@@ -1519,14 +1629,15 @@ function rerenderMagicELabel(slotEl) {
 
 
     const TTS_SOUND_OVERRIDES = {
-      "watch": "watch"
+      "watch": "watch",
+      "en": "in"
     };
 
     function playTtsSoundOverride(text, cb) {
       const prevBlock = BLOCK_TTS;
       BLOCK_TTS = false;
 
-      // Irregular whole-word tokens, e.g. watch, should be spoken as the
+      // Irregular/TTS tokens, e.g. watch or en, should be spoken as the
       // normal word immediately when the counter is placed on that tile.
       if (!text || !voiceEnabled || !window.speechSynthesis) {
         BLOCK_TTS = prevBlock;
@@ -3074,7 +3185,7 @@ function rerenderMagicELabel(slotEl) {
       const localObj = (typeof LOCAL_LESSON_SETS !== 'undefined') ? LOCAL_LESSON_SETS[key] : null;
       if (localObj && Array.isArray(localObj.words)) {
         try {
-          applyLessonObject(localObj, 'Cycle 19 Level 1');
+          applyLessonObject(localObj, LOCAL_LESSON_LABELS[key] || 'Embedded lesson');
         } catch (e) {
           alert(e.message);
           setInstruction("Could not load the embedded lesson set.", false);
@@ -3144,13 +3255,13 @@ function rerenderMagicELabel(slotEl) {
 
 
 
-    function autoLoadCycle19Level1() {
+    function autoLoadCycle19Level2() {
       const lessonSel = document.getElementById('lessonSelect');
-      if (lessonSel) lessonSel.value = 'c19l1';
-      setTimeout(() => onLessonChange('c19l1'), 0);
+      if (lessonSel) lessonSel.value = 'c19l2';
+      setTimeout(() => onLessonChange('c19l2'), 0);
     }
 
-    addEventListener('load', autoLoadCycle19Level1);
+    addEventListener('load', autoLoadCycle19Level2);
 
     window.debugList = () => ({
       teacherSet,
