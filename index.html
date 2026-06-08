@@ -4,7 +4,7 @@
   <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
   <link rel="shortcut icon" href="./kimsze_sharp16.ico?v=20260111a">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-  <title>Cycle 19 Level 2 — Spelling Worksheet</title>
+  <title>Cycle 20 Level 2 — Spelling Worksheet</title>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -586,7 +586,7 @@
 <body>
   <div id="stage">
     <div class="sheet">
-      <div class="title">Spelling Worksheet — Cycle 19 Level 3</div>
+      <div class="title">Spelling Worksheet — Cycle 20 Level 2</div>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
@@ -649,6 +649,9 @@
           <option value="c19l1">Cycle 19 Level 1</option>
           <option value="c19l2">Cycle 19 Level 2</option>
           <option value="c19l3">Cycle 19 Level 3</option>
+          <option value="c20l1">Cycle 20 Level 1</option>
+          <option value="c20l2">Cycle 20 Level 2</option>
+          <option value="c20l3">Cycle 20 Level 3</option>
         </select>
 
         <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
@@ -715,6 +718,8 @@
           <li><code>be</code> is be that sounds like be. Same rule apply for consonant which has 'Magic e' behind.</li>
           <li><code>a_</code> is a that sounds like schwa.</li>
           <li><code>a__</code> is short sound for a.</li>
+          <li><code>scared</code> is treated as one irregular word token and uses TTS, like <code>watch</code>.</li>
+          <li><code>aw_a</code> uses <code>aw_a.m4a</code> but shows letter <code>a</code> in the Elkonin box.</li>
           <li><code>c_</code> is soft c.</li>
           <li><code>ce</code> is soft c.</li>
           <li><code>e_</code> is e that sounds like schwa.</li>
@@ -751,6 +756,7 @@
           <li><code>ll</code> is ll sound.</li>
           <li><code>ff</code> is ff sound.</li>
           <li><code>ss</code> is ss sound.</li>
+          <li><code>s_z</code> displays as <code>s</code> but plays the /z/ sound.</li>
           <li><code>ai_</code> is schwa sound.</li>
           <li><code>ar_</code> is schwa sound.</li>
           <li><code>ay_</code> is schwa sound.</li>
@@ -936,6 +942,9 @@
       c19l1: ASSET_BASE + "Cycle%2019%20Level%201.json",
       c19l2: ASSET_BASE + "Cycle%2019%20Level%202.json",
       c19l3: ASSET_BASE + "Cycle%2019%20Level%203.json",
+      c20l1: ASSET_BASE + "Cycle%2020%20Level%201.json",
+      c20l2: ASSET_BASE + "Cycle%2020%20Level%202.json",
+      c20l3: ASSET_BASE + "Cycle%2020%20Level%203.json",
     };
 
     const LOCAL_LESSON_SETS = {
@@ -1250,17 +1259,391 @@
                         }
             ]
 }
+      ,
+      "c20l1": {
+            "words": [
+                  {
+                        "word": "scared",
+                        "meaning": "Scared means feeling afraid or frightened. The cub was scared when it faced the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "scared"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "confused",
+                        "meaning": "Confused means not able to understand clearly. The animal was confused when it heard the loud roar.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u",
+                                          "s_z",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "afraid",
+                        "meaning": "Afraid means feeling fear or worry. The cub was afraid of the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "r",
+                                          "ai",
+                                          "d"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "overheard",
+                        "meaning": "Overheard means heard something that was not meant for you. The cub overheard the lions talking.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "o"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "er_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "heard"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "inside",
+                        "meaning": "Inside means in the inner part of something. The cub hid inside the cave.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "s",
+                                          "i",
+                                          "de"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c20l2": {
+            "words": [
+                  {
+                        "word": "terrified",
+                        "meaning": "Terrified means very scared. The cub was terrified when it faced the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "t",
+                                          "e__",
+                                          "r"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "i_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "i",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "confused",
+                        "meaning": "Confused means not able to understand clearly. The animal was confused when it heard the loud roar.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u",
+                                          "s_z",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "together",
+                        "meaning": "Together means with each other or in one group. The animals stayed together.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "t",
+                                          "o_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "g",
+                                          "e__",
+                                          "th"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "er_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "afraid",
+                        "meaning": "Afraid means feeling fear or worry. The cub was afraid of the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "r",
+                                          "ai",
+                                          "d"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "overheard",
+                        "meaning": "Overheard means heard something that was not meant for you. The cub overheard the lions talking.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "o"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "er_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "heard"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c20l3": {
+            "words": [
+                  {
+                        "word": "conversation",
+                        "meaning": "Conversation means a talk between people. The animals had a quiet conversation near the cave.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o__",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "er_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "s",
+                                          "a"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "tion"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "terrified",
+                        "meaning": "Terrified means very scared. The cub was terrified when it faced the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "t",
+                                          "e__",
+                                          "r"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "i_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "i",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "afraid",
+                        "meaning": "Afraid means feeling fear or worry. The cub was afraid of the lions.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "r",
+                                          "ai",
+                                          "d"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "confused",
+                        "meaning": "Confused means not able to understand clearly. The animal was confused when it heard the loud roar.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u",
+                                          "s_z",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "overheard",
+                        "meaning": "Overheard means heard something that was not meant for you. The cub overheard the lions talking.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "o"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "er_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "heard"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
 };
 
     const LOCAL_LESSON_LABELS = {
       c19l1: "Cycle 19 Level 1",
       c19l2: "Cycle 19 Level 2",
-      c19l3: "Cycle 19 Level 3"
+      c19l3: "Cycle 19 Level 3",
+      c20l1: "Cycle 20 Level 1",
+      c20l2: "Cycle 20 Level 2",
+      c20l3: "Cycle 20 Level 3"
     };
 
     let instructionsHidden = false;
     let voiceEnabled = true;
     let BLOCK_TTS = false;
+
+    // Single-sound playback guard: prevents two phonogram files from overlapping.
+    let ACTIVE_SOUND_AUDIO = null;
+    let SOUND_PLAYBACK_ID = 0;
+    let SOUND_BUSY = false;
+
+    function setSoundBusy(busy) {
+      SOUND_BUSY = !!busy;
+      document.querySelectorAll('#counters .counter').forEach(c => {
+        if (c.id !== 'seedCounter') c.classList.toggle('locked', SOUND_BUSY || !ALLOW_DRAG);
+      });
+    }
+
+    function pauseActiveSoundAudio() {
+      try {
+        if (ACTIVE_SOUND_AUDIO) {
+          ACTIVE_SOUND_AUDIO.pause();
+          ACTIVE_SOUND_AUDIO.removeAttribute('src');
+          ACTIVE_SOUND_AUDIO.load();
+        }
+      } catch (_) {}
+      ACTIVE_SOUND_AUDIO = null;
+    }
+
+    function cancelCurrentSoundPlayback() {
+      SOUND_PLAYBACK_ID++;
+      pauseActiveSoundAudio();
+      setSoundBusy(false);
+    }
+
+    function stopAllSpeechAndSound() {
+      cancelCurrentSoundPlayback();
+      if (window.speechSynthesis) speechSynthesis.cancel();
+    }
 
     let words = [
       { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
@@ -1291,11 +1674,12 @@
     }
 
     const TOKEN_DISPLAY_MAP = {
-      "a_":"a","a__":"a",
+      "a_":"a","a__":"a","aw_a":"a","are_air":"are",
       "ai":"ai",
       "ay":"ay",
       "igh":"igh",
       "watch":"watch",
+      "scared":"scared",
       "en":"en",
       "ed":"ed",
       "com":"com",
@@ -1307,6 +1691,7 @@
       "oy":"oy",
       "sh":"sh",
       "tch":"tch",
+      "tion":"tion",
       "ai_":"ai",
       "ar_":"ar",
       "ay_":"ay",
@@ -1330,7 +1715,7 @@
       "oo_":"oo","oo":"oo",
       "or_":"or",
       "ow_":"ow","ow":"ow",
-      "ss":"ss",
+      "ss":"ss","s_z":"s",
       "th":"th","th_":"th",
       "u__":"u","u_":"u","u":"u",
       "ue":"ue","ue_":"ue",
@@ -1741,22 +2126,32 @@ function rerenderMagicELabel(slotEl) {
     }
 
 
-// Cycle 19 Level 3: en is intentionally spoken by TTS as "in", not loaded from en.m4a.
+// TTS/alternate playback tokens for irregular reading-column items.
+    const SOUND_TOKEN_FILE_OVERRIDES = {
+      "s_z": "z"
+    };
+
     const TTS_SOUND_OVERRIDES = {
       "watch": "watch",
       "en": "in",
       "com": "come",
-      "ex": "icks"
+      "ex": "icks",
+      "are_air": "air",
+      "scared": "scared",
+      "heard": "heard"
     };
 
     function playTtsSoundOverride(text, cb) {
       const prevBlock = BLOCK_TTS;
       BLOCK_TTS = false;
+      pauseActiveSoundAudio();
+      setSoundBusy(true);
 
       // Irregular/TTS tokens, e.g. watch, should be spoken as the
       // normal word immediately when the counter is placed on that tile.
       if (!text || !voiceEnabled || !window.speechSynthesis) {
         BLOCK_TTS = prevBlock;
+        setSoundBusy(false);
         cb && cb();
         return;
       }
@@ -1769,8 +2164,8 @@ function rerenderMagicELabel(slotEl) {
       u.pitch = TTS_PITCH;
       u.volume = TTS_VOLUME;
 
-      u.onend = () => { BLOCK_TTS = prevBlock; cb && cb(); };
-      u.onerror = () => { BLOCK_TTS = prevBlock; cb && cb(); };
+      u.onend = () => { BLOCK_TTS = prevBlock; setSoundBusy(false); cb && cb(); };
+      u.onerror = () => { BLOCK_TTS = prevBlock; setSoundBusy(false); cb && cb(); };
 
       speechSynthesis.cancel();
       speechSynthesis.speak(u);
@@ -1784,6 +2179,16 @@ function rerenderMagicELabel(slotEl) {
       let failTimer = null;
       let maxTimer = null;
 
+      // Start a new sound session and silence anything still playing.
+      const playId = ++SOUND_PLAYBACK_ID;
+      pauseActiveSoundAudio();
+      setSoundBusy(true);
+      if (window.speechSynthesis) speechSynthesis.cancel();
+
+      function isCurrent() {
+        return playId === SOUND_PLAYBACK_ID;
+      }
+
       function clearTimers() {
         if (failTimer) clearTimeout(failTimer);
         if (maxTimer) clearTimeout(maxTimer);
@@ -1792,15 +2197,17 @@ function rerenderMagicELabel(slotEl) {
       }
 
       function finish() {
-        if (done) return;
+        if (done || !isCurrent()) return;
         done = true;
         clearTimers();
         try { if (audio) audio.pause(); } catch (_) {}
+        if (ACTIVE_SOUND_AUDIO === audio) ACTIVE_SOUND_AUDIO = null;
+        setSoundBusy(false);
         cb && cb();
       }
 
       function tryNext() {
-        if (done) return;
+        if (done || !isCurrent()) return;
         clearTimers();
 
         if (i >= queue.length) {
@@ -1812,30 +2219,38 @@ function rerenderMagicELabel(slotEl) {
           return;
         }
 
-        audio = new Audio(queue[i++]);
-        audio.preload = 'auto';
+        const candidate = new Audio(queue[i++]);
+        audio = candidate;
+        ACTIVE_SOUND_AUDIO = candidate;
+        candidate.preload = 'auto';
 
         // Do not let a missing or hanging sound file block the next counter.
         // Short SDR sound tiles should either start quickly or move to the next candidate.
         failTimer = setTimeout(() => {
-          try { audio.pause(); } catch (_) {}
+          if (!isCurrent() || audio !== candidate) return;
+          try { candidate.pause(); } catch (_) {}
+          if (ACTIVE_SOUND_AUDIO === candidate) ACTIVE_SOUND_AUDIO = null;
           tryNext();
         }, 1200);
 
         // Even if a browser does not fire 'ended', release the programme shortly.
         maxTimer = setTimeout(finish, 3500);
 
-        audio.onplaying = () => {
+        candidate.onplaying = () => {
+          if (!isCurrent() || audio !== candidate) return;
           if (failTimer) clearTimeout(failTimer);
           failTimer = null;
         };
-        audio.oncanplay = () => {
+        candidate.oncanplay = () => {
+          if (!isCurrent() || audio !== candidate) return;
           if (failTimer) clearTimeout(failTimer);
           failTimer = null;
         };
-        audio.onended = finish;
-        audio.onerror = tryNext;
-        audio.play().catch(tryNext);
+        candidate.onended = finish;
+        candidate.onerror = tryNext;
+        candidate.play().catch(() => {
+          if (isCurrent() && audio === candidate) tryNext();
+        });
       }
 
       tryNext();
@@ -1865,6 +2280,7 @@ function rerenderMagicELabel(slotEl) {
       }
 
       const bust = Date.now().toString(36);
+      const audioKey = (typeof SOUND_TOKEN_FILE_OVERRIDES !== 'undefined' && SOUND_TOKEN_FILE_OVERRIDES[k]) ? SOUND_TOKEN_FILE_OVERRIDES[k] : k;
 
       // Schwa-marked phonograms must use ONLY their matching .mp4 files.
       // Do not fall back to the unmarked sound or to another extension.
@@ -1873,8 +2289,8 @@ function rerenderMagicELabel(slotEl) {
         'ai_', 'ar_', 'ay_', 'ea_', 'er_', 'ir_', 'or_', 'ur_'
       ]);
 
-      if (SCHWA_MP4_ONLY.has(k)) {
-        const file = `${encodeURIComponent(k)}.mp4`;
+      if (SCHWA_MP4_ONLY.has(audioKey)) {
+        const file = `${encodeURIComponent(audioKey)}.mp4`;
         playAudioUrlSequence(
           soundCandidateUrlsForFiles([file], bust),
           cb,
@@ -1883,9 +2299,9 @@ function rerenderMagicELabel(slotEl) {
         return;
       }
 
-      const encoded = encodeURIComponent(k);
+      const encoded = encodeURIComponent(audioKey);
       const files = ['m4a', 'mp4', 'mp3', 'wav', 'ogg', 'aac', 'webm'].map(ext => `${encoded}.${ext}`);
-      playAudioUrlSequence(soundCandidateUrlsForFiles(files, bust), cb, k);
+      playAudioUrlSequence(soundCandidateUrlsForFiles(files, bust), cb, audioKey);
     }
 
     function prefetchLessonAudio(wordArr) {
@@ -1897,7 +2313,7 @@ function rerenderMagicELabel(slotEl) {
           (w.syllables || []).forEach(s => {
             (s.letters || []).forEach(t => {
               const k = String(t || '').trim().toLowerCase();
-              if (k) toks.add(k);
+              if (k) toks.add((typeof SOUND_TOKEN_FILE_OVERRIDES !== 'undefined' && SOUND_TOKEN_FILE_OVERRIDES[k]) ? SOUND_TOKEN_FILE_OVERRIDES[k] : k);
             });
           });
         });
@@ -1937,6 +2353,7 @@ function rerenderMagicELabel(slotEl) {
       const meaning = String(w.meaning || "").trim();
       const prevBlock = BLOCK_TTS;
       BLOCK_TTS = false;
+      cancelCurrentSoundPlayback();
 
       if (window.speechSynthesis) speechSynthesis.cancel();
 
@@ -2466,7 +2883,7 @@ function rerenderMagicELabel(slotEl) {
       while (list.length < MAX_TRAY_COUNTERS) {
         const c = _makeCounter();
         if (!c) break;
-        if (!ALLOW_DRAG) c.classList.add('locked');
+        if (!ALLOW_DRAG || SOUND_BUSY) c.classList.add('locked');
         tray.appendChild(c);
         list = _trayCounters();
       }
@@ -2475,6 +2892,7 @@ function rerenderMagicELabel(slotEl) {
     function setCountersLocked(locked) {
       document.querySelectorAll('.counter').forEach(c => {
         c.classList.toggle('locked', locked);
+        if (SOUND_BUSY && c.id !== 'seedCounter') c.classList.add('locked');
         if (c.id === 'seedCounter') {
           c.setAttribute('draggable', 'false');
           c.style.display = 'none';
@@ -2484,7 +2902,7 @@ function rerenderMagicELabel(slotEl) {
     }
 
     function dragStart(ev) {
-      if (!ALLOW_DRAG || ev.target.classList.contains('locked')) {
+      if (SOUND_BUSY || !ALLOW_DRAG || ev.target.classList.contains('locked')) {
         ev.preventDefault();
         return;
       }
@@ -2682,19 +3100,19 @@ function rerenderMagicELabel(slotEl) {
       }
 
       if (token) {
+        addTileLabel(host, token);
         playSoundForToken(token, ()=> {
-          addTileLabel(host, token);
-          completeSoundDropAfterAudio(syll);
+          completeSoundDropOnce(host, syll);
         });
       } else {
-        completeSoundDropAfterAudio(syll);
+        completeSoundDropOnce(host, syll);
       }
     }
 
     function _mobileDown(e){
       const t0 = e.target.closest('.counter');
       if (!t0) return;
-      if (!ALLOW_DRAG || t0.classList.contains('locked')) return;
+      if (SOUND_BUSY || !ALLOW_DRAG || t0.classList.contains('locked')) return;
       if (t0.id === 'seedCounter') return;
 
       e.preventDefault();
@@ -2884,8 +3302,14 @@ function rerenderMagicELabel(slotEl) {
       }
     }
 
+    function completeSoundDropOnce(host, syll) {
+      if (host && host.dataset.soundCounted === '1') return;
+      if (host) host.dataset.soundCounted = '1';
+      completeSoundDropAfterAudio(syll);
+    }
+
     function dropSound(ev, syll, tile){
-      if (!ALLOW_DRAG) { ev.preventDefault(); return; }
+      if (SOUND_BUSY || !ALLOW_DRAG) { ev.preventDefault(); return; }
 
       const host = ev.currentTarget;
       const allow = host?.dataset?.allow === '1';
@@ -2922,12 +3346,12 @@ function rerenderMagicELabel(slotEl) {
         }
 
         if (token) {
+          addTileLabel(host, token);
           playSoundForToken(token, ()=> {
-            addTileLabel(host, token);
-            completeSoundDropAfterAudio(syll);
+            completeSoundDropOnce(host, syll);
           });
         } else {
-          completeSoundDropAfterAudio(syll);
+          completeSoundDropOnce(host, syll);
         }
       }
     }
@@ -2958,6 +3382,7 @@ function rerenderMagicELabel(slotEl) {
         delete slot.dataset.spanParent;
         delete slot.dataset.magicE;
         delete slot.dataset.rawToken;
+        delete slot.dataset.soundCounted;
       }
     }
 
@@ -3474,13 +3899,13 @@ function rerenderMagicELabel(slotEl) {
 
 
 
-    function autoLoadCycle19Level3() {
+    function autoLoadCycle20Level3() {
       const lessonSel = document.getElementById('lessonSelect');
-      if (lessonSel) lessonSel.value = 'c19l3';
-      setTimeout(() => onLessonChange('c19l3'), 0);
+      if (lessonSel) lessonSel.value = 'c20l3';
+      setTimeout(() => onLessonChange('c20l3'), 0);
     }
 
-    addEventListener('load', autoLoadCycle19Level3);
+    addEventListener('load', autoLoadCycle20Level3);
 
     window.debugList = () => ({
       teacherSet,
