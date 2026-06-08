@@ -4,7 +4,7 @@
   <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
   <link rel="shortcut icon" href="./kimsze_sharp16.ico?v=20260111a">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-  <title>Spelling Worksheet — 1–4 Syllables + Unified Sounds Folder</title>
+  <title>Cycle 19 Level 1 — Spelling Worksheet</title>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -586,7 +586,7 @@
 <body>
   <div id="stage">
     <div class="sheet">
-      <div class="title">Spelling Worksheet</div>
+      <div class="title">Spelling Worksheet — Cycle 19 Level 1</div>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
@@ -646,6 +646,7 @@
           <option value="c18s1">Cycle 18 Session 1</option>
           <option value="c18s2">Cycle 18 Session 2</option>
           <option value="c18s3">Cycle 18 Session 3</option>
+          <option value="c19l1">Cycle 19 Level 1</option>
         </select>
 
         <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
@@ -930,7 +931,120 @@
       c18s1: ASSET_BASE + "Cycle%2018%20Session%201.json",
       c18s2: ASSET_BASE + "Cycle%2018%20Session%202.json",
       c18s3: ASSET_BASE + "Cycle%2018%20Session%203.json",
+      c19l1: ASSET_BASE + "Cycle%2019%20Level%201.json",
     };
+
+    const LOCAL_LESSON_SETS = {
+      "c19l1": {
+            "words": [
+                  {
+                        "word": "complained",
+                        "meaning": "Complained means said that something was wrong or not good. I complained when the chocolate milk was warm.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "l",
+                                          "ai",
+                                          "n",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "holidays",
+                        "meaning": "Holidays are days away from school or work. We can rest during the holidays.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "h",
+                                          "o__",
+                                          "l"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "i_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "d",
+                                          "ay",
+                                          "s"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "picnic",
+                        "meaning": "A picnic is a meal eaten outdoors. We had a picnic in the park.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "p",
+                                          "i__",
+                                          "c"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "n",
+                                          "i__",
+                                          "c"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "sighed",
+                        "meaning": "Sighed means breathed out because you were tired, sad, or relieved. He sighed after the long walk.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "s",
+                                          "igh",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "stole",
+                        "meaning": "Stole means took something that did not belong to you. The boy stole the chocolate milk.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "s",
+                                          "t",
+                                          "o",
+                                          "le"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "watch",
+                        "meaning": "Watch means to look at someone or something carefully. A watch can also tell the time.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "watch"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+};
 
     let instructionsHidden = false;
     let voiceEnabled = true;
@@ -966,6 +1080,10 @@
 
     const TOKEN_DISPLAY_MAP = {
       "a_":"a","a__":"a",
+      "ai":"ai",
+      "ay":"ay",
+      "igh":"igh",
+      "watch":"watch",
       "ai_":"ai",
       "ar_":"ar",
       "ay_":"ay",
@@ -1399,9 +1517,46 @@ function rerenderMagicELabel(slotEl) {
       });
     }
 
+
+    const TTS_SOUND_OVERRIDES = {
+      "watch": "watch"
+    };
+
+    function playTtsSoundOverride(text, cb) {
+      const prevBlock = BLOCK_TTS;
+      BLOCK_TTS = false;
+
+      // Irregular whole-word tokens, e.g. watch, should be spoken as the
+      // normal word immediately when the counter is placed on that tile.
+      if (!text || !voiceEnabled || !window.speechSynthesis) {
+        BLOCK_TTS = prevBlock;
+        cb && cb();
+        return;
+      }
+
+      const u = new SpeechSynthesisUtterance(text);
+      const v = preferredVoice || pickPreferredVoice();
+      u.lang = 'en-GB';
+      if (v) u.voice = v;
+      u.rate = TTS_RATE;
+      u.pitch = TTS_PITCH;
+      u.volume = TTS_VOLUME;
+
+      u.onend = () => { BLOCK_TTS = prevBlock; cb && cb(); };
+      u.onerror = () => { BLOCK_TTS = prevBlock; cb && cb(); };
+
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
     function playSoundForToken(token, cb) {
       const k = (token || '').toLowerCase().trim();
       if (!k) { cb && cb(); return; }
+
+      if (TTS_SOUND_OVERRIDES[k]) {
+        playTtsSoundOverride(TTS_SOUND_OVERRIDES[k], cb);
+        return;
+      }
 
       const bust = Date.now().toString(36);
       const file = `${encodeURIComponent(k)}.m4a`;
@@ -2197,22 +2352,12 @@ function rerenderMagicELabel(slotEl) {
       }
 
       if (token) {
-        playSoundForToken(token, ()=> addTileLabel(host, token));
-      }
-
-      soundDropsDone++;
-      ensureTrayCounters();
-
-      if (soundDropsDone >= Math.min(6, sylLetters.length)) {
-        blendWriteSyllable(syll);
-
-        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
-        if (syll < sylCount) {
-          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
-          startSyllableTrack(syll+1);
-        } else {
-          finishSoundTracking();
-        }
+        playSoundForToken(token, ()=> {
+          addTileLabel(host, token);
+          completeSoundDropAfterAudio(syll);
+        });
+      } else {
+        completeSoundDropAfterAudio(syll);
       }
     }
 
@@ -2389,6 +2534,26 @@ function rerenderMagicELabel(slotEl) {
       }
     }
 
+    function completeSoundDropAfterAudio(syll){
+      soundDropsDone++;
+      ensureTrayCounters();
+
+      const w = words[wIndex];
+      const sylLetters = (w.syllables?.[syll - 1]?.letters) || [];
+
+      if (soundDropsDone >= Math.min(6, sylLetters.length)) {
+        blendWriteSyllable(syll);
+
+        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+        if (syll < sylCount) {
+          setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
+          startSyllableTrack(syll+1);
+        } else {
+          finishSoundTracking();
+        }
+      }
+    }
+
     function dropSound(ev, syll, tile){
       if (!ALLOW_DRAG) { ev.preventDefault(); return; }
 
@@ -2427,22 +2592,12 @@ function rerenderMagicELabel(slotEl) {
         }
 
         if (token) {
-          playSoundForToken(token, ()=> addTileLabel(host, token));
-        }
-
-        soundDropsDone++;
-        ensureTrayCounters();
-
-        if (soundDropsDone >= Math.min(6, sylLetters.length)) {
-          blendWriteSyllable(syll);
-
-          const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
-          if (syll < sylCount) {
-            setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
-            startSyllableTrack(syll+1);
-          } else {
-            finishSoundTracking();
-          }
+          playSoundForToken(token, ()=> {
+            addTileLabel(host, token);
+            completeSoundDropAfterAudio(syll);
+          });
+        } else {
+          completeSoundDropAfterAudio(syll);
         }
       }
     }
@@ -2867,6 +3022,44 @@ function rerenderMagicELabel(slotEl) {
       ensureTrayCounters();
     }
 
+
+    function applyLessonObject(obj, sourceLabel) {
+      if (!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
+
+      teacherSet = normalizeWordSet(obj.words);
+      if (!teacherSet.length) throw new Error('lesson has no usable words');
+
+      PLAY_SCOPE = 'set';
+      words = teacherSet.map(deepCopy);
+      wIndex = 0;
+      step = 0;
+      activeSyllable = 1;
+      selectedIndex = -1;
+
+      Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r => r.classList.remove('selected'));
+
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      exitNoTTSPhase();
+
+      refreshTable();
+      resetBoard();
+      ensureTrayCounters();
+      autoFitDisplayToWord();
+
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
+
+      document.getElementById('beginBtn').disabled = false;
+      document.getElementById('nextBtn').disabled = true;
+      document.getElementById('backBtn').disabled = true;
+
+      prefetchLessonAudio(words);
+
+      setCurrentLine('L0');
+      setInstruction(`${sourceLabel || 'Lesson'} loaded (${teacherSet.length} words). First word: "${teacherSet[0].word}". Click "Begin".`, false);
+    }
+
     function reloadCurrentLesson(){
       const sel = document.getElementById('lessonSelect');
       if (sel && sel.value) onLessonChange(sel.value);
@@ -2875,6 +3068,17 @@ function rerenderMagicELabel(slotEl) {
     async function onLessonChange(key){
       if (!key) {
         setInstruction("Choose a lesson set above, or load words in the teacher panel.", false);
+        return;
+      }
+
+      const localObj = (typeof LOCAL_LESSON_SETS !== 'undefined') ? LOCAL_LESSON_SETS[key] : null;
+      if (localObj && Array.isArray(localObj.words)) {
+        try {
+          applyLessonObject(localObj, 'Cycle 19 Level 1');
+        } catch (e) {
+          alert(e.message);
+          setInstruction("Could not load the embedded lesson set.", false);
+        }
         return;
       }
 
@@ -2900,40 +3104,7 @@ function rerenderMagicELabel(slotEl) {
         if (!res || !res.ok) throw new Error(`could not load lesson (status ${res ? res.status : 'no response'})`);
 
         const obj = await res.json();
-        if (!obj || !Array.isArray(obj.words)) throw new Error('invalid json: missing "words" array');
-
-        teacherSet = normalizeWordSet(obj.words);
-        if (!teacherSet.length) throw new Error('lesson has no usable words');
-
-        PLAY_SCOPE = 'set';
-        words = teacherSet.map(deepCopy);
-        wIndex = 0;
-        step = 0;
-        activeSyllable = 1;
-        selectedIndex = -1;
-
-        Array.from(document.querySelectorAll('#wordTBody tr')).forEach(r => r.classList.remove('selected'));
-
-        if (window.speechSynthesis) speechSynthesis.cancel();
-        exitNoTTSPhase();
-
-        refreshTable();
-        resetBoard();
-        ensureTrayCounters();
-        autoFitDisplayToWord();
-
-        ALLOW_DRAG = false;
-        setCountersLocked(true);
-        lockAllSoundSlots();
-
-        document.getElementById('beginBtn').disabled = false;
-        document.getElementById('nextBtn').disabled = true;
-        document.getElementById('backBtn').disabled = true;
-
-        prefetchLessonAudio(words);
-
-        setCurrentLine('L0');
-        setInstruction(`Lesson loaded (${teacherSet.length} words). First word: "${teacherSet[0].word}". Click "Begin".`, false);
+        applyLessonObject(obj, 'Lesson');
       } catch (e) {
         alert(e.message);
         setInstruction("Could not load the lesson set. Check internet / URL / CORS.", false);
@@ -2970,6 +3141,16 @@ function rerenderMagicELabel(slotEl) {
     window.shuffleTeacherSet = shuffleTeacherSet;
     window.reloadCurrentLesson = reloadCurrentLesson;
     window.toggleMagicEMode = toggleMagicEMode;
+
+
+
+    function autoLoadCycle19Level1() {
+      const lessonSel = document.getElementById('lessonSelect');
+      if (lessonSel) lessonSel.value = 'c19l1';
+      setTimeout(() => onLessonChange('c19l1'), 0);
+    }
+
+    addEventListener('load', autoLoadCycle19Level1);
 
     window.debugList = () => ({
       teacherSet,
