@@ -586,7 +586,7 @@
 <body>
   <div id="stage">
     <div class="sheet">
-      <div class="title">Spelling Worksheet — Cycle 19 Level 2</div>
+      <div class="title">Spelling Worksheet — Cycle 19 Level 3</div>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
@@ -648,6 +648,7 @@
           <option value="c18s3">Cycle 18 Session 3</option>
           <option value="c19l1">Cycle 19 Level 1</option>
           <option value="c19l2">Cycle 19 Level 2</option>
+          <option value="c19l3">Cycle 19 Level 3</option>
         </select>
 
         <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
@@ -720,7 +721,6 @@
           <li><code>e__</code> is short sound for e.</li>
           <li><code>ea</code> is short sound for e.</li>
           <li><code>ea__</code> is long e sound.</li>
-	  <li><code>ed</code> is schwa followed by /d/ sound.</li>
           <li><code>ed_</code> is /d/ sound.</li>
           <li><code>ed__</code> is /t/ sound.</li>
           <li><code>ei</code> is long a sound.</li>
@@ -761,7 +761,6 @@
           <li><code>ur_</code> is schwa sound.</li>
           <li><code>y_e</code> is y sounding as long e sound.</li>
           <li><code>y_i</code> is y sounding as long i sound.</li>
-          <li><code>en</code> is 'en' sound.</li>
         </ul>
       </div>
     </div>
@@ -936,6 +935,7 @@
       c18s3: ASSET_BASE + "Cycle%2018%20Session%203.json",
       c19l1: ASSET_BASE + "Cycle%2019%20Level%201.json",
       c19l2: ASSET_BASE + "Cycle%2019%20Level%202.json",
+      c19l3: ASSET_BASE + "Cycle%2019%20Level%203.json",
     };
 
     const LOCAL_LESSON_SETS = {
@@ -1142,11 +1142,120 @@
                   }
             ]
       }
+      ,
+      "c19l3": {
+            "words": [
+                        {
+                                    "word": "comforted",
+                                    "meaning": "Comforted means made someone feel better when they were sad or upset. She comforted her friend after the spill.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "com"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "f",
+                                                                        "or_",
+                                                                        "t"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ed"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "exclaimed",
+                                    "meaning": "Exclaimed means said something suddenly and strongly. He exclaimed when he saw the spilled chocolate milk.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "ex"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "l",
+                                                                        "ai",
+                                                                        "m",
+                                                                        "ed_"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "around",
+                                    "meaning": "Around means on all sides of something or moving in a circle. The children sat around the table.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "r",
+                                                                        "ou",
+                                                                        "n",
+                                                                        "d"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "quickly",
+                                    "meaning": "Quickly means doing something fast. He quickly cleaned the table.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "qu",
+                                                                        "i__",
+                                                                        "ck"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "l",
+                                                                        "y_e"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "enjoying",
+                                    "meaning": "Enjoying means liking what you are doing. She is enjoying her chocolate milk.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "en"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "j",
+                                                                        "oy"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ing"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
 };
 
     const LOCAL_LESSON_LABELS = {
       c19l1: "Cycle 19 Level 1",
-      c19l2: "Cycle 19 Level 2"
+      c19l2: "Cycle 19 Level 2",
+      c19l3: "Cycle 19 Level 3"
     };
 
     let instructionsHidden = false;
@@ -1189,6 +1298,10 @@
       "watch":"watch",
       "en":"en",
       "ed":"ed",
+      "com":"com",
+      "ex":"ex",
+      "or":"or",
+      "qu":"qu",
       "ing":"ing",
       "ou":"ou",
       "oy":"oy",
@@ -1628,16 +1741,19 @@ function rerenderMagicELabel(slotEl) {
     }
 
 
+// Cycle 19 Level 3: en is intentionally spoken by TTS as "in", not loaded from en.m4a.
     const TTS_SOUND_OVERRIDES = {
       "watch": "watch",
-      "en": "in"
+      "en": "in",
+      "com": "come",
+      "ex": "icks"
     };
 
     function playTtsSoundOverride(text, cb) {
       const prevBlock = BLOCK_TTS;
       BLOCK_TTS = false;
 
-      // Irregular/TTS tokens, e.g. watch or en, should be spoken as the
+      // Irregular/TTS tokens, e.g. watch, should be spoken as the
       // normal word immediately when the counter is placed on that tile.
       if (!text || !voiceEnabled || !window.speechSynthesis) {
         BLOCK_TTS = prevBlock;
@@ -3255,13 +3371,13 @@ function rerenderMagicELabel(slotEl) {
 
 
 
-    function autoLoadCycle19Level2() {
+    function autoLoadCycle19Level3() {
       const lessonSel = document.getElementById('lessonSelect');
-      if (lessonSel) lessonSel.value = 'c19l2';
-      setTimeout(() => onLessonChange('c19l2'), 0);
+      if (lessonSel) lessonSel.value = 'c19l3';
+      setTimeout(() => onLessonChange('c19l3'), 0);
     }
 
-    addEventListener('load', autoLoadCycle19Level2);
+    addEventListener('load', autoLoadCycle19Level3);
 
     window.debugList = () => ({
       teacherSet,
