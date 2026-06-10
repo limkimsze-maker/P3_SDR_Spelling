@@ -4,7 +4,7 @@
   <link rel="icon" href="./kimsze_sharp16.ico?v=20260111a" sizes="any">
   <link rel="shortcut icon" href="./kimsze_sharp16.ico?v=20260111a">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-  <title>Cycle 20 Level 2 — Spelling Worksheet</title>
+  <title>Spelling Worksheet</title>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -129,6 +129,125 @@
     .lessonbar .hint {
       font-size: 12px;
       color: #555;
+    }
+
+
+    /* Teacher Console upgrade: compact controls only; student board and teaching sequence stay unchanged. */
+    .teacher-console {
+      border: 1px solid #d1d5db;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 5px 7px;
+      margin: 4px 0 4px;
+      font-size: 12px;
+    }
+
+    .teacher-console .tc-header,
+    .teacher-console .tc-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 3px 0;
+    }
+
+    .teacher-console .tc-header {
+      justify-content: flex-start;
+      margin: 0;
+    }
+
+    .teacher-console .tc-title {
+      font-weight: 900;
+      margin-right: 4px;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .teacher-console .tc-explain {
+      color: #4b5563;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .teacher-console .tc-toggle {
+      width: 26px;
+      min-width: 26px;
+      height: 24px;
+      padding: 0;
+      border-radius: 6px;
+      background: #374151;
+      color: #fff;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .teacher-console .tc-body {
+      margin-top: 4px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 4px;
+    }
+
+    .teacher-console.is-collapsed .tc-body {
+      display: none;
+    }
+
+    .teacher-console.is-collapsed {
+      padding: 5px 7px;
+    }
+
+    .teacher-console label {
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .teacher-console select {
+      padding: 5px 7px;
+      font-size: 12px;
+      border: 1px solid #cfd4da;
+      border-radius: 6px;
+      background: #fff;
+      max-width: 260px;
+    }
+
+    .teacher-console button {
+      padding: 5px 8px;
+      font-size: 12px;
+      line-height: 1.1;
+      border-radius: 6px;
+    }
+
+    .teacher-console .tc-mini {
+      background: #374151;
+    }
+
+    .teacher-console .tc-danger {
+      background: #c2410c;
+    }
+
+    .teacher-console .tc-status {
+      font-weight: 800;
+      color: #0f5132;
+      padding: 3px 6px;
+      background: #e9f7ef;
+      border-radius: 999px;
+    }
+
+    .teacher-console input[type="checkbox"] {
+      transform: translateY(1px);
+    }
+
+    body.tc-focus .lessonbar,
+    body.tc-focus #teacherConsole,
+    body.tc-focus .controls,
+    body.tc-focus .credits,
+    body.tc-focus #teacherHotspot,
+    body.tc-focus .sheet > h3 {
+      display: none !important;
+    }
+
+    body.tc-focus .sheet {
+      margin-top: 4px;
+      padding-top: 8px;
     }
 
     #studentLayout { margin-top: 12px; }
@@ -355,8 +474,9 @@
       align-items: center;
       justify-content: flex-start;
       gap: 12px;
-      margin-top: 8px;
+      margin-top: 6px;
       padding-right: 0;
+      min-height: 34px;
     }
 
     .magic-e-panel {
@@ -586,7 +706,7 @@
 <body>
   <div id="stage">
     <div class="sheet">
-      <div class="title">Spelling Worksheet — Cycle 20 Level 2</div>
+      <div class="title" id="worksheetTitle">Spelling Worksheet</div>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
@@ -652,10 +772,80 @@
           <option value="c20l1">Cycle 20 Level 1</option>
           <option value="c20l2">Cycle 20 Level 2</option>
           <option value="c20l3">Cycle 20 Level 3</option>
+          <option value="c21l1">Cycle 21 Level 1</option>
+          <option value="c21l2">Cycle 21 Level 2</option>
+          <option value="c21l3">Cycle 21 Level 3</option>
+          <option value="c22l1">Cycle 22 Level 1</option>
+          <option value="c22l2">Cycle 22 Level 2</option>
+          <option value="c22l3">Cycle 22 Level 3</option>
+          <option value="c23l1">Cycle 23 Level 1</option>
+          <option value="c23l2">Cycle 23 Level 2</option>
+          <option value="c23l3">Cycle 23 Level 3</option>
+          <option value="c24l1">Cycle 24 Level 1</option>
+          <option value="c24l2">Cycle 24 Level 2</option>
+          <option value="c24l3">Cycle 24 Level 3</option>
+          <option value="c25l1">Cycle 25 Level 1</option>
+          <option value="c25l2">Cycle 25 Level 2</option>
+          <option value="c25l3">Cycle 25 Level 3</option>
+          <option value="c26l1">Cycle 26 Level 1</option>
+          <option value="c26l2">Cycle 26 Level 2</option>
+          <option value="c26l3">Cycle 26 Level 3</option>
         </select>
 
         <button type="button" class="secondary" onclick="reloadCurrentLesson()">Reload Lesson</button>
         <span class="hint">Select a set to auto-load the Word List.</span>
+      </div>
+
+
+
+      <div id="teacherConsole" class="teacher-console is-collapsed" aria-label="Teacher Console">
+        <div class="tc-header">
+          <button type="button" id="tcCollapseBtn" class="tc-toggle" aria-expanded="false" aria-controls="tcConsoleBody" onclick="tcToggleConsole()">▶</button>
+          <span class="tc-title">Teacher Console</span>
+          <span class="tc-explain">Teacher remote control: choose the word or step, run Free Run teaching, pause/replay, focus the display, and mark words for review.</span>
+          <span id="tcWordStatus" class="tc-status">No word loaded</span>
+        </div>
+        <div id="tcConsoleBody" class="tc-body">
+          <div class="tc-row">
+            <label for="tcWordSelect">Word</label>
+            <select id="tcWordSelect" onchange="tcChooseWord(this.value)"></select>
+            <button type="button" class="tc-mini" onclick="tcPrevWord()">← Previous Word</button>
+            <button type="button" class="tc-mini" onclick="tcNextWord()">Next Word →</button>
+            <button type="button" class="tc-mini" onclick="tcToggleReview()">★ Mark Review</button>
+          </div>
+          <div class="tc-row">
+            <label for="tcStepSelect">Step</label>
+            <select id="tcStepSelect" onchange="tcJumpToSelectedStep()">
+              <option value="intro">1 Watch me spell</option>
+              <option value="say">2 Say word + meaning</option>
+              <option value="syllables">3 Track syllables</option>
+              <option value="sound1">4 Track 1st syllable sounds</option>
+              <option value="sound2">5 Track 2nd syllable sounds</option>
+              <option value="sound3">6 Track 3rd syllable sounds</option>
+              <option value="sound4">7 Track 4th syllable sounds</option>
+              <option value="sound5">8 Track 5th syllable sounds</option>
+              <option value="whole">9 Blend whole word</option>
+            </select>
+            <button type="button" class="tc-mini" onclick="tcPrevTeachingStep()">← Previous Step</button>
+            <button type="button" class="tc-mini" onclick="tcNextTeachingStep()">Next Step →</button>
+            <label><input type="checkbox" id="tcKeepStep" checked> Keep same step when changing word</label>
+            <button type="button" class="tc-mini" onclick="tcReplayStep()">🔁 Replay Step</button>
+          </div>
+          <div class="tc-row">
+            <button type="button" id="tcPlayBtn" onclick="tcPlayFreeRun()">▶ Free Run</button>
+            <button type="button" class="tc-mini" id="tcPauseBtn" onclick="tcPauseFreeRun()">⏸ Pause</button>
+            <button type="button" class="tc-danger" onclick="tcStopFreeRun()">⏹ Stop</button>
+            <label for="tcPaceSelect">Pace</label>
+            <select id="tcPaceSelect">
+              <option value="verySlow">Very slow</option>
+              <option value="slow" selected>Slow</option>
+              <option value="normal">Normal</option>
+            </select>
+            <label><input type="checkbox" id="tcAutoNext"> Auto-play next word</label>
+            <button type="button" class="tc-mini" onclick="tcToggleFocus()">Focus Mode</button>
+            <span class="hint">Shortcuts: Space play/pause · ←/→ step · N/B word · R replay · F focus</span>
+          </div>
+        </div>
       </div>
 
       <div class="steps" id="stepsPanel">
@@ -663,7 +853,7 @@
         <div id="script" class="script">
           <div class="line current" id="L0">Watch me spell a word. Remember how i do it. You will have to do it later.</div>
           <div class="line" id="La">a) <span class="em">Say</span> the word. Give the meaning in a sentence, and repeat the word.</div>
-          <div class="line" id="Lb">b) I track the syllables. &nbsp; <span id="Lb1">1st syllable /___/.</span> &nbsp; <span id="Lb2">2 syll /___/.</span> &nbsp; <span id="Lb3">3 syll /___/.</span> &nbsp; <span id="Lb4">4 syll /___/.</span></div>
+          <div class="line" id="Lb">b) I track the syllables. &nbsp; <span id="Lb1">1st syllable /___/.</span> &nbsp; <span id="Lb2">2nd syllable /___/.</span> &nbsp; <span id="Lb3">3rd syllable /___/.</span> &nbsp; <span id="Lb4">4th syllable /___/.</span> &nbsp; <span id="Lb5">5th syllable /___/.</span></div>
           <div class="line" id="Lc1">c) I track and spell the sounds in each syllable.</div>
           <div class="line" id="Lc2">1st syllable /__/.</div>
           <div class="line" id="Lc3">1st sound /__/ . 2nd sound /___/. 3rd sound /__/.</div>
@@ -692,7 +882,7 @@
 
       <div id="studentLayout"></div>
 
-      <h3 style="margin:12px 0 6px;font-size:18px">Counters</h3>
+      <h3 style="margin:8px 0 4px;font-size:18px">Counters</h3>
 
       <div class="bottom-tools">
         <div class="counter-tray" id="counters" ondrop="dropToTray(event)" ondragover="allowDropBasic(event)">
@@ -716,6 +906,14 @@
         <h5>Sound Markers</h5>
         <ul>
           <li><code>be</code> is be that sounds like be. Same rule apply for consonant which has 'Magic e' behind.</li>
+          <li><code>beau</code> displays as beau and plays <code>beau.mp4</code> from GitHub.</li>
+          <li><code>tures</code> displays as tures and plays <code>tures.mp4</code> from GitHub, for words such as <code>creatures</code>.</li>
+          <li><code>ture</code> displays as ture and plays <code>ture.mp4</code> from GitHub, for words such as <code>capture</code>.</li>
+          <li><code>trians</code> displays as trians and plays <code>trians.mp4</code> from GitHub, for words such as <code>pedestrians</code>.</li>
+          <li><code>wh_h</code> displays as <code>wh</code> but plays /h/ for the word <code>whole</code> only.</li>
+          <li><code>immediately</code> follows the reading-column boxes: <code>i__</code> + <code>m</code> / <code>m</code> + <code>e</code> / <code>di</code> / <code>a_</code> + <code>te</code> / <code>l</code> + <code>y_e</code>. The <code>a_</code> displays as <code>a</code> but plays the schwa sound.</li>
+          <li><code>es</code> displays as es but TTS says is, for words such as escape.</li>
+          <li><code>es_sound</code> displays as <code>es</code> but plays <code>es.m4a</code>, for <code>ditches</code>.</li>
           <li><code>a_</code> is a that sounds like schwa.</li>
           <li><code>a__</code> is short sound for a.</li>
           <li><code>scared</code> is treated as one irregular word token and uses TTS, like <code>watch</code>.</li>
@@ -785,6 +983,7 @@
           <option value="2">2 syllables</option>
           <option value="3" selected>3 syllables</option>
           <option value="4">4 syllables</option>
+          <option value="5">5 syllables</option>
         </select>
 
         <div class="hint" style="margin:6px 0 8px;">enter sound units per tile (digraphs/teams). leave blanks where unused.</div>
@@ -812,6 +1011,12 @@
             <div class="tg-title">syllable 4</div>
             <div class="tg-tiles">
               <input id="q4_0"><input id="q4_1"><input id="q4_2"><input id="q4_3"><input id="q4_4"><input id="q4_5">
+            </div>
+          </div>
+          <div class="tg-row">
+            <div class="tg-title">syllable 5</div>
+            <div class="tg-tiles">
+              <input id="q5_0"><input id="q5_1"><input id="q5_2"><input id="q5_3"><input id="q5_4"><input id="q5_5">
             </div>
           </div>
         </div>
@@ -849,6 +1054,7 @@
               <th style="width:180px">s2 tiles</th>
               <th style="width:180px">s3 tiles</th>
               <th style="width:180px">s4 tiles</th>
+              <th style="width:180px">s5 tiles</th>
             </tr>
           </thead>
           <tbody id="wordTBody"></tbody>
@@ -945,6 +1151,24 @@
       c20l1: ASSET_BASE + "Cycle%2020%20Level%201.json",
       c20l2: ASSET_BASE + "Cycle%2020%20Level%202.json",
       c20l3: ASSET_BASE + "Cycle%2020%20Level%203.json",
+      c21l1: ASSET_BASE + "Cycle%2021%20Level%201.json",
+      c21l2: ASSET_BASE + "Cycle%2021%20Level%202.json",
+      c21l3: ASSET_BASE + "Cycle%2021%20Level%203.json",
+      c22l1: ASSET_BASE + "Cycle%2022%20Level%201.json",
+      c22l2: ASSET_BASE + "Cycle%2022%20Level%202.json",
+      c22l3: ASSET_BASE + "Cycle%2022%20Level%203.json",
+      c23l1: ASSET_BASE + "Cycle%2023%20Level%201.json",
+      c23l2: ASSET_BASE + "Cycle%2023%20Level%202.json",
+      c23l3: ASSET_BASE + "Cycle%2023%20Level%203.json",
+      c24l1: ASSET_BASE + "Cycle%2024%20Level%201.json",
+      c24l2: ASSET_BASE + "Cycle%2024%20Level%202.json",
+      c24l3: ASSET_BASE + "Cycle%2024%20Level%203.json",
+      c25l1: ASSET_BASE + "Cycle%2025%20Level%201.json",
+      c25l2: ASSET_BASE + "Cycle%2025%20Level%202.json",
+      c25l3: ASSET_BASE + "Cycle%2025%20Level%203.json",
+      c26l1: ASSET_BASE + "Cycle%2026%20Level%201.json",
+      c26l2: ASSET_BASE + "Cycle%2026%20Level%202.json",
+      c26l3: ASSET_BASE + "Cycle%2026%20Level%203.json",
     };
 
     const LOCAL_LESSON_SETS = {
@@ -1026,20 +1250,6 @@
                                           "s",
                                           "igh",
                                           "ed_"
-                                    ]
-                              }
-                        ]
-                  },
-                  {
-                        "word": "stole",
-                        "meaning": "Stole means took something that did not belong to you. The boy stole the chocolate milk.",
-                        "syllables": [
-                              {
-                                    "letters": [
-                                          "s",
-                                          "t",
-                                          "o",
-                                          "le"
                                     ]
                               }
                         ]
@@ -1596,6 +1806,1858 @@
                   }
             ]
       }
+      ,
+      "c21l1": {
+            "words": [
+                  {
+                        "word": "important",
+                        "meaning": "Important means something that matters a lot. It is important to listen carefully.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "or"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a_",
+                                          "n",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "hardworking",
+                        "meaning": "Hardworking means putting in a lot of effort. The ant was hardworking and did not give up.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "h",
+                                          "ar",
+                                          "d"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "work"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ing"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "protect",
+                        "meaning": "Protect means to keep someone or something safe. The ants protect their home.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "p",
+                                          "r",
+                                          "o_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "e__",
+                                          "c",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "weight",
+                        "meaning": "Weight means how heavy something is. The ant carried a heavy weight.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "weight"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "dislike",
+                        "meaning": "Dislike means not to like something. I dislike being careless with my work.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "dis"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "i",
+                                          "ke"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c21l2": {
+            "words": [
+                  {
+                        "word": "environment",
+                        "meaning": "Environment means the place and conditions where people, animals or plants live. The ants live in their environment.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "en"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "i"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "m",
+                                          "e_",
+                                          "n",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "hardworking",
+                        "meaning": "Hardworking means putting in a lot of effort. The ant was hardworking and did not give up.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "h",
+                                          "ar",
+                                          "d"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "work"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ing"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "fierce",
+                        "meaning": "Fierce means strong, angry or scary. The fierce ant protected its colony.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "fierce"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "every",
+                        "meaning": "Every means each one in a group. Every ant has a job to do.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "e__",
+                                          "ve"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "dislike",
+                        "meaning": "Dislike means not to like something. I dislike being careless with my work.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "dis"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "i",
+                                          "ke"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c21l3": {
+            "words": [
+                  {
+                        "word": "extremely",
+                        "meaning": "Extremely means very much or to a very great degree. The ant worked extremely hard.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "ex"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "r",
+                                          "e",
+                                          "me"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "environment",
+                        "meaning": "Environment means the place and conditions where people, animals or plants live. The ants live in their environment.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "en"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "i"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "m",
+                                          "e_",
+                                          "n",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "important",
+                        "meaning": "Important means something that matters a lot. It is important to protect the ants.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "or"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a_",
+                                          "n",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "contain",
+                        "meaning": "Contain means to have something inside. The ant nest may contain many tunnels.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "ai",
+                                          "n"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "thousands",
+                        "meaning": "Thousands means many groups of one thousand. Thousands of ants can live together.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "th",
+                                          "ou"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "sands"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c22l1": {
+            "words": [
+                  {
+                        "word": "laughed",
+                        "meaning": "Laughed means made a happy sound because something was funny. Coco laughed during bath time.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "laughed"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "carefully",
+                        "meaning": "Carefully means doing something with care so it is done safely or correctly. Coco washed carefully in the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "care"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u_",
+                                          "l"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "squeezed",
+                        "meaning": "Squeezed means pressed something firmly. Coco squeezed the sponge.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "s",
+                                          "qu",
+                                          "ee",
+                                          "z",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "quickly",
+                        "meaning": "Quickly means doing something fast. Coco quickly got into the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "qu",
+                                          "i__",
+                                          "ck"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "mistake",
+                        "meaning": "A mistake is something done incorrectly. Coco made a small mistake.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "mis"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a",
+                                          "ke"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c22l2": {
+            "words": [
+                  {
+                        "word": "immediately",
+                        "meaning": "Immediately means right away or at once. Coco immediately went to the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "m",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "di"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "a_",
+                                          "te"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "carefully",
+                        "meaning": "Carefully means doing something with care so it is done safely or correctly. Coco washed carefully in the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "care"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u_",
+                                          "l"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "mistake",
+                        "meaning": "A mistake is something done incorrectly. Coco made a small mistake.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "mis"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a",
+                                          "ke"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "laughed",
+                        "meaning": "Laughed means made a happy sound because something was funny. Coco laughed during bath time.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "laughed"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "groaned",
+                        "meaning": "Groaned means made a low sound because of pain, tiredness, or unhappiness. Coco groaned when the bath was too cold.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "g",
+                                          "r",
+                                          "oa",
+                                          "n",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c22l3": {
+            "words": [
+                  {
+                        "word": "immediately",
+                        "meaning": "Immediately means right away or at once. Coco immediately went to the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "m",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "di"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "a_",
+                                          "te"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "announced",
+                        "meaning": "Announced means said something clearly so people could know it. Coco announced that bath time was starting.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "n",
+                                          "ou",
+                                          "n",
+                                          "c_",
+                                          "ed__"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "carefully",
+                        "meaning": "Carefully means doing something with care so it is done safely or correctly. Coco washed carefully in the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "care"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "u_",
+                                          "l"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "mistake",
+                        "meaning": "A mistake is something done incorrectly. Coco made a small mistake.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "mis"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a",
+                                          "ke"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "explained",
+                        "meaning": "Explained means made something clear by telling more about it. Coco explained what happened in the bath.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "ex"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "l",
+                                          "ai",
+                                          "n",
+                                          "ed_"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+
+      ,
+      "c23l1": {
+            "words": [
+                  {
+                        "word": "tough",
+                        "meaning": "Tough means strong or difficult. Keeping Singapore clean can be tough when everyone does not help.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "tough"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "thankful",
+                        "meaning": "Thankful means feeling pleased and grateful. We are thankful when people help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "th",
+                                          "a__",
+                                          "n",
+                                          "k"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ful"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "everyone",
+                        "meaning": "Everyone means every person. Everyone can help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "e__",
+                                          "ve"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "y_e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "one"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "forget",
+                        "meaning": "Forget means fail to remember something. Do not forget to throw rubbish into the bin.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "f",
+                                          "or_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "g",
+                                          "e__",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "throw",
+                        "meaning": "Throw means send something from your hand through the air. Please throw litter into the bin.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "th",
+                                          "r",
+                                          "ow_"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c23l2": {
+            "words": [
+                  {
+                        "word": "tough",
+                        "meaning": "Tough means strong or difficult. Keeping Singapore clean can be tough when everyone does not help.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "tough"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "responsible",
+                        "meaning": "Responsible means trusted to do the right thing. We are responsible for keeping Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "r",
+                                          "e__"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "s",
+                                          "p",
+                                          "o__",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "s",
+                                          "i_"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ble"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "areas",
+                        "meaning": "Areas are places or spaces. We keep all areas of Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_area"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "a_",
+                                          "s"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "everyone",
+                        "meaning": "Everyone means every person. Everyone can help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "e__",
+                                          "ve"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "y_e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "one"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "importantly",
+                        "meaning": "Importantly means in an important way. Most importantly, everyone should help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "i__",
+                                          "m"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "p",
+                                          "or"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "t",
+                                          "a_",
+                                          "n",
+                                          "t"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "l",
+                                          "y_e"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+
+      ,
+      "c23l3": {
+            "words": [
+                  {
+                        "word": "inconvenient",
+                        "meaning": "Inconvenient means causing trouble or difficulty. It is inconvenient when rubbish is left in public areas.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "in"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "c",
+                                          "o_",
+                                          "n"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "v",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "n",
+                                          "i__"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "e_",
+                                          "n",
+                                          "t"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "efforts",
+                        "meaning": "Efforts are tries or hard work. Our efforts help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "e__",
+                                          "f"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "f",
+                                          "or_",
+                                          "t",
+                                          "s"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "demanding",
+                        "meaning": "Demanding means needing a lot of effort or attention. Keeping a place clean can be demanding.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "d",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "mand"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "ing"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "areas",
+                        "meaning": "Areas are places or spaces. We keep all areas of Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "a_area"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "a_",
+                                          "s"
+                                    ]
+                              }
+                        ]
+                  },
+                  {
+                        "word": "everyone",
+                        "meaning": "Everyone means every person. Everyone can help to keep Singapore clean.",
+                        "syllables": [
+                              {
+                                    "letters": [
+                                          "e__",
+                                          "ve"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "r",
+                                          "y_e"
+                                    ]
+                              },
+                              {
+                                    "letters": [
+                                          "one"
+                                    ]
+                              }
+                        ]
+                  }
+            ]
+      }
+      ,
+      "c24l1": {
+            "words": [
+                        {
+                                    "word": "interesting",
+                                    "meaning": "Interesting means making you want to know more. Sea stars are interesting animals.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "in"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "terest"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ing"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "escape",
+                                    "meaning": "Escape means to get away from danger. A sea star can escape from a predator.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "es"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "a",
+                                                                        "pe"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "attacked",
+                                    "meaning": "Attacked means hurt or tried to harm. The prey was attacked by a predator.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_",
+                                                                        "t"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "a__",
+                                                                        "ck",
+                                                                        "ed_"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "colourful",
+                                    "meaning": "Colourful means having many bright colours. The sea star is colourful.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "col"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "our_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ful"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "prey",
+                                    "meaning": "Prey is an animal that is hunted or eaten by another animal. Small sea animals can be prey.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "p",
+                                                                        "r",
+                                                                        "ey"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+      ,
+      "c24l2": {
+            "words": [
+                        {
+                                    "word": "predator",
+                                    "meaning": "A predator is an animal that hunts and eats other animals. The predator looked for prey in the sea.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "p",
+                                                                        "r",
+                                                                        "e__",
+                                                                        "d"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "or_"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "escape",
+                                    "meaning": "Escape means to get away from danger. The sea star can escape from danger.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "es"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "a",
+                                                                        "pe"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "attacks",
+                                    "meaning": "Attacks means tries to hurt or harm. A predator attacks its prey.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_",
+                                                                        "t"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "a__",
+                                                                        "ck",
+                                                                        "s"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "prey",
+                                    "meaning": "Prey is an animal that is hunted or eaten by another animal. Small sea animals can be prey.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "p",
+                                                                        "r",
+                                                                        "ey"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "creatures",
+                                    "meaning": "Creatures are living things. Sea stars and fish are sea creatures.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "r",
+                                                                        "ea__"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "tures"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+      ,
+      "c24l3": {
+            "words": [
+                        {
+                                    "word": "predator",
+                                    "meaning": "A predator is an animal that hunts and eats other animals. The predator looked for prey in the sea.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "p",
+                                                                        "r",
+                                                                        "e__",
+                                                                        "d"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "or_"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "ditches",
+                                    "meaning": "Ditches are long narrow holes in the ground. The sea water flowed through the ditches.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "i__",
+                                                                        "tch"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "es_sound"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "ability",
+                                    "meaning": "Ability means the skill or power to do something. A sea star has the ability to escape.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "b",
+                                                                        "i__",
+                                                                        "l"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "i_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "y_e"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "creatures",
+                                    "meaning": "Creatures are living things. Sea stars and fish are sea creatures.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "r",
+                                                                        "ea__"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "tures"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "capture",
+                                    "meaning": "Capture means to catch and hold something. The predator tried to capture its prey.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "a__",
+                                                                        "p"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ture"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+
+      ,
+      "c25l1": {
+            "words": [
+                        {
+                                    "word": "hundreds",
+                                    "meaning": "Hundreds means many groups of one hundred. There were hundreds of amazing plants.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "h",
+                                                                        "u__",
+                                                                        "n"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "r",
+                                                                        "e_",
+                                                                        "d",
+                                                                        "s_z"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "insects",
+                                    "meaning": "Insects are small animals with six legs. Some insects live around plants.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "in"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "s",
+                                                                        "e__",
+                                                                        "c",
+                                                                        "t",
+                                                                        "s"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "amazing",
+                                    "meaning": "Amazing means very surprising or wonderful. The plants were amazing.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "m",
+                                                                        "a",
+                                                                        "z"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ing"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "digests",
+                                    "meaning": "Digests means breaks food down in the body. The plant digests the insect.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "i"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "g_",
+                                                                        "e__",
+                                                                        "s",
+                                                                        "t",
+                                                                        "s"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+
+      ,
+      "c25l2": {
+            "words": [
+                        {
+                                    "word": "incredible",
+                                    "meaning": "Incredible means very amazing or hard to believe. The plant had an incredible way to catch insects.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "in"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "r",
+                                                                        "e__",
+                                                                        "d"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "i_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ble"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "amazing",
+                                    "meaning": "Amazing means very surprising or wonderful. The plant was amazing.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "m",
+                                                                        "a",
+                                                                        "z"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ing"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "hundreds",
+                                    "meaning": "Hundreds means many groups of one hundred. There were hundreds of amazing plants.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "h",
+                                                                        "u__",
+                                                                        "n"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "r",
+                                                                        "e_",
+                                                                        "d",
+                                                                        "s_z"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "contains",
+                                    "meaning": "Contains means has something inside. The plant contains liquid that helps it digest insects.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "o_",
+                                                                        "n"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "ai",
+                                                                        "n",
+                                                                        "s"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "digest",
+                                    "meaning": "Digest means to break food down. The plant can digest insects.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "i"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "g_",
+                                                                        "e__",
+                                                                        "s",
+                                                                        "t"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+
+      ,
+      "c25l3": {
+            "words": [
+                        {
+                                    "word": "incredible",
+                                    "meaning": "Incredible means very amazing or hard to believe. The plant had an incredible way to catch insects.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "in"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c",
+                                                                        "r",
+                                                                        "e__",
+                                                                        "d"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "i_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ble"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "instead",
+                                    "meaning": "Instead means in place of something else. The plant caught insects instead of eating food like animals do.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "in"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "s",
+                                                                        "t",
+                                                                        "ea",
+                                                                        "d"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "digest",
+                                    "meaning": "Digest means to break food down. The plant can digest insects.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "d",
+                                                                        "i"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "g_",
+                                                                        "e__",
+                                                                        "s",
+                                                                        "t"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "attracts",
+                                    "meaning": "Attracts means pulls or draws something closer. The plant attracts insects with its smell.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_",
+                                                                        "t"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "t",
+                                                                        "r",
+                                                                        "a__",
+                                                                        "c",
+                                                                        "t",
+                                                                        "s"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "amazing",
+                                    "meaning": "Amazing means very surprising or wonderful. The plant was amazing.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "m",
+                                                                        "a",
+                                                                        "z"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ing"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+      ,
+      "c26l1": {
+            "words": [
+                        {
+                                    "word": "another",
+                                    "meaning": "Another means one more or a different one. Nor saw another view from the Singapore Flyer.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "a_"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "no"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "th",
+                                                                        "er"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "beautiful",
+                                    "meaning": "Beautiful means very nice to look at. The view from the Singapore Flyer was beautiful.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "beau"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ti"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ful"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "whole",
+                                    "meaning": "Whole means all of something. Nor could see the whole city from above.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "wh_h",
+                                                                        "o",
+                                                                        "le"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "excited",
+                                    "meaning": "Excited means feeling very happy and eager. Nor was excited to ride the Singapore Flyer.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "ex"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "c_",
+                                                                        "i",
+                                                                        "t"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "ed"
+                                                            ]
+                                                }
+                                    ]
+                        },
+                        {
+                                    "word": "everywhere",
+                                    "meaning": "Everywhere means in all places. Nor saw lights everywhere around the city.",
+                                    "syllables": [
+                                                {
+                                                            "letters": [
+                                                                        "e__",
+                                                                        "ve"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "r",
+                                                                        "y_e"
+                                                            ]
+                                                },
+                                                {
+                                                            "letters": [
+                                                                        "where"
+                                                            ]
+                                                }
+                                    ]
+                        }
+            ]
+}
+      ,
+      "c26l2": {
+            "words": [
+                        {
+                                    "word": "beautiful",
+                                    "meaning": "Beautiful means very nice to look at. The view from the Singapore Flyer was beautiful.",
+                                    "syllables": [
+                                                { "letters": [ "beau" ] },
+                                                { "letters": [ "ti" ] },
+                                                { "letters": [ "ful" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "excitedly",
+                                    "meaning": "Excitedly means doing something in a very happy and eager way. Nor waved excitedly at the view.",
+                                    "syllables": [
+                                                { "letters": [ "ex" ] },
+                                                { "letters": [ "c_", "i", "t" ] },
+                                                { "letters": [ "ed" ] },
+                                                { "letters": [ "l", "y_e" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "minutes",
+                                    "meaning": "Minutes are short units of time. Nor waited a few minutes before the ride began.",
+                                    "syllables": [
+                                                { "letters": [ "m", "i__", "n" ] },
+                                                { "letters": [ "utes" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "against",
+                                    "meaning": "Against means touching or facing something. Nor leaned against the glass safely.",
+                                    "syllables": [
+                                                { "letters": [ "a_" ] },
+                                                { "letters": [ "g", "ai", "n", "s", "t" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "gasped",
+                                    "meaning": "Gasped means breathed in suddenly because of surprise. Nor gasped when he saw the high view.",
+                                    "syllables": [
+                                                { "letters": [ "g", "a__", "s", "p", "ed__" ] }
+                                    ]
+                        }
+            ]
+}
+
+      ,
+      "c26l3": {
+            "words": [
+                        {
+                                    "word": "extremely",
+                                    "meaning": "Extremely means very or to a great degree. Nor was extremely excited to visit the Singapore Flyer.",
+                                    "syllables": [
+                                                { "letters": [ "ex" ] },
+                                                { "letters": [ "t", "r", "e", "me" ] },
+                                                { "letters": [ "l", "y_e" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "wistfully",
+                                    "meaning": "Wistfully means in a thoughtful or longing way. Nor looked wistfully at the beautiful view.",
+                                    "syllables": [
+                                                { "letters": [ "w", "i__", "s", "t" ] },
+                                                { "letters": [ "ful" ] },
+                                                { "letters": [ "l", "y_e" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "beautiful",
+                                    "meaning": "Beautiful means very nice to look at. The Singapore Flyer had a beautiful view.",
+                                    "syllables": [
+                                                { "letters": [ "beau" ] },
+                                                { "letters": [ "ti" ] },
+                                                { "letters": [ "ful" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "pedestrians",
+                                    "meaning": "Pedestrians are people walking along a road or path. The pedestrians walked near the Singapore Flyer.",
+                                    "syllables": [
+                                                { "letters": [ "p", "e_" ] },
+                                                { "letters": [ "d", "e__", "s" ] },
+                                                { "letters": [ "trians" ] }
+                                    ]
+                        },
+                        {
+                                    "word": "whole",
+                                    "meaning": "Whole means all of something. Nor could see the whole city from above.",
+                                    "syllables": [
+                                                { "letters": [ "wh_h", "o", "le" ] }
+                                    ]
+                        }
+            ]
+}
+
 };
 
     const LOCAL_LESSON_LABELS = {
@@ -1604,8 +3666,48 @@
       c19l3: "Cycle 19 Level 3",
       c20l1: "Cycle 20 Level 1",
       c20l2: "Cycle 20 Level 2",
-      c20l3: "Cycle 20 Level 3"
+      c20l3: "Cycle 20 Level 3",
+      c21l1: "Cycle 21 Level 1",
+      c21l2: "Cycle 21 Level 2",
+      c21l3: "Cycle 21 Level 3",
+      c22l1: "Cycle 22 Level 1",
+      c22l2: "Cycle 22 Level 2",
+      c22l3: "Cycle 22 Level 3",
+      c23l1: "Cycle 23 Level 1",
+      c23l2: "Cycle 23 Level 2",
+      c23l3: "Cycle 23 Level 3",
+      c24l1: "Cycle 24 Level 1",
+      c24l2: "Cycle 24 Level 2",
+      c24l3: "Cycle 24 Level 3",
+      c25l1: "Cycle 25 Level 1",
+      c25l2: "Cycle 25 Level 2",
+      c25l3: "Cycle 25 Level 3",
+      c26l1: "Cycle 26 Level 1",
+      c26l2: "Cycle 26 Level 2",
+      c26l3: "Cycle 26 Level 3"
     };
+
+    function getLessonLabel(key, fallback = 'Lesson') {
+      if (key && LOCAL_LESSON_LABELS[key]) return LOCAL_LESSON_LABELS[key];
+
+      const sel = document.getElementById('lessonSelect');
+      if (sel && key) {
+        const opt = Array.from(sel.options).find(o => o.value === key);
+        if (opt && opt.textContent.trim()) return opt.textContent.trim();
+      }
+
+      return fallback || 'Lesson';
+    }
+
+    function updateWorksheetTitle(label) {
+      const cleanLabel = String(label || '').trim();
+      const visibleTitle = cleanLabel ? `Spelling Worksheet — ${cleanLabel}` : 'Spelling Worksheet';
+      const browserTitle = cleanLabel ? `${cleanLabel} — Spelling Worksheet` : 'Spelling Worksheet';
+
+      const titleEl = document.getElementById('worksheetTitle') || document.querySelector('.title');
+      if (titleEl) titleEl.textContent = visibleTitle;
+      document.title = browserTitle;
+    }
 
     let instructionsHidden = false;
     let voiceEnabled = true;
@@ -1642,7 +3744,7 @@
 
     function stopAllSpeechAndSound() {
       cancelCurrentSoundPlayback();
-      if (window.speechSynthesis) speechSynthesis.cancel();
+      cancelTeacherVoiceOnly();
     }
 
     let words = [
@@ -1652,6 +3754,8 @@
     let teacherSet = [
       { word:"map", meaning:"a map shows places. i see a map on the wall.", syllables:[{letters:["m","a__","p"]}] }
     ];
+
+    const MAX_SYLLABLES = 5;
 
     let DISPLAY_SYL = 1;
     let selectedIndex = -1;
@@ -1674,12 +3778,46 @@
     }
 
     const TOKEN_DISPLAY_MAP = {
-      "a_":"a","a__":"a","aw_a":"a","are_air":"are",
+      "a_":"a","a__":"a","aw_a":"a","are_air":"are","a_area":"a",
       "ai":"ai",
       "ay":"ay",
       "igh":"igh",
       "watch":"watch",
+      "wh_h":"wh",
+      "laughed":"laughed",
+      "tough":"tough",
+      "no":"no",
+      "beau":"beau",
+      "ti":"ti",
+      "whole":"whole",
+      "where":"where",
+      "utes":"utes",
+      "ed_a":"ed",
+      "terest":"terest",
+      "tures":"tures",
+      "ture":"ture",
+      "trians":"trians",
+      "es":"es",
+      "es_sound":"es",
+      "col":"col",
+      "our_":"our",
+      "ful":"ful",
+      "ble":"ble",
+      "re":"re",
+      "one":"one",
+      "care":"care",
+      "im":"im",
+      "me":"me",
+      "di":"di",
+      "mis":"mis",
+      "in":"in",
+      "mand":"mand",
+      "ee":"ee",
       "scared":"scared",
+      "work":"work",
+      "weight":"weight",
+      "fierce":"fierce",
+      "sands":"sands",
       "en":"en",
       "ed":"ed",
       "com":"com",
@@ -1688,11 +3826,13 @@
       "qu":"qu",
       "ing":"ing",
       "ou":"ou",
+      "oa":"oa",
       "oy":"oy",
       "sh":"sh",
       "tch":"tch",
       "tion":"tion",
       "ai_":"ai",
+      "ar":"ar",
       "ar_":"ar",
       "ay_":"ay",
       "c_":"c",
@@ -1710,6 +3850,7 @@
       "ir_":"ir",
       "k":"k",
       "ck":"ck",
+      "dis":"dis",
       "l":"l","ll":"ll",
       "o__":"o","o_":"o",
       "oo_":"oo","oo":"oo",
@@ -1726,7 +3867,7 @@
 
     const SCHWA_TOKENS = new Set([
       "a_","e_","i_","o_","u_",
-      "ai_","ar_","ay_","ea_","er_","ir_","or_","ur_"
+      "ai_","ar_","ay_","ea_","er_","ir_","or_","our_","ur_","ed_a"
     ]);
 
     const MAGIC_E_CARRIERS = new Set([
@@ -1859,10 +4000,16 @@
       }
 
       function fit() {
-        if (!W || !H) measure();
+        // Re-measure every time because the worksheet height changes after a lesson/word is loaded.
+        // Without this, the newly-rendered board can extend below the viewport and hide the counter tray.
+        measure();
         const s = Math.min((innerWidth - 2) / W, (innerHeight - 2) / H);
         stage.style.transform = 'scale(' + s + ')';
       }
+
+      window.fitWorksheetToViewport = function(){
+        requestAnimationFrame(() => fit());
+      };
 
       addEventListener('load', () => requestAnimationFrame(() => {
         measure();
@@ -1873,6 +4020,7 @@
         lockAllSoundSlots();
         autoFitDisplayToWord();
         ensureTrayCounters();
+        if (window.fitWorksheetToViewport) window.fitWorksheetToViewport();
 
         const bb = document.getElementById('backBtn');
         const nb = document.getElementById('nextBtn');
@@ -2007,7 +4155,7 @@ function rerenderMagicELabel(slotEl) {
     function toggleVoice() {
       voiceEnabled = !voiceEnabled;
       document.getElementById('toggleVoiceBtn').textContent = voiceEnabled ? 'Mute Voice' : 'Unmute Voice';
-      if (!voiceEnabled && window.speechSynthesis) speechSynthesis.cancel();
+      if (!voiceEnabled) cancelTeacherVoiceOnly();
     }
 
     function setInstruction(text, speakNow = true) {
@@ -2025,7 +4173,23 @@ function rerenderMagicELabel(slotEl) {
     const TTS_RATE = 0.62;
     const TTS_PITCH = 1.0;
     const TTS_VOLUME = 1.0;
+    // Extra pause after a speechSynthesis line ends. Chrome can fire onend a
+    // little early, so this prevents the next step/audio from cutting off
+    // phrases such as "say again ...".
+    const TTS_TAIL_BUFFER_MS = 650;
+    const TTS_START_BUFFER_MS = 80;
     let preferredVoice = null;
+
+    // Main teacher-voice tracking. Free Run waits for this to finish before
+    // moving to the next teaching step, so longer sentences are not cut off.
+    let TTS_SEQUENCE_ID = 0;
+    let TTS_IS_SPEAKING = false;
+
+    function cancelTeacherVoiceOnly() {
+      TTS_SEQUENCE_ID++;
+      TTS_IS_SPEAKING = false;
+      if (window.speechSynthesis) speechSynthesis.cancel();
+    }
 
     function pickPreferredVoice() {
       if (!window.speechSynthesis) return null;
@@ -2056,9 +4220,13 @@ function rerenderMagicELabel(slotEl) {
 
     function tts(text, cb) {
       if (!text || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
+        TTS_IS_SPEAKING = false;
         cb && cb();
         return;
       }
+
+      const speakId = ++TTS_SEQUENCE_ID;
+      TTS_IS_SPEAKING = true;
 
       const u = new SpeechSynthesisUtterance(text);
       const v = preferredVoice || pickPreferredVoice();
@@ -2069,16 +4237,90 @@ function rerenderMagicELabel(slotEl) {
       u.pitch = TTS_PITCH;
       u.volume = TTS_VOLUME;
 
-      u.onend = () => cb && cb();
-      u.onerror = () => cb && cb();
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        // Do not release the callback immediately. Some browsers fire onend
+        // just before the audible tail is complete. Keeping TTS_IS_SPEAKING
+        // true during this tail buffer makes Free Run wait instead of moving
+        // on and cancelling the last words.
+        setTimeout(() => {
+          if (speakId === TTS_SEQUENCE_ID) TTS_IS_SPEAKING = false;
+          cb && cb();
+        }, TTS_TAIL_BUFFER_MS);
+      };
+
+      u.onend = finish;
+      u.onerror = finish;
+
+      // Cancel earlier teacher voice, then speak the new line. The tiny delay
+      // avoids Chrome occasionally swallowing the start/end of an utterance.
+      speechSynthesis.cancel();
+      setTimeout(() => {
+        if (speakId !== TTS_SEQUENCE_ID) return;
+        try { speechSynthesis.speak(u); }
+        catch (_) { finish(); }
+      }, TTS_START_BUFFER_MS);
+    }
+
+
+    function ttsSequence(lines, cb) {
+      const cleanLines = (Array.isArray(lines) ? lines : [lines])
+        .map(x => String(x || '').trim())
+        .filter(Boolean);
+
+      if (!cleanLines.length || BLOCK_TTS || !voiceEnabled || !window.speechSynthesis) {
+        TTS_IS_SPEAKING = false;
+        cb && cb();
+        return;
+      }
+
+      const sequenceId = ++TTS_SEQUENCE_ID;
+      TTS_IS_SPEAKING = true;
+      let index = 0;
 
       speechSynthesis.cancel();
-      speechSynthesis.speak(u);
+
+      const speakNext = () => {
+        if (sequenceId !== TTS_SEQUENCE_ID) return;
+        if (index >= cleanLines.length) {
+          setTimeout(() => {
+            if (sequenceId === TTS_SEQUENCE_ID) TTS_IS_SPEAKING = false;
+            cb && cb();
+          }, TTS_TAIL_BUFFER_MS);
+          return;
+        }
+
+        const u = new SpeechSynthesisUtterance(cleanLines[index++]);
+        const v = preferredVoice || pickPreferredVoice();
+        u.lang = 'en-GB';
+        if (v) u.voice = v;
+        u.rate = TTS_RATE;
+        u.pitch = TTS_PITCH;
+        u.volume = TTS_VOLUME;
+
+        let done = false;
+        const advance = () => {
+          if (done) return;
+          done = true;
+          // Small gap between speech lines so the final syllable of one line
+          // is not swallowed by the next line or by the next teaching step.
+          setTimeout(speakNext, TTS_TAIL_BUFFER_MS);
+        };
+
+        u.onend = advance;
+        u.onerror = advance;
+        try { speechSynthesis.speak(u); }
+        catch (_) { advance(); }
+      };
+
+      setTimeout(speakNext, TTS_START_BUFFER_MS);
     }
 
     function enterNoTTSPhase() {
       BLOCK_TTS = true;
-      if (window.speechSynthesis) speechSynthesis.cancel();
+      cancelTeacherVoiceOnly();
     }
 
     function exitNoTTSPhase() {
@@ -2128,17 +4370,47 @@ function rerenderMagicELabel(slotEl) {
 
 // TTS/alternate playback tokens for irregular reading-column items.
     const SOUND_TOKEN_FILE_OVERRIDES = {
-      "s_z": "z"
+      "s_z": "z",
+      "ve": "v",
+      "our_": "er_",
+      "wh_h": "h",
+      "es_sound": "es"
     };
 
     const TTS_SOUND_OVERRIDES = {
       "watch": "watch",
+      "laughed": "laughed",
+      "tough": "tough",
+      "no": "nuh",
+      "es": "is",
+      "ti": "tee",
+      "whole": "whole",
+      "where": "where",
+      "utes": "its",
+      "ed_a": "uhd",
+      "terest": "trust",
+      "tures": "chuhz",
+      "ture": "chuh",
+      "trians": "tree uhnz",
+      "col": "cull",
+      "one": "one",
+      "care": "care",
+      "re": "ree",
+      "mis": "mis",
+      "in": "in",
+      "mand": "marnd",
       "en": "in",
+      "di": "dee",
       "com": "come",
       "ex": "icks",
       "are_air": "air",
+      "a_area": "air",
       "scared": "scared",
-      "heard": "heard"
+      "heard": "heard",
+      "work": "work",
+      "weight": "weight",
+      "fierce": "fierce",
+      "sands": "zands"
     };
 
     function playTtsSoundOverride(text, cb) {
@@ -2167,7 +4439,7 @@ function rerenderMagicELabel(slotEl) {
       u.onend = () => { BLOCK_TTS = prevBlock; setSoundBusy(false); cb && cb(); };
       u.onerror = () => { BLOCK_TTS = prevBlock; setSoundBusy(false); cb && cb(); };
 
-      speechSynthesis.cancel();
+      cancelTeacherVoiceOnly();
       speechSynthesis.speak(u);
     }
 
@@ -2183,7 +4455,7 @@ function rerenderMagicELabel(slotEl) {
       const playId = ++SOUND_PLAYBACK_ID;
       pauseActiveSoundAudio();
       setSoundBusy(true);
-      if (window.speechSynthesis) speechSynthesis.cancel();
+      cancelTeacherVoiceOnly();
 
       function isCurrent() {
         return playId === SOUND_PLAYBACK_ID;
@@ -2274,6 +4546,14 @@ function rerenderMagicELabel(slotEl) {
       const k = (token || '').toLowerCase().trim();
       if (!k) { cb && cb(); return; }
 
+      // Use uploaded GitHub sound files instead of browser TTS for selected tokens.
+      if (k === 'beau' || k === 'tures' || k === 'ture' || k === 'trians') {
+        const bust = Date.now().toString(36);
+        playAudioUrlSequence([`${RAW_SOUND_BASE}${k}.mp4?v=${bust}`], cb, null);
+        return;
+      }
+
+
       if (TTS_SOUND_OVERRIDES[k]) {
         playTtsSoundOverride(TTS_SOUND_OVERRIDES[k], cb);
         return;
@@ -2363,22 +4643,17 @@ function rerenderMagicELabel(slotEl) {
         return;
       }
 
-      tts(`say the word ${sayWord}`, () => {
-        if (meaning) {
-          tts(meaning, () => {
-            tts(`say again ${sayWord}`, () => { BLOCK_TTS = prevBlock; });
-          });
-        } else {
-          tts(`say again ${sayWord}`, () => { BLOCK_TTS = prevBlock; });
-        }
-      });
+      const lines = [`say the word ${sayWord}`];
+      if (meaning) lines.push(meaning);
+      lines.push(`say again ${sayWord}`);
+      ttsSequence(lines, () => { BLOCK_TTS = prevBlock; });
     }
 
     function renderLayout() {
       const container = document.getElementById('studentLayout');
       container.innerHTML = '';
 
-      const displaySyl = Math.max(1, Math.min(4, parseInt(DISPLAY_SYL || 1, 10)));
+      const displaySyl = Math.max(1, Math.min(MAX_SYLLABLES, parseInt(DISPLAY_SYL || 1, 10)));
       const COLS = `repeat(${displaySyl}, minmax(0,1fr)) 1.1fr`;
 
       const grid = document.createElement('div');
@@ -2390,7 +4665,7 @@ function rerenderMagicELabel(slotEl) {
 
       for (let s = 1; s <= displaySyl; s++) {
         const d = document.createElement('div');
-        d.textContent = (s===1?'First':s===2?'Second':s===3?'Third':'Fourth') + ' Syllable';
+        d.textContent = syllableHeading(s) + ' Syllable';
         hdr.appendChild(d);
       }
 
@@ -2463,10 +4738,12 @@ function rerenderMagicELabel(slotEl) {
       if (!w) {
         DISPLAY_SYL = 1;
         renderLayout();
+        if (window.fitWorksheetToViewport) window.fitWorksheetToViewport();
         return;
       }
-      DISPLAY_SYL = Math.max(1, Math.min(4, (w.syllables || [{letters:[]}]).length));
+      DISPLAY_SYL = Math.max(1, Math.min(MAX_SYLLABLES, (w.syllables || [{letters:[]}]).length));
       renderLayout();
+      if (window.fitWorksheetToViewport) window.fitWorksheetToViewport();
     }
 
     function refreshTable() {
@@ -2482,29 +4759,26 @@ function rerenderMagicELabel(slotEl) {
         const tdM = cellTextarea(item.meaning, (v) => item.meaning = v);
         const sylCount = item.syllables.length;
 
-        const tdS = cellSelect([1,2,3,4], sylCount, (v) => {
+        const tdS = cellSelect(Array.from({length: MAX_SYLLABLES}, (_, i) => i + 1), sylCount, (v) => {
           const n = parseInt(v, 10);
           while (item.syllables.length < n) item.syllables.push({letters:[]});
           while (item.syllables.length > n) item.syllables.pop();
         });
 
-        const s1 = (item.syllables[0]?.letters || []).join(',');
-        const s2 = (item.syllables[1]?.letters || []).join(',');
-        const s3 = (item.syllables[2]?.letters || []).join(',');
-        const s4 = (item.syllables[3]?.letters || []).join(',');
-
-        const tdS1 = cellInput(s1, (v) => item.syllables[0] = {letters: csvToTokens(v)});
-        const tdS2 = cellInput(s2, (v) => { if(item.syllables.length < 2) item.syllables[1] = {letters:[]}; item.syllables[1].letters = csvToTokens(v); });
-        const tdS3 = cellInput(s3, (v) => { if(item.syllables.length < 3) item.syllables[2] = {letters:[]}; item.syllables[2].letters = csvToTokens(v); });
-        const tdS4 = cellInput(s4, (v) => { if(item.syllables.length < 4) item.syllables[3] = {letters:[]}; item.syllables[3].letters = csvToTokens(v); });
+        const tdTiles = [];
+        for (let s = 1; s <= MAX_SYLLABLES; s++) {
+          const val = (item.syllables[s - 1]?.letters || []).join(',');
+          const td = cellInput(val, (v) => {
+            while (item.syllables.length < s) item.syllables.push({letters:[]});
+            item.syllables[s - 1].letters = csvToTokens(v);
+          });
+          tdTiles.push(td);
+        }
 
         tr.appendChild(tdW);
         tr.appendChild(tdM);
         tr.appendChild(tdS);
-        tr.appendChild(tdS1);
-        tr.appendChild(tdS2);
-        tr.appendChild(tdS3);
-        tr.appendChild(tdS4);
+        tdTiles.forEach(td => tr.appendChild(td));
 
         tbody.appendChild(tr);
       });
@@ -2793,7 +5067,7 @@ function rerenderMagicELabel(slotEl) {
           word: String(w.word || '').trim(),
           meaning: String(w.meaning || '').trim(),
           syllables: (Array.isArray(w.syllables) ? w.syllables : [])
-            .slice(0,4)
+            .slice(0, MAX_SYLLABLES)
             .map(s => ({
               letters: Array.isArray(s.letters)
                 ? s.letters.slice(0,6).map(t => String(t || '').toLowerCase())
@@ -2850,7 +5124,7 @@ function rerenderMagicELabel(slotEl) {
       }
     }
 
-    const MAX_TRAY_COUNTERS = 4;
+    const MAX_TRAY_COUNTERS = MAX_SYLLABLES;
 
     function _trayCounters() {
       return Array.from(document.querySelectorAll('#counters .counter'))
@@ -3292,7 +5566,7 @@ function rerenderMagicELabel(slotEl) {
       if (soundDropsDone >= Math.min(6, sylLetters.length)) {
         blendWriteSyllable(syll);
 
-        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+        const sylCount = Math.min(MAX_SYLLABLES, Math.max(1, (w.syllables||[{letters:[]}]).length));
         if (syll < sylCount) {
           setInstruction(`${ordinal(syll+1)} syllable — track the sounds: Place counters on the tiles (left→right).`, false);
           startSyllableTrack(syll+1);
@@ -3357,7 +5631,14 @@ function rerenderMagicELabel(slotEl) {
     }
 
     function ordinal(n) {
-      return n===1 ? '1st' : n===2 ? '2nd' : n===3 ? '3rd' : '4th';
+      const mod100 = n % 100;
+      if (mod100 >= 11 && mod100 <= 13) return n + 'th';
+      const mod10 = n % 10;
+      return n + (mod10 === 1 ? 'st' : mod10 === 2 ? 'nd' : mod10 === 3 ? 'rd' : 'th');
+    }
+
+    function syllableHeading(n) {
+      return ['First','Second','Third','Fourth','Fifth'][n - 1] || ordinal(n);
     }
 
     function _clearSyllableSoundRow(s){
@@ -3399,7 +5680,7 @@ function rerenderMagicELabel(slotEl) {
     }
 
     function _clearFromSyllable(s){
-      for (let i = s; i <= 4; i++) _clearSyllableWork(i);
+      for (let i = s; i <= MAX_SYLLABLES; i++) _clearSyllableWork(i);
       const ww = document.getElementById('wholewordText');
       if (ww) ww.textContent = '';
       ensureTrayCounters();
@@ -3407,7 +5688,7 @@ function rerenderMagicELabel(slotEl) {
 
     function blendWriteSyllable(n){
       setCurrentLine('Ld');
-      if (window.speechSynthesis) speechSynthesis.cancel();
+      cancelTeacherVoiceOnly();
       setInstruction(`I blend and check the ${ordinal(n)} syllable. I write it in the syllable cell.`, false);
 
       const w = words[wIndex];
@@ -3444,7 +5725,7 @@ function rerenderMagicELabel(slotEl) {
 
       if (needSoundDrops === 0) {
         blendWriteSyllable(n);
-        const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+        const sylCount = Math.min(MAX_SYLLABLES, Math.max(1, (w.syllables||[{letters:[]}]).length));
         if (n < sylCount) {
           startSyllableTrack(n + 1);
         } else {
@@ -3495,7 +5776,7 @@ function rerenderMagicELabel(slotEl) {
 
     function nextStep(){
       const w = words[wIndex];
-      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      const sylCount = Math.min(MAX_SYLLABLES, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
       switch(step){
         case 0:
@@ -3511,15 +5792,10 @@ function rerenderMagicELabel(slotEl) {
           document.getElementById('nextBtn').disabled = true;
           setInstruction(`Say the word.`, false);
 
-          tts(`say the word ${w.word}`, ()=>{
-            if (w.meaning) {
-              tts(w.meaning, ()=>{
-                tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled = false);
-              });
-            } else {
-              tts(`say again ${w.word}`, ()=> document.getElementById('nextBtn').disabled = false);
-            }
-          });
+          const sayLines = [`say the word ${w.word}`];
+          if (w.meaning) sayLines.push(w.meaning);
+          sayLines.push(`say again ${w.word}`);
+          ttsSequence(sayLines, ()=> document.getElementById('nextBtn').disabled = false);
           break;
 
         case 2:
@@ -3588,7 +5864,7 @@ function rerenderMagicELabel(slotEl) {
       if (window.speechSynthesis) speechSynthesis.cancel();
 
       const w = words[wIndex];
-      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      const sylCount = Math.min(MAX_SYLLABLES, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
       if (ALLOW_DRAG && needSoundDrops > 0 && BLOCK_TTS) {
         if (activeSyllable > 1) {
@@ -3678,7 +5954,7 @@ function rerenderMagicELabel(slotEl) {
       if (window.speechSynthesis) speechSynthesis.cancel();
 
       const w = words[wIndex];
-      const sylCount = Math.min(4, Math.max(1, (w.syllables||[{letters:[]}]).length));
+      const sylCount = Math.min(MAX_SYLLABLES, Math.max(1, (w.syllables||[{letters:[]}]).length));
 
       if (ALLOW_DRAG && needSoundDrops > 0 && BLOCK_TTS) {
         _clearSyllableWork(activeSyllable);
@@ -3784,6 +6060,8 @@ function rerenderMagicELabel(slotEl) {
       teacherSet = normalizeWordSet(obj.words);
       if (!teacherSet.length) throw new Error('lesson has no usable words');
 
+      updateWorksheetTitle(sourceLabel);
+
       PLAY_SCOPE = 'set';
       words = teacherSet.map(deepCopy);
       wIndex = 0;
@@ -3822,6 +6100,7 @@ function rerenderMagicELabel(slotEl) {
 
     async function onLessonChange(key){
       if (!key) {
+        updateWorksheetTitle('');
         setInstruction("Choose a lesson set above, or load words in the teacher panel.", false);
         return;
       }
@@ -3829,7 +6108,7 @@ function rerenderMagicELabel(slotEl) {
       const localObj = (typeof LOCAL_LESSON_SETS !== 'undefined') ? LOCAL_LESSON_SETS[key] : null;
       if (localObj && Array.isArray(localObj.words)) {
         try {
-          applyLessonObject(localObj, LOCAL_LESSON_LABELS[key] || 'Embedded lesson');
+          applyLessonObject(localObj, getLessonLabel(key, 'Embedded lesson'));
         } catch (e) {
           alert(e.message);
           setInstruction("Could not load the embedded lesson set.", false);
@@ -3859,7 +6138,7 @@ function rerenderMagicELabel(slotEl) {
         if (!res || !res.ok) throw new Error(`could not load lesson (status ${res ? res.status : 'no response'})`);
 
         const obj = await res.json();
-        applyLessonObject(obj, 'Lesson');
+        applyLessonObject(obj, getLessonLabel(key, 'Lesson'));
       } catch (e) {
         alert(e.message);
         setInstruction("Could not load the lesson set. Check internet / URL / CORS.", false);
@@ -3899,13 +6178,682 @@ function rerenderMagicELabel(slotEl) {
 
 
 
-    function autoLoadCycle20Level3() {
-      const lessonSel = document.getElementById('lessonSelect');
-      if (lessonSel) lessonSel.value = 'c20l3';
-      setTimeout(() => onLessonChange('c20l3'), 0);
+
+
+    /* === Teacher Console + Free Run upgrade ===
+       This layer keeps the original worksheet display and original manual teaching sequence.
+       Free Run simply automates the same actions: same counters, same tile positions, same sound files. */
+    const TC_REVIEW_MARKS = new Set();
+    let TC_RUNNING = false;
+    let TC_PAUSED = false;
+    let TC_STOP_REQUESTED = false;
+    let TC_CURRENT_STEP_KEY = 'intro';
+
+    function tcToggleConsole(forceCollapse) {
+      const box = document.getElementById('teacherConsole');
+      if (!box) return;
+      const shouldCollapse = (typeof forceCollapse === 'boolean')
+        ? forceCollapse
+        : !box.classList.contains('is-collapsed');
+      box.classList.toggle('is-collapsed', shouldCollapse);
+
+      const btn = document.getElementById('tcCollapseBtn');
+      if (btn) {
+        btn.textContent = shouldCollapse ? '▶' : '▼';
+        btn.setAttribute('aria-expanded', String(!shouldCollapse));
+        btn.setAttribute('title', shouldCollapse ? 'Open Teacher Console' : 'Collapse Teacher Console');
+      }
+
+      try {
+        localStorage.setItem('spellingTeacherConsoleCollapsed', shouldCollapse ? '1' : '0');
+      } catch (_) {}
+
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 30);
     }
 
-    addEventListener('load', autoLoadCycle20Level3);
+    function tcInitConsoleState() {
+      let saved = null;
+      try { saved = localStorage.getItem('spellingTeacherConsoleCollapsed'); } catch (_) {}
+      tcToggleConsole(saved === null ? true : saved === '1');
+    }
+
+    const TC_PACE = {
+      verySlow: { afterIntro: 1600, afterSay: 1200, syllableCounter: 900, beforeSounds: 900, soundGap: 850, afterBlend: 1300, afterWhole: 1900 },
+      slow:     { afterIntro: 1000, afterSay: 800,  syllableCounter: 650, beforeSounds: 650, soundGap: 600, afterBlend: 950,  afterWhole: 1400 },
+      normal:   { afterIntro: 650,  afterSay: 450,  syllableCounter: 420, beforeSounds: 420, soundGap: 350, afterBlend: 650,  afterWhole: 900  }
+    };
+
+    function tcPace() {
+      const sel = document.getElementById('tcPaceSelect');
+      return TC_PACE[(sel && sel.value) || 'slow'] || TC_PACE.slow;
+    }
+
+    function tcValidWords() {
+      const src = (Array.isArray(words) && words.length) ? words : teacherSet;
+      return (Array.isArray(src) ? src : []).filter(it =>
+        it && it.word &&
+        Array.isArray(it.syllables) &&
+        it.syllables.some(s => Array.isArray(s.letters) && s.letters.length)
+      );
+    }
+
+    function tcEnsureWords() {
+      const valid = tcValidWords();
+      if (!valid.length) return false;
+      if (!Array.isArray(words) || !words.length) words = valid.map(deepCopy);
+      PLAY_SCOPE = 'set';
+      return true;
+    }
+
+    function tcSyllableCount(wordObj) {
+      return Math.min(MAX_SYLLABLES, Math.max(1, (wordObj?.syllables || [{letters:[]}]).length));
+    }
+
+    function tcStepListForWord(wordObj) {
+      const count = tcSyllableCount(wordObj);
+      const list = ['intro', 'say', 'syllables'];
+      for (let i = 1; i <= count; i++) list.push('sound' + i);
+      list.push('whole');
+      return list;
+    }
+
+    function tcStepLabel(key) {
+      if (key === 'intro') return 'Watch me spell';
+      if (key === 'say') return 'Say word + meaning';
+      if (key === 'syllables') return 'Track syllables';
+      if (key === 'whole') return 'Blend whole word';
+      const m = /^sound(\d)$/.exec(key || '');
+      if (m) return `Track ${ordinal(parseInt(m[1], 10))} syllable sounds`;
+      return 'Step';
+    }
+
+    function tcUpdateStepOptions() {
+      const sel = document.getElementById('tcStepSelect');
+      if (!sel) return;
+      const w = words[wIndex] || words[0];
+      const current = sel.value || TC_CURRENT_STEP_KEY || 'intro';
+      const list = tcStepListForWord(w);
+      sel.innerHTML = '';
+      list.forEach((key, idx) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${idx + 1} ${tcStepLabel(key)}`;
+        sel.appendChild(opt);
+      });
+      sel.value = list.includes(current) ? current : 'intro';
+    }
+
+    function tcRefreshWordSelect() {
+      const sel = document.getElementById('tcWordSelect');
+      if (!sel) return;
+      const valid = tcValidWords();
+      const old = String(Math.max(0, wIndex));
+      sel.innerHTML = '';
+      if (!valid.length) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'No words loaded';
+        sel.appendChild(opt);
+        return;
+      }
+      valid.forEach((w, idx) => {
+        const opt = document.createElement('option');
+        opt.value = String(idx);
+        opt.textContent = `${idx + 1}. ${TC_REVIEW_MARKS.has(idx) ? '★ ' : ''}${w.word}`;
+        sel.appendChild(opt);
+      });
+      sel.value = (parseInt(old, 10) < valid.length) ? old : '0';
+    }
+
+    function tcCurrentStepFromRuntime() {
+      if (TC_RUNNING) return TC_CURRENT_STEP_KEY || 'intro';
+      if (ALLOW_DRAG && BLOCK_TTS && activeSyllable) return 'sound' + activeSyllable;
+      const cur = _logicalStepShown();
+      if (cur <= 0) return 'intro';
+      if (cur === 1) return 'say';
+      if (cur === 2) return (ALLOW_DRAG && needSoundDrops > 0) ? ('sound' + activeSyllable) : 'syllables';
+      if (cur >= 19) return 'whole';
+      return TC_CURRENT_STEP_KEY || 'intro';
+    }
+
+    function tcRefresh() {
+      tcRefreshWordSelect();
+      tcUpdateStepOptions();
+      const w = words[wIndex] || words[0];
+      const stepKey = tcCurrentStepFromRuntime();
+      TC_CURRENT_STEP_KEY = stepKey;
+      const stepSel = document.getElementById('tcStepSelect');
+      if (stepSel && Array.from(stepSel.options).some(o => o.value === stepKey)) stepSel.value = stepKey;
+
+      const status = document.getElementById('tcWordStatus');
+      if (status) {
+        const total = (Array.isArray(words) && words.length) ? words.length : 0;
+        if (w && total) status.textContent = `${wIndex + 1}/${total} ${w.word}${TC_REVIEW_MARKS.has(wIndex) ? ' ★ review' : ''}`;
+        else status.textContent = 'No word loaded';
+      }
+
+      const playBtn = document.getElementById('tcPlayBtn');
+      if (playBtn) playBtn.textContent = TC_RUNNING && !TC_PAUSED ? '▶ Free Run Running' : '▶ Free Run';
+      const pauseBtn = document.getElementById('tcPauseBtn');
+      if (pauseBtn) pauseBtn.textContent = TC_PAUSED ? '▶ Resume' : '⏸ Pause';
+    }
+
+    function tcPrepareCurrentWord(index = wIndex) {
+      if (!tcEnsureWords()) {
+        alert('Load a lesson set or word list first.');
+        return false;
+      }
+      wIndex = Math.max(0, Math.min(index, words.length - 1));
+      step = 0;
+      activeSyllable = 1;
+      needSyllableDrops = 0;
+      syllableDropsDone = 0;
+      needSoundDrops = 0;
+      soundDropsDone = 0;
+      stopAllSpeechAndSound();
+      exitNoTTSPhase();
+      resetBoard();
+      ensureTrayCounters();
+      autoFitDisplayToWord();
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
+      const beginBtn = document.getElementById('beginBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const backBtn = document.getElementById('backBtn');
+      if (beginBtn) beginBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = false;
+      if (backBtn) backBtn.disabled = false;
+      setCurrentLine('L0');
+      setInstruction('');
+      TC_CURRENT_STEP_KEY = 'intro';
+      tcRefresh();
+      return true;
+    }
+
+    function tcChooseWord(value) {
+      const idx = parseInt(value, 10);
+      if (!isFinite(idx)) return;
+      const keep = !!document.getElementById('tcKeepStep')?.checked;
+      const wantedStep = keep ? (document.getElementById('tcStepSelect')?.value || TC_CURRENT_STEP_KEY || 'intro') : 'intro';
+      tcStopFreeRun(false);
+      if (!tcPrepareCurrentWord(idx)) return;
+      if (keep) tcJumpToStep(wantedStep, false);
+    }
+
+    function tcPrevWord() {
+      if (!tcEnsureWords()) return;
+      tcChooseWord(String((wIndex - 1 + words.length) % words.length));
+    }
+
+    function tcNextWord() {
+      if (!tcEnsureWords()) return;
+      tcChooseWord(String((wIndex + 1) % words.length));
+    }
+
+    function tcToggleReview() {
+      if (!tcEnsureWords()) return;
+      if (TC_REVIEW_MARKS.has(wIndex)) TC_REVIEW_MARKS.delete(wIndex);
+      else TC_REVIEW_MARKS.add(wIndex);
+      tcRefresh();
+    }
+
+    function tcTakeCounter() {
+      ensureTrayCounters();
+      const tray = document.getElementById('counters');
+      let c = Array.from(tray?.querySelectorAll('.counter') || []).find(x => x.id !== 'seedCounter');
+      if (!c && typeof _makeCounter === 'function') {
+        c = _makeCounter();
+        if (c && tray) tray.appendChild(c);
+      }
+      if (c) {
+        c.classList.remove('locked');
+        c.classList.remove('in-slot');
+        c.style.left = '';
+        c.style.top = '';
+        c.style.position = '';
+        c.style.zIndex = '';
+        c.style.transform = '';
+      }
+      return c;
+    }
+
+    function tcPlaceSyllableCounter(s) {
+      const host = document.getElementById('syldrop' + s);
+      const c = tcTakeCounter();
+      if (!host || !c) return;
+      host.innerHTML = '';
+      host.appendChild(c);
+      ensureTrayCounters();
+    }
+
+    function tcPlaceAllSyllableCounters() {
+      const w = words[wIndex];
+      const sylCount = tcSyllableCount(w);
+      needSyllableDrops = sylCount;
+      syllableDropsDone = sylCount;
+      for (let s = 1; s <= sylCount; s++) tcPlaceSyllableCounter(s);
+    }
+
+    function tcRenderCompletedSyllable(s) {
+      const w = words[wIndex];
+      const letters = (w.syllables?.[s - 1]?.letters || []).slice(0, 6);
+      guardSoundSlots(s, letters);
+      letters.forEach((token, tokenIndex) => {
+        const slot = document.querySelector(`#studentLayout .counter-slot[id^="s${s}t"][data-token-index="${tokenIndex}"]`);
+        if (!slot) return;
+        const c = tcTakeCounter();
+        if (!c) return;
+        slot.appendChild(c);
+        slot.classList.add('has-counter');
+        const span = parseInt(slot.dataset.span || '1', 10);
+        c.classList.add('in-slot');
+        if (span === 2) {
+          c.style.left = '100%';
+          const m = /^s(\d)t(\d)$/.exec(slot.id || '');
+          if (m) {
+            const ghost = document.getElementById(`s${m[1]}t${parseInt(m[2], 10) + 1}`);
+            if (ghost) ghost.classList.add('has-counter');
+          }
+        }
+        addTileLabel(slot, token);
+        slot.dataset.soundCounted = '1';
+      });
+      blendWriteSyllable(s);
+      lockAllSoundSlots();
+    }
+
+    function tcRebuildUpToStep(stepKey) {
+      resetBoard();
+      ensureTrayCounters();
+      autoFitDisplayToWord();
+      ALLOW_DRAG = false;
+      setCountersLocked(true);
+      lockAllSoundSlots();
+      step = 0;
+      activeSyllable = 1;
+      TC_CURRENT_STEP_KEY = stepKey;
+
+      if (stepKey === 'intro' || stepKey === 'say') return;
+
+      tcPlaceAllSyllableCounters();
+
+      const m = /^sound(\d)$/.exec(stepKey || '');
+      if (m) {
+        const target = parseInt(m[1], 10);
+        for (let s = 1; s < target; s++) tcRenderCompletedSyllable(s);
+      } else if (stepKey === 'whole') {
+        const count = tcSyllableCount(words[wIndex]);
+        for (let s = 1; s <= count; s++) tcRenderCompletedSyllable(s);
+      }
+    }
+
+    function tcJumpToStep(stepKey, autoplay = false) {
+      if (!tcPrepareCurrentWord(wIndex)) return;
+      const allowed = tcStepListForWord(words[wIndex]);
+      if (!allowed.includes(stepKey)) stepKey = allowed[0] || 'intro';
+      TC_CURRENT_STEP_KEY = stepKey;
+
+      if (stepKey === 'intro') {
+        step = 0;
+        nextStep();
+      } else if (stepKey === 'say') {
+        step = 1;
+        nextStep();
+      } else if (stepKey === 'syllables') {
+        step = 2;
+        nextStep();
+        if (autoplay) tcAutoSyllableCountersOnly();
+      } else if (/^sound\d$/.test(stepKey)) {
+        const target = parseInt(stepKey.replace('sound', ''), 10);
+        tcRebuildUpToStep(stepKey);
+        startSyllableTrack(target);
+        if (autoplay) tcAutoSoundSyllable(target);
+      } else if (stepKey === 'whole') {
+        tcRebuildUpToStep('whole');
+        step = 19;
+        nextStep();
+      }
+      tcRefresh();
+    }
+
+    function tcJumpToSelectedStep() {
+      const key = document.getElementById('tcStepSelect')?.value || 'intro';
+      tcStopFreeRun(false);
+      tcJumpToStep(key, false);
+    }
+
+    function tcPrevTeachingStep() {
+      const list = tcStepListForWord(words[wIndex] || words[0]);
+      const key = document.getElementById('tcStepSelect')?.value || tcCurrentStepFromRuntime();
+      const i = Math.max(0, list.indexOf(key));
+      tcJumpToStep(list[Math.max(0, i - 1)] || 'intro', false);
+    }
+
+    function tcNextTeachingStep() {
+      const list = tcStepListForWord(words[wIndex] || words[0]);
+      const key = document.getElementById('tcStepSelect')?.value || tcCurrentStepFromRuntime();
+      const i = Math.max(0, list.indexOf(key));
+      tcJumpToStep(list[Math.min(list.length - 1, i + 1)] || 'intro', false);
+    }
+
+    function tcWait(ms) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        function tick() {
+          if (TC_STOP_REQUESTED) return reject(new Error('stopped'));
+          if (!TC_PAUSED && Date.now() - start >= ms) return resolve();
+          setTimeout(tick, 80);
+        }
+        tick();
+      });
+    }
+
+    function tcWaitUntilNextEnabled(maxMs = 15000) {
+      return new Promise((resolve, reject) => {
+        const started = Date.now();
+        function poll() {
+          if (TC_STOP_REQUESTED) return reject(new Error('stopped'));
+          const nb = document.getElementById('nextBtn');
+          if (!nb || !nb.disabled || Date.now() - started > maxMs) return resolve();
+          setTimeout(poll, 120);
+        }
+        poll();
+      });
+    }
+
+    function tcWaitForTeacherVoice(maxMs = 15000) {
+      const watchId = TTS_SEQUENCE_ID;
+      return new Promise((resolve, reject) => {
+        const started = Date.now();
+        function poll() {
+          if (TC_STOP_REQUESTED) return reject(new Error('stopped'));
+          if (TC_PAUSED) return setTimeout(poll, 100);
+          if (!TTS_IS_SPEAKING || TTS_SEQUENCE_ID !== watchId || Date.now() - started > maxMs) return resolve();
+          setTimeout(poll, 100);
+        }
+        setTimeout(poll, 80);
+      });
+    }
+
+    async function tcWaitForTeacherVoiceThen(extraMs = 0, maxMs = 15000) {
+      await tcWaitForTeacherVoice(maxMs);
+      if (extraMs > 0) await tcWait(extraMs);
+    }
+
+    function tcPlaySoundToken(token) {
+      return new Promise((resolve, reject) => {
+        if (TC_STOP_REQUESTED) return reject(new Error('stopped'));
+        playSoundForToken(token, () => resolve());
+      });
+    }
+
+    async function tcAutoSyllableCountersOnly() {
+      const p = tcPace();
+      const w = words[wIndex];
+      const count = tcSyllableCount(w);
+      ALLOW_DRAG = true;
+      setCountersLocked(false);
+      needSyllableDrops = count;
+      syllableDropsDone = 0;
+      for (let s = 1; s <= count; s++) {
+        if (TC_STOP_REQUESTED) throw new Error('stopped');
+        tcPlaceSyllableCounter(s);
+        syllableDropsDone++;
+        await tcWait(p.syllableCounter);
+      }
+      setInstruction('syllables tracked — start with 1st syllable sounds.', false);
+      startSyllableTrack(1);
+    }
+
+    async function tcAutoSoundSyllable(s) {
+      const p = tcPace();
+      const w = words[wIndex];
+      const letters = (w.syllables?.[s - 1]?.letters || []).slice(0, 6);
+      if (!letters.length) return;
+      startSyllableTrack(s);
+      await tcWait(p.beforeSounds);
+
+      for (let tokenIndex = 0; tokenIndex < letters.length; tokenIndex++) {
+        if (TC_STOP_REQUESTED) throw new Error('stopped');
+        const token = letters[tokenIndex];
+        const slot = document.querySelector(`#studentLayout .counter-slot[id^="s${s}t"][data-token-index="${tokenIndex}"]`);
+        if (!slot) continue;
+        const c = tcTakeCounter();
+        if (!c) continue;
+        slot.appendChild(c);
+        slot.classList.add('has-counter');
+        const span = parseInt(slot.dataset.span || '1', 10);
+        c.classList.add('in-slot');
+        if (span === 2) {
+          c.style.left = '100%';
+          const m = /^s(\d)t(\d)$/.exec(slot.id || '');
+          if (m) {
+            const ghost = document.getElementById(`s${m[1]}t${parseInt(m[2], 10) + 1}`);
+            if (ghost) ghost.classList.add('has-counter');
+          }
+        }
+        addTileLabel(slot, token);
+        TC_CURRENT_STEP_KEY = 'sound' + s;
+        tcRefresh();
+        await tcPlaySoundToken(token);
+        completeSoundDropOnce(slot, s);
+        await tcWait(p.soundGap);
+      }
+      await tcWait(p.afterBlend);
+    }
+
+    async function tcFreeRunOneWord() {
+      const p = tcPace();
+      tcPrepareCurrentWord(wIndex);
+      TC_RUNNING = true;
+      TC_STOP_REQUESTED = false;
+      TC_PAUSED = false;
+      tcRefresh();
+
+      TC_CURRENT_STEP_KEY = 'intro';
+      step = 0;
+      nextStep();
+      tcRefresh();
+      await tcWaitForTeacherVoiceThen(p.afterIntro, 12000);
+
+      TC_CURRENT_STEP_KEY = 'say';
+      step = 1;
+      nextStep();
+      tcRefresh();
+      await tcWaitUntilNextEnabled(18000);
+      await tcWait(p.afterSay);
+
+      TC_CURRENT_STEP_KEY = 'syllables';
+      step = 2;
+      nextStep();
+      tcRefresh();
+      await tcAutoSyllableCountersOnly();
+
+      const count = tcSyllableCount(words[wIndex]);
+      for (let s = 1; s <= count; s++) {
+        TC_CURRENT_STEP_KEY = 'sound' + s;
+        tcRefresh();
+        if (activeSyllable !== s) startSyllableTrack(s);
+        await tcAutoSoundSyllable(s);
+      }
+
+      TC_CURRENT_STEP_KEY = 'whole';
+      step = 19;
+      nextStep();
+      tcRefresh();
+      await tcWaitForTeacherVoiceThen(p.afterWhole, 15000);
+    }
+
+    async function tcPlayFreeRun() {
+      if (TC_RUNNING) {
+        tcPauseFreeRun();
+        return;
+      }
+      if (!tcEnsureWords()) {
+        alert('Load a lesson set or word list first.');
+        return;
+      }
+      TC_RUNNING = true;
+      TC_STOP_REQUESTED = false;
+      TC_PAUSED = false;
+      try {
+        while (true) {
+          await tcFreeRunOneWord();
+          if (!document.getElementById('tcAutoNext')?.checked) break;
+          if (wIndex >= words.length - 1) break;
+          wIndex++;
+        }
+      } catch (_) {
+        // stopped by teacher
+      } finally {
+        TC_RUNNING = false;
+        TC_PAUSED = false;
+        TC_STOP_REQUESTED = false;
+        tcRefresh();
+      }
+    }
+
+    function tcPauseFreeRun() {
+      if (!TC_RUNNING) return;
+      TC_PAUSED = !TC_PAUSED;
+      try {
+        if (window.speechSynthesis) {
+          if (TC_PAUSED) speechSynthesis.pause();
+          else speechSynthesis.resume();
+        }
+        if (ACTIVE_SOUND_AUDIO) {
+          if (TC_PAUSED) ACTIVE_SOUND_AUDIO.pause();
+          else ACTIVE_SOUND_AUDIO.play().catch(()=>{});
+        }
+      } catch (_) {}
+      tcRefresh();
+    }
+
+    function tcStopFreeRun(update = true) {
+      if (!TC_RUNNING && !TC_PAUSED) {
+        TC_STOP_REQUESTED = false;
+        if (update) tcRefresh();
+        return;
+      }
+      TC_STOP_REQUESTED = true;
+      TC_RUNNING = false;
+      TC_PAUSED = false;
+      stopAllSpeechAndSound();
+      if (update) tcRefresh();
+    }
+
+    function tcReplayStep() {
+      const key = document.getElementById('tcStepSelect')?.value || TC_CURRENT_STEP_KEY || tcCurrentStepFromRuntime();
+      tcStopFreeRun(false);
+      tcJumpToStep(key, true);
+    }
+
+    function tcToggleFocus() {
+      document.body.classList.toggle('tc-focus');
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 30);
+    }
+
+    function tcIsEditingTarget(e) {
+      const el = e.target;
+      if (!el) return false;
+      const tag = (el.tagName || '').toLowerCase();
+      return tag === 'input' || tag === 'textarea' || tag === 'select' || el.isContentEditable;
+    }
+
+    addEventListener('keydown', (e) => {
+      if (tcIsEditingTarget(e)) return;
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (TC_RUNNING) tcPauseFreeRun(); else tcPlayFreeRun();
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        tcNextTeachingStep();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        tcPrevTeachingStep();
+      } else if ((e.key || '').toLowerCase() === 'n') {
+        e.preventDefault();
+        tcNextWord();
+      } else if ((e.key || '').toLowerCase() === 'b') {
+        e.preventDefault();
+        tcPrevWord();
+      } else if ((e.key || '').toLowerCase() === 'r') {
+        e.preventDefault();
+        tcReplayStep();
+      } else if ((e.key || '').toLowerCase() === 'f') {
+        e.preventDefault();
+        tcToggleFocus();
+      }
+    });
+
+    // Refresh the console whenever the original controls change the lesson/word/step.
+    const __tc_applyLessonObject = applyLessonObject;
+    applyLessonObject = function(obj, sourceLabel) {
+      __tc_applyLessonObject(obj, sourceLabel);
+      TC_REVIEW_MARKS.clear();
+      setTimeout(tcRefresh, 0);
+    };
+
+    const __tc_begin = begin;
+    begin = function() {
+      __tc_begin.apply(this, arguments);
+      setTimeout(tcRefresh, 0);
+    };
+
+    const __tc_nextStep = nextStep;
+    nextStep = function() {
+      __tc_nextStep.apply(this, arguments);
+      setTimeout(tcRefresh, 0);
+    };
+
+    const __tc_backStep = backStep;
+    backStep = function() {
+      __tc_backStep.apply(this, arguments);
+      setTimeout(tcRefresh, 0);
+    };
+
+    const __tc_restart = restart;
+    restart = function() {
+      __tc_restart.apply(this, arguments);
+      setTimeout(tcRefresh, 0);
+    };
+
+    // Update globals used by inline onclick attributes.
+    window.tcChooseWord = tcChooseWord;
+    window.tcPrevWord = tcPrevWord;
+    window.tcNextWord = tcNextWord;
+    window.tcToggleReview = tcToggleReview;
+    window.tcJumpToSelectedStep = tcJumpToSelectedStep;
+    window.tcPrevTeachingStep = tcPrevTeachingStep;
+    window.tcNextTeachingStep = tcNextTeachingStep;
+    window.tcPlayFreeRun = tcPlayFreeRun;
+    window.tcPauseFreeRun = tcPauseFreeRun;
+    window.tcStopFreeRun = tcStopFreeRun;
+    window.tcReplayStep = tcReplayStep;
+    window.tcToggleFocus = tcToggleFocus;
+    window.tcToggleConsole = tcToggleConsole;
+    window.begin = begin;
+    window.nextStep = nextStep;
+    window.backStep = backStep;
+    window.restart = restart;
+    window.applyLessonObject = applyLessonObject;
+
+    addEventListener('load', () => {
+      tcInitConsoleState();
+      setTimeout(tcRefresh, 250);
+    });
+
+
+    function autoLoadCycle26Level3() {
+      const lessonSel = document.getElementById('lessonSelect');
+      if (lessonSel) lessonSel.value = 'c26l3';
+      updateWorksheetTitle(getLessonLabel('c26l3', 'Cycle 26 Level 3'));
+      setTimeout(() => onLessonChange('c26l3'), 0);
+    }
+
+    addEventListener('load', autoLoadCycle26Level3);
 
     window.debugList = () => ({
       teacherSet,
