@@ -812,6 +812,7 @@
             <button type="button" class="tc-mini" onclick="tcPrevWord()">← Previous Word</button>
             <button type="button" class="tc-mini" onclick="tcNextWord()">Next Word →</button>
             <button type="button" class="tc-mini" onclick="tcToggleReview()">★ Mark Review</button>
+            <label><input type="checkbox" id="tcHideStatusWord" onchange="tcRefresh()"> Hide top-right word</label>
           </div>
           <div class="tc-row">
             <label for="tcStepSelect">Step</label>
@@ -828,7 +829,6 @@
             </select>
             <button type="button" class="tc-mini" onclick="tcPrevTeachingStep()">← Previous Step</button>
             <button type="button" class="tc-mini" onclick="tcNextTeachingStep()">Next Step →</button>
-            <label><input type="checkbox" id="tcKeepStep" checked> Keep same step when changing word</label>
             <button type="button" class="tc-mini" onclick="tcReplayStep()">🔁 Replay Step</button>
           </div>
           <div class="tc-row">
@@ -6328,7 +6328,11 @@ function rerenderMagicELabel(slotEl) {
       const status = document.getElementById('tcWordStatus');
       if (status) {
         const total = (Array.isArray(words) && words.length) ? words.length : 0;
-        if (w && total) status.textContent = `${wIndex + 1}/${total} ${w.word}${TC_REVIEW_MARKS.has(wIndex) ? ' ★ review' : ''}`;
+        const hideStatusWord = !!document.getElementById('tcHideStatusWord')?.checked;
+        if (w && total) {
+          const reviewText = TC_REVIEW_MARKS.has(wIndex) ? ' ★ review' : '';
+          status.textContent = hideStatusWord ? `${wIndex + 1}/${total}${reviewText}` : `${wIndex + 1}/${total} ${w.word}${reviewText}`;
+        }
         else status.textContent = 'No word loaded';
       }
 
