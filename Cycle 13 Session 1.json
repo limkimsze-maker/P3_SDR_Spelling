@@ -5,17 +5,10 @@
       "meaning": "Meaning: how much of something there is.\nSentence: That is a large amount of rice.",
       "syllables": [
         {
-          "letters": [
-            "a_"
-          ]
+          "letters": ["a_"]
         },
         {
-          "letters": [
-            "m",
-            "ou",
-            "n",
-            "t"
-          ]
+          "letters": ["m", "ou", "n", "t"]
         }
       ]
     },
@@ -24,11 +17,7 @@
       "meaning": "Meaning: a place where people live and work, bigger than a village.\nSentence: We drove into town.",
       "syllables": [
         {
-          "letters": [
-            "t",
-            "ow",
-            "n"
-          ]
+          "letters": ["t", "ow", "n"]
         }
       ]
     },
@@ -37,17 +26,10 @@
       "meaning": "Meaning: not having something.\nSentence: He left without his bag.",
       "syllables": [
         {
-          "letters": [
-            "w",
-            "i__",
-            "th"
-          ]
+          "letters": ["w", "i__", "th"]
         },
         {
-          "letters": [
-            "ou",
-            "t"
-          ]
+          "letters": ["ou", "t"]
         }
       ]
     },
@@ -56,12 +38,7 @@
       "meaning": "Meaning: something you hear.\nSentence: I heard a loud sound.",
       "syllables": [
         {
-          "letters": [
-            "s",
-            "ou",
-            "n",
-            "d"
-          ]
+          "letters": ["s", "ou", "n", "d"]
         }
       ]
     },
@@ -70,12 +47,7 @@
       "meaning": "Meaning: a colour like chocolate or soil.\nSentence: The dog is brown.",
       "syllables": [
         {
-          "letters": [
-            "b",
-            "r",
-            "ow",
-            "n"
-          ]
+          "letters": ["b", "r", "ow", "n"]
         }
       ]
     },
@@ -84,13 +56,7 @@
       "meaning": "Meaning: the surface of the earth.\nSentence: The ball fell to the ground.",
       "syllables": [
         {
-          "letters": [
-            "g",
-            "r",
-            "ou",
-            "n",
-            "d"
-          ]
+          "letters": ["g", "r", "ou", "n", "d"]
         }
       ]
     },
@@ -99,22 +65,14 @@
       "meaning": "Meaning: but; in a different way.\nSentence: It looked easy; however, it was hard.",
       "syllables": [
         {
-          "letters": [
-            "h",
-            "ow"
-          ]
+          "letters": ["h", "ow"]
         },
         {
-          "letters": [
-            "e__",
-            "v"
-          ]
+          "letters": ["e__", "v"]
         },
         {
-          "letters": [
-            "er_"
-          ]
-        },
+          "letters": ["er_"]
+        }
       ]
     },
     {
@@ -122,12 +80,7 @@
       "meaning": "Meaning: a low angry sound made by an animal or person.\nSentence: The dog gave a growl.",
       "syllables": [
         {
-          "letters": [
-            "g",
-            "r",
-            "ow",
-            "l"
-          ]
+          "letters": ["g", "r", "ow", "l"]
         }
       ]
     }
