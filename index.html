@@ -131,6 +131,32 @@
       color: #555;
     }
 
+    .resourcebar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: -2px 0 4px;
+    }
+
+    .resourcebar a {
+      display: inline-block;
+      padding: 4px 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(15,23,42,.08);
+    }
+
+    .resourcebar a:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
 
     /* Teacher Console upgrade: compact controls only; student board and teaching sequence stay unchanged. */
     .teacher-console {
@@ -237,6 +263,7 @@
     }
 
     body.tc-focus .lessonbar,
+    body.tc-focus .resourcebar,
     body.tc-focus #teacherConsole,
     body.tc-focus .controls,
     body.tc-focus .credits,
@@ -936,6 +963,11 @@
   <div id="stage">
     <div class="sheet">
       <div class="title" id="worksheetTitle">Spelling Worksheet</div>
+
+      <nav class="resourcebar" aria-label="Learning resources">
+        <a href="https://limkimsze-maker.github.io/P3-SDR-ORF/" target="_blank" rel="noopener">Oral Fluency Reading</a>
+        <a href="https://limkimsze-maker.github.io/P3-SDR-Vocab-Cards/" target="_blank" rel="noopener">Vocabulary Cards</a>
+      </nav>
 
       <div class="lessonbar">
         <label for="lessonSelect">Lesson set</label>
