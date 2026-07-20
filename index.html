@@ -954,6 +954,137 @@
     }
 
 
+    /* Compact teacher annotation toolbar — fixed above the worksheet. */
+    body{ padding-top:68px; }
+
+    #teacherDrawCanvas{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      z-index:99990;
+      pointer-events:none;
+      touch-action:none;
+    }
+    .tdraw-toolbar{
+      position:fixed;
+      top:8px;
+      right:8px;
+      z-index:100000;
+      width:max-content;
+      max-width:calc(100vw - 16px);
+      height:52px;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      padding:5px 6px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      background:rgba(255,255,255,.98);
+      color:#0f172a;
+      border:1px solid rgba(15,23,42,.16);
+      border-radius:11px;
+      box-shadow:0 8px 24px rgba(15,23,42,.20);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      font-family:Arial, Helvetica, sans-serif;
+      user-select:none;
+      scrollbar-width:thin;
+    }
+    .tdraw-group{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      flex:0 0 auto;
+    }
+    .tdraw-group + .tdraw-group{
+      border-left:1px solid #d7dee8;
+      padding-left:5px;
+    }
+    .tdraw-btn{
+      appearance:none;
+      border:1px solid #dbe4f0;
+      background:#f8fafc;
+      color:#0f172a;
+      border-radius:8px;
+      width:38px;
+      height:38px;
+      min-height:38px;
+      padding:6px;
+      font-family:inherit;
+      font-size:17px;
+      line-height:1;
+      font-weight:800;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      box-shadow:none;
+    }
+    .tdraw-btn:hover{ background:#eef2f7; color:#0f172a; }
+    .tdraw-btn:active{ transform:translateY(1px); }
+    .tdraw-btn.active{
+      background:#dbeafe;
+      border-color:#2563eb;
+      color:#1e3a8a;
+      box-shadow:inset 0 0 0 1px #2563eb;
+    }
+    .tdraw-btn.danger{
+      background:#fff1f2;
+      border-color:#fecdd3;
+      color:#9f1239;
+    }
+    .tdraw-btn:disabled{
+      opacity:.42;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .tdraw-color{
+      width:38px;
+      height:38px;
+      padding:2px;
+      border:1px solid #cbd5e1;
+      border-radius:8px;
+      background:#fff;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+    .tdraw-select,
+    .tdraw-text-input{
+      height:38px;
+      border:1px solid #cbd5e1;
+      border-radius:8px;
+      background:#fff;
+      color:#0f172a;
+      font:800 12px/1 Arial, Helvetica, sans-serif;
+      padding:0 8px;
+    }
+    .tdraw-select{ width:70px; flex:0 0 70px; }
+    .tdraw-text-input{
+      width:118px;
+      flex:0 0 118px;
+      cursor:text;
+    }
+    .tdraw-text-input::placeholder{ color:#64748b; }
+    .tdraw-icon{
+      width:23px;
+      height:23px;
+      display:block;
+      pointer-events:none;
+    }
+    .tdraw-icon *{ vector-effect:non-scaling-stroke; }
+
+    @media (max-width:520px){
+      body{ padding-top:66px; }
+      .tdraw-toolbar{
+        left:8px;
+        right:8px;
+        top:8px;
+        width:auto;
+      }
+      .tdraw-text-input{ width:96px; flex-basis:96px; }
+    }
   </style>
 
   <script src="https://cdn.counter.dev/script.js" data-id="825e93b6-ce99-40ef-8bcc-125f13297433" data-utcoffset="8"></script>
@@ -4264,7 +4395,9 @@
         // Re-measure every time because the worksheet height changes after a lesson/word is loaded.
         // Without this, the newly-rendered board can extend below the viewport and hide the counter tray.
         measure();
-        const s = Math.min((innerWidth - 2) / W, (innerHeight - 2) / H);
+        /* Reserve the permanent toolbar strip so the worksheet is never hidden
+           beneath the fixed teacher annotation controls. */
+        const s = Math.min((innerWidth - 2) / W, (innerHeight - 72) / H);
         stage.style.transform = 'scale(' + s + ')';
       }
 
@@ -5126,6 +5259,7 @@ function rerenderMagicELabel(slotEl) {
     function quickUse() {
       const it = quickBuildItem();
       if (!it) return;
+      window.dispatchEvent(new Event('teacher:content-change'));
 
       PLAY_SCOPE = 'single';
       words = [deepCopy(it)];
@@ -5179,6 +5313,7 @@ function rerenderMagicELabel(slotEl) {
         alert('Please fill the word and at least one tile.');
         return;
       }
+      window.dispatchEvent(new Event('teacher:content-change'));
 
       PLAY_SCOPE = 'single';
       words = [deepCopy(it)];
@@ -5217,6 +5352,7 @@ function rerenderMagicELabel(slotEl) {
         alert('Your Word List has no usable items yet. Add a word and at least one syllable.');
         return;
       }
+      window.dispatchEvent(new Event('teacher:content-change'));
 
       PLAY_SCOPE = 'set';
       words = valid.map(deepCopy);
@@ -6088,6 +6224,7 @@ function rerenderMagicELabel(slotEl) {
           break;
 
         case 20:
+          window.dispatchEvent(new Event('teacher:content-change'));
           wIndex++;
           if (wIndex >= words.length) {
             setInstruction("All words completed! Load another word in the teacher panel, or choose a lesson set above, then begin.");
@@ -6607,6 +6744,7 @@ function rerenderMagicELabel(slotEl) {
         alert('Load a lesson set or word list first.');
         return false;
       }
+      window.dispatchEvent(new Event('teacher:content-change'));
       wIndex = Math.max(0, Math.min(index, words.length - 1));
       step = 0;
       activeSyllable = 1;
@@ -7055,6 +7193,7 @@ function rerenderMagicELabel(slotEl) {
     // Refresh the console whenever the original controls change the lesson/word/step.
     const __tc_applyLessonObject = applyLessonObject;
     applyLessonObject = function(obj, sourceLabel) {
+      window.dispatchEvent(new Event('teacher:content-change'));
       __tc_applyLessonObject(obj, sourceLabel);
       TC_REVIEW_MARKS.clear();
       setTimeout(tcRefresh, 0);
@@ -7134,55 +7273,59 @@ function rerenderMagicELabel(slotEl) {
   </script>
   <!-- Teacher Annotation Tools -->
   <canvas id="teacherDrawCanvas" aria-hidden="true"></canvas>
-  <div id="teacherDrawTools" class="tdraw-toolbar" aria-label="Teacher annotation toolbar">
-    <div class="tdraw-head" id="teacherDrawDragHandle" title="Drag to move the toolbar">
-      <div class="tdraw-title">✏️ Teacher Annotation Tools</div>
-      <div class="tdraw-row" style="gap:6px;">
-        <button class="tdraw-btn" id="tdrawCollapse" type="button" title="Collapse toolbar">▾</button>
-      </div>
+  <div id="teacherDrawTools" class="tdraw-toolbar" role="toolbar" aria-label="Teacher drawing tools">
+    <div class="tdraw-group" aria-label="Annotation tools">
+      <button class="tdraw-btn active" type="button" data-tdraw-tool="pointer" title="Pointer / scroll (default)" aria-label="Pointer and scroll">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l12 10-6.2 1.1L8 20z" fill="#fff" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="select" title="Select and erase annotations" aria-label="Select and erase annotations">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="13" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.5 2"/><path d="M11 10l9 7.5-4.5.8-2 3.7z" fill="#fff" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="pen" title="Pen" aria-label="Pen">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18.8l1-4.2L16.8 3.8a1.8 1.8 0 012.5 0l.9.9a1.8 1.8 0 010 2.5L9.4 18z" fill="#ef4444" stroke="currentColor" stroke-width="1.4"/><path d="M5 18.8c2.2-.3 3.5-.2 5 .8-2.3.5-4.4.9-6.4.2" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="highlighter" title="Highlighter" aria-label="Highlighter">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8v12l-2 3h-4l-2-3z" fill="#fde047" stroke="currentColor" stroke-width="1.4"/><path d="M7 21h10" stroke="#facc15" stroke-width="3" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="eraser" title="Eraser" aria-label="Eraser">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14.5L13 6a2 2 0 012.8 0l3.2 3.2a2 2 0 010 2.8l-6.5 6.5H8.5z" fill="#f9a8d4" stroke="currentColor" stroke-width="1.4"/><path d="M12.5 18.5H21" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="line" title="Straight line" aria-label="Straight line">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L20 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="arrow" title="Arrow" aria-label="Arrow">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L19 5M12 5h7v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="rect" title="Box" aria-label="Box">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="ellipse" title="Circle / oval" aria-label="Circle or oval">
+        <svg class="tdraw-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="8" ry="7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+      <button class="tdraw-btn" type="button" data-tdraw-tool="text" title="Text: type in the box, then click where it should appear" aria-label="Text tool">T</button>
     </div>
-    <div class="tdraw-body">
-      <div class="tdraw-row" role="toolbar" aria-label="Drawing tools">
-        <span class="tdraw-label">Tools</span>
-        <button class="tdraw-btn active" type="button" data-tdraw-tool="pen">Pen</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="highlighter">Highlighter</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="eraser">Eraser</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="line">Line</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="arrow">Arrow</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="rect">Box</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="ellipse">Circle</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="text">Text</button>
-        <button class="tdraw-btn" type="button" data-tdraw-tool="pointer">Pointer</button>
-      </div>
-
-      <div class="tdraw-row">
-        <span class="tdraw-label">Colour</span>
-        <input class="tdraw-color" id="tdrawColor" type="color" value="#ef4444" title="Choose colour">
-        <button class="tdraw-swatch active" type="button" data-tdraw-colour="#ef4444" style="background:#ef4444" aria-label="Red"></button>
-        <button class="tdraw-swatch" type="button" data-tdraw-colour="#2563eb" style="background:#2563eb" aria-label="Blue"></button>
-        <button class="tdraw-swatch" type="button" data-tdraw-colour="#16a34a" style="background:#16a34a" aria-label="Green"></button>
-        <button class="tdraw-swatch" type="button" data-tdraw-colour="#f59e0b" style="background:#f59e0b" aria-label="Amber"></button>
-        <button class="tdraw-swatch" type="button" data-tdraw-colour="#111827" style="background:#111827" aria-label="Black"></button>
-        <button class="tdraw-swatch" type="button" data-tdraw-colour="#ffffff" style="background:#ffffff" aria-label="White"></button>
-      </div>
-
-      <div class="tdraw-row">
-        <span class="tdraw-label">Tip size</span>
-        <input class="tdraw-range" id="tdrawSize" type="range" min="2" max="48" step="1" value="6">
-        <span class="tdraw-size-pill" id="tdrawSizeLabel">6 px</span>
-      </div>
-
-      <div class="tdraw-row">
-        <span class="tdraw-label">Actions</span>
-        <button class="tdraw-btn" id="tdrawUndo" type="button" disabled>↶ Undo</button>
-        <button class="tdraw-btn" id="tdrawRedo" type="button" disabled>↷ Redo</button>
-        <button class="tdraw-btn" id="tdrawHide" type="button">Hide ink</button>
-        <button class="tdraw-btn danger" id="tdrawClear" type="button">Clear all</button>
-      </div>
-
-      <div class="tdraw-note">
-        Buttons, spelling controls, teacher console controls and counters remain usable. To annotate, start drawing on the worksheet/background, not directly on a control. The mouse pointer changes to match the selected tool.
-      </div>
+    <div class="tdraw-group" aria-label="Text settings">
+      <input class="tdraw-text-input" id="tdrawText" type="text" maxlength="80" placeholder="Type text…" title="Type text, choose the T tool, then click to place it" aria-label="Annotation text">
+    </div>
+    <div class="tdraw-group" aria-label="Ink settings">
+      <select class="tdraw-select" id="tdrawSize" title="Tip size" aria-label="Tip size">
+        <option value="2">2 px</option>
+        <option value="4">4 px</option>
+        <option value="6" selected>6 px</option>
+        <option value="8">8 px</option>
+        <option value="12">12 px</option>
+        <option value="18">18 px</option>
+        <option value="24">24 px</option>
+        <option value="36">36 px</option>
+        <option value="48">48 px</option>
+      </select>
+      <input class="tdraw-color" id="tdrawColor" type="color" value="#ef4444" title="Colour" aria-label="Ink colour">
+    </div>
+    <div class="tdraw-group" aria-label="Annotation actions">
+      <button class="tdraw-btn" id="tdrawUndo" type="button" title="Undo" aria-label="Undo" disabled>↶</button>
+      <button class="tdraw-btn" id="tdrawRedo" type="button" title="Redo" aria-label="Redo" disabled>↷</button>
+      <button class="tdraw-btn" id="tdrawHide" type="button" title="Hide annotations" aria-label="Hide annotations">◉</button>
+      <button class="tdraw-btn danger" id="tdrawClear" type="button" title="Clear all annotations" aria-label="Clear all annotations">⌫</button>
     </div>
   </div>
 
@@ -7190,18 +7333,18 @@ function rerenderMagicELabel(slotEl) {
   (function(){
     const canvas = document.getElementById('teacherDrawCanvas');
     const toolbar = document.getElementById('teacherDrawTools');
-    const dragHandle = document.getElementById('teacherDrawDragHandle');
-    if (!canvas || !toolbar || !dragHandle) return;
+    if (!canvas || !toolbar) return;
 
     const ctx = canvas.getContext('2d');
     const state = {
       hidden:false,
-      tool:'pen',
+      tool:'pointer',
       color:'#ef4444',
       size:6,
       drawing:false,
       current:null,
       commands:[],
+      history:[],
       redo:[],
       dpr:Math.max(1, Math.min(3, window.devicePixelRatio || 1))
     };
@@ -7209,10 +7352,9 @@ function rerenderMagicELabel(slotEl) {
     const $ = (sel, root=document) => root.querySelector(sel);
     const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-    const collapseBtn = $('#tdrawCollapse');
     const colorInput = $('#tdrawColor');
     const sizeInput = $('#tdrawSize');
-    const sizeLabel = $('#tdrawSizeLabel');
+    const textInput = $('#tdrawText');
     const undoBtn = $('#tdrawUndo');
     const redoBtn = $('#tdrawRedo');
     const hideBtn = $('#tdrawHide');
@@ -7238,6 +7380,7 @@ function rerenderMagicELabel(slotEl) {
       '.teacher-console',
       '.teacher-panel',
       '.teacher-hotspot',
+      '.counter',
       '#counters'
     ].join(',');
 
@@ -7254,7 +7397,9 @@ function rerenderMagicELabel(slotEl) {
     function updateLayerMode(){
       canvas.style.display = state.hidden ? 'none' : 'block';
       canvas.style.pointerEvents = 'none';
-      hideBtn.textContent = state.hidden ? 'Show ink' : 'Hide ink';
+      hideBtn.textContent = state.hidden ? '⊙' : '◉';
+      hideBtn.title = state.hidden ? 'Show annotations' : 'Hide annotations';
+      hideBtn.setAttribute('aria-label', hideBtn.title);
     }
 
     function cursorUrl(svg, hotspotX, hotspotY, fallback){
@@ -7268,37 +7413,31 @@ function rerenderMagicELabel(slotEl) {
       const stroke = color || '#ef4444';
       switch(tool){
         case 'pen': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g transform="translate(16 16) rotate(-28) translate(-16 -16)"><path d="M11 23 L8.8 28.4 L14.4 26.2 L24.8 15.8 L21.4 12.4 Z" fill="${stroke}" stroke="#0f172a" stroke-width="1.3" stroke-linejoin="round"/><path d="M21.4 12.4 L24 9.8 Q25.8 8 27.4 9.6 L27.6 9.8 Q29.2 11.4 27.4 13.2 L24.8 15.8 Z" fill="#f8fafc" stroke="#0f172a" stroke-width="1.3" stroke-linejoin="round"/><path d="M8.8 28.4 L10.5 24.4 L12.8 26.7 Z" fill="#fde68a" stroke="#0f172a" stroke-width="1.1" stroke-linejoin="round"/></g></svg>`;
-          return cursorUrl(svg, 3, 29, 'crosshair');
+          /* The nib ends at (2,29), exactly matching the CSS cursor hotspot. */
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2 29L5.4 20.8 22.8 3.4a2 2 0 012.8 0l3 3a2 2 0 010 2.8L11.2 26.6z" fill="${stroke}" stroke="#0f172a" stroke-width="1.25" stroke-linejoin="round"/><path d="M5.4 20.8l5.8 5.8L2 29z" fill="#fde68a" stroke="#0f172a" stroke-width="1.05" stroke-linejoin="round"/><path d="M2 29l2.3-2.3" stroke="#0f172a" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+          return cursorUrl(svg, 2, 29, 'crosshair');
         }
         case 'highlighter': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g transform="translate(16 16) rotate(-28) translate(-16 -16)"><rect x="11" y="8" width="11" height="12" rx="2.4" fill="${stroke}" stroke="#0f172a" stroke-width="1.3"/><rect x="11" y="18.5" width="11" height="4.7" rx="1.5" fill="#fef3c7" stroke="#0f172a" stroke-width="1.1"/><path d="M12.2 23.2 H20.8 L19.6 27 H13.4 Z" fill="#f59e0b" fill-opacity="0.35" stroke="#b45309" stroke-width="0.9"/></g></svg>`;
-          return cursorUrl(svg, 3, 29, 'crosshair');
+          /* The centre of the flat chisel edge is (6,29), the drawing point. */
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M3 25L20.8 3.5a2 2 0 012.8-.3l4 3.3a2 2 0 01.3 2.8L10 30z" fill="${stroke}" stroke="#0f172a" stroke-width="1.25" stroke-linejoin="round"/><path d="M3 25l7 5H3z" fill="#fef3c7" stroke="#0f172a" stroke-width="1.05" stroke-linejoin="round"/><path d="M3 29h6" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+          return cursorUrl(svg, 6, 29, 'crosshair');
         }
         case 'eraser': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g transform="translate(16 16) rotate(-35) translate(-16 -16)"><path d="M9 12.8 L15.5 6.4 Q17.1 4.8 18.8 6.4 L25.6 13.2 Q27.2 14.8 25.6 16.4 L18.8 23.2 Q17.2 24.8 15.5 23.2 L8.8 16.5 Q7.2 14.9 8.8 13.3 Z" fill="#f8fafc" stroke="#0f172a" stroke-width="1.3"/><path d="M13.2 10.6 L21.4 18.8" stroke="#cbd5e1" stroke-width="2"/><path d="M17.2 24.1 H26.6" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"/></g></svg>`;
-          return cursorUrl(svg, 4, 28, 'crosshair');
+          /* The centre of the erasing edge is (6,28), the eraser path centre. */
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2.5 23L18.7 4.5a2.1 2.1 0 013-.2l6 5.2a2.1 2.1 0 01.2 3L12.2 30H4.5z" fill="#f9a8d4" stroke="#0f172a" stroke-width="1.25" stroke-linejoin="round"/><path d="M12.2 30H4.5l-2-7 4.4-5 9.6 8.4z" fill="#f8fafc" stroke="#0f172a" stroke-width="1.05" stroke-linejoin="round"/><path d="M3 28h6" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+          return cursorUrl(svg, 6, 28, 'crosshair');
         }
-        case 'line': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M6 26 L26 6" stroke="${stroke}" stroke-width="3" stroke-linecap="round"/><circle cx="6" cy="26" r="2.7" fill="#fff" stroke="#0f172a" stroke-width="1.2"/><circle cx="26" cy="6" r="2.7" fill="#fff" stroke="#0f172a" stroke-width="1.2"/></svg>`;
-          return cursorUrl(svg, 6, 26, 'crosshair');
-        }
-        case 'arrow': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M6 26 L22 10" stroke="${stroke}" stroke-width="3" stroke-linecap="round"/><path d="M19 10 H26 V17" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-          return cursorUrl(svg, 6, 26, 'crosshair');
-        }
-        case 'rect': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect x="7" y="8" width="18" height="15" rx="1.5" fill="none" stroke="${stroke}" stroke-width="2.6" stroke-dasharray="2 1.2"/></svg>`;
-          return cursorUrl(svg, 8, 24, 'crosshair');
-        }
-        case 'ellipse': {
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><ellipse cx="16" cy="16" rx="10" ry="7.4" fill="none" stroke="${stroke}" stroke-width="2.6" stroke-dasharray="2 1.2"/></svg>`;
-          return cursorUrl(svg, 8, 24, 'crosshair');
-        }
+        case 'line':
+        case 'arrow':
+        case 'rect':
+        case 'ellipse':
+        case 'select':
+          /* A system crosshair has its hotspot at its exact centre. */
+          return 'crosshair';
         case 'text':
           return 'text';
         case 'pointer':
-          return 'pointer';
+          return 'default';
         default:
           return 'default';
       }
@@ -7311,14 +7450,10 @@ function rerenderMagicELabel(slotEl) {
     }
 
     function updateButtons(){
-      undoBtn.disabled = state.commands.length === 0;
+      undoBtn.disabled = state.history.length === 0;
       redoBtn.disabled = state.redo.length === 0;
-      sizeLabel.textContent = state.size + ' px';
       $$('.tdraw-btn[data-tdraw-tool]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tdrawTool === state.tool);
-      });
-      $$('.tdraw-swatch').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tdrawColour.toLowerCase() === state.color.toLowerCase());
       });
       updateLayerMode();
       applyToolCursor();
@@ -7384,7 +7519,20 @@ function rerenderMagicELabel(slotEl) {
       }
 
       const pts = cmd.points || [];
-      if (['pen','highlighter','eraser'].includes(cmd.tool)){
+      if (cmd.tool === 'select' && pts.length >= 2){
+        const x = Math.min(pts[0].x, pts[1].x);
+        const y = Math.min(pts[0].y, pts[1].y);
+        const w = Math.abs(pts[1].x - pts[0].x);
+        const h = Math.abs(pts[1].y - pts[0].y);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        ctx.setLineDash([7,5]);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#2563eb';
+        ctx.fillStyle = 'rgba(37,99,235,.10)';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeRect(x, y, w, h);
+      } else if (['pen','highlighter','eraser'].includes(cmd.tool)){
         drawSmoothPath(pts);
       } else if (cmd.tool === 'line' && pts.length >= 2){
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y); ctx.stroke();
@@ -7423,39 +7571,78 @@ function rerenderMagicELabel(slotEl) {
       if (extra) drawCommand(extra);
     }
 
-    function commit(cmd){
-      state.commands.push(cmd);
+    function checkpoint(){
+      state.history.push(state.commands.slice());
+      if (state.history.length > 60) state.history.shift();
       state.redo.length = 0;
+    }
+
+    function commit(cmd){
+      checkpoint();
+      state.commands.push(cmd);
       redraw();
       updateButtons();
     }
 
-    function flashPointer(point){
-      const pulse = document.createElement('div');
-      pulse.className = 'tdraw-pulse';
-      pulse.style.left = point.x + 'px';
-      pulse.style.top = point.y + 'px';
-      pulse.style.color = state.color;
-      document.body.appendChild(pulse);
-      window.setTimeout(() => pulse.remove(), 900);
+    function commandBounds(cmd){
+      const pts = cmd.points || [];
+      if (!pts.length) return null;
+      if (cmd.tool === 'text'){
+        const fontSize = Math.max(18, Math.min(72, (cmd.size || 6) * 4));
+        const width = Math.max(fontSize * .6, String(cmd.text || '').length * fontSize * .64);
+        return { left:pts[0].x, top:pts[0].y - fontSize, right:pts[0].x + width, bottom:pts[0].y + fontSize * .25 };
+      }
+      let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+      pts.forEach(p=>{
+        left = Math.min(left, p.x); top = Math.min(top, p.y);
+        right = Math.max(right, p.x); bottom = Math.max(bottom, p.y);
+      });
+      const base = cmd.size || 6;
+      const pad = cmd.tool === 'highlighter' ? Math.max(7, base * 1.5)
+        : cmd.tool === 'eraser' ? Math.max(7, base * 1.3)
+        : cmd.tool === 'arrow' ? Math.max(8, base * 3.2)
+        : Math.max(3, base / 2);
+      return { left:left-pad, top:top-pad, right:right+pad, bottom:bottom+pad };
+    }
+
+    function selectionRect(points){
+      if (!points || points.length < 2) return null;
+      return {
+        left:Math.min(points[0].x, points[1].x),
+        top:Math.min(points[0].y, points[1].y),
+        right:Math.max(points[0].x, points[1].x),
+        bottom:Math.max(points[0].y, points[1].y)
+      };
+    }
+
+    function boxesIntersect(a,b){
+      return !!(a && b && a.left <= b.right && a.right >= b.left && a.top <= b.bottom && a.bottom >= b.top);
+    }
+
+    function eraseSelected(points){
+      const box = selectionRect(points);
+      if (!box || (box.right-box.left < 3 && box.bottom-box.top < 3)){
+        redraw();
+        return;
+      }
+      const kept = state.commands.filter(cmd => !boxesIntersect(commandBounds(cmd), box));
+      if (kept.length === state.commands.length){
+        redraw();
+        return;
+      }
+      checkpoint();
+      state.commands = kept;
+      redraw();
+      updateButtons();
     }
 
     function canStartAnnotation(e){
-      if (state.hidden || dragging) return false;
+      /* Pointer mode leaves the page completely normal: click, select and scroll. */
+      if (state.hidden || state.tool === 'pointer') return false;
       if (e.pointerType === 'mouse' && e.button !== 0) return false;
       const target = e.target;
       if (!target || !target.closest) return true;
-
-      // Keep the spelling app controls usable, but allow the Elkonin board itself
-      // (syllableDrop and counter-slot areas) to be annotated anywhere.
-      if (target.closest(interactiveSelector)) return false;
-
-      // Counters are draggable when active, so do not start annotation on active counters.
-      // Locked counters are treated as part of the board, so teachers can annotate over them.
-      const counter = target.closest('.counter');
-      if (counter && !counter.classList.contains('locked')) return false;
-
-      return true;
+      return !target.closest(interactiveSelector);
     }
 
     document.addEventListener('pointerdown', (e) => {
@@ -7465,15 +7652,12 @@ function rerenderMagicELabel(slotEl) {
 
       const p = posFromEvent(e);
 
-      if (state.tool === 'pointer'){
-        flashPointer({ x:e.clientX, y:e.clientY });
-        return;
-      }
-
       if (state.tool === 'text'){
-        const text = window.prompt('Type the annotation text:');
+        const text = textInput ? textInput.value : '';
         if (text && text.trim()){
           commit({ tool:'text', color:state.color, size:state.size, text:text.trim(), points:[p] });
+        } else if (textInput){
+          textInput.focus();
         }
         return;
       }
@@ -7506,6 +7690,10 @@ function rerenderMagicELabel(slotEl) {
       state.drawing = false;
       state.current = null;
       const pts = cmd.points || [];
+      if (cmd.tool === 'select'){
+        eraseSelected(pts);
+        return;
+      }
       const shouldKeep = pts.length > 1 && distance(pts[0], pts[pts.length - 1]) > 1;
       if (shouldKeep) commit(cmd);
       else redraw();
@@ -7513,15 +7701,11 @@ function rerenderMagicELabel(slotEl) {
     document.addEventListener('pointerup', endPointer, true);
     document.addEventListener('pointercancel', endPointer, true);
 
-    collapseBtn.addEventListener('click', () => {
-      toolbar.classList.toggle('collapsed');
-      collapseBtn.textContent = toolbar.classList.contains('collapsed') ? '▸' : '▾';
-    });
-
     $$('.tdraw-btn[data-tdraw-tool]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.tool = btn.dataset.tdrawTool;
         updateButtons();
+        if (state.tool === 'text' && textInput) textInput.focus();
       });
     });
 
@@ -7530,29 +7714,23 @@ function rerenderMagicELabel(slotEl) {
       updateButtons();
     });
 
-    $$('.tdraw-swatch').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.color = btn.dataset.tdrawColour;
-        colorInput.value = state.color;
-        updateButtons();
-      });
-    });
-
-    sizeInput.addEventListener('input', () => {
+    sizeInput.addEventListener('change', () => {
       state.size = parseInt(sizeInput.value, 10) || 6;
       updateButtons();
     });
 
     undoBtn.addEventListener('click', () => {
-      if (!state.commands.length) return;
-      state.redo.push(state.commands.pop());
+      if (!state.history.length) return;
+      state.redo.push(state.commands.slice());
+      state.commands = state.history.pop();
       redraw();
       updateButtons();
     });
 
     redoBtn.addEventListener('click', () => {
       if (!state.redo.length) return;
-      state.commands.push(state.redo.pop());
+      state.history.push(state.commands.slice());
+      state.commands = state.redo.pop();
       redraw();
       updateButtons();
     });
@@ -7564,41 +7742,25 @@ function rerenderMagicELabel(slotEl) {
 
     clearBtn.addEventListener('click', () => {
       if (!state.commands.length || window.confirm('Clear all annotations?')){
-        state.commands.length = 0;
-        state.redo.length = 0;
+        if (state.commands.length) checkpoint();
+        state.commands = [];
         redraw();
         updateButtons();
       }
     });
 
-    let dragging = false;
-    let dragOffset = {x:0, y:0};
-    dragHandle.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button')) return;
-      dragging = true;
-      const rect = toolbar.getBoundingClientRect();
-      dragOffset = { x:e.clientX - rect.left, y:e.clientY - rect.top };
-      toolbar.style.left = rect.left + 'px';
-      toolbar.style.top = rect.top + 'px';
-      toolbar.style.right = 'auto';
-      dragHandle.setPointerCapture(e.pointerId);
-    });
-    dragHandle.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const maxX = window.innerWidth - toolbar.offsetWidth - 8;
-      const maxY = window.innerHeight - 48;
-      const x = Math.max(8, Math.min(maxX, e.clientX - dragOffset.x));
-      const y = Math.max(8, Math.min(maxY, e.clientY - dragOffset.y));
-      toolbar.style.left = x + 'px';
-      toolbar.style.top = y + 'px';
-    });
-    function stopDrag(e){
-      if (!dragging) return;
-      dragging = false;
-      try { dragHandle.releasePointerCapture(e.pointerId); } catch(err) {}
+    function clearAnnotations(){
+      state.drawing = false;
+      state.current = null;
+      state.commands = [];
+      state.history.length = 0;
+      state.redo.length = 0;
+      redraw();
+      updateButtons();
     }
-    dragHandle.addEventListener('pointerup', stopDrag);
-    dragHandle.addEventListener('pointercancel', stopDrag);
+
+    /* Lesson views dispatch this whenever the displayed word/phonogram changes. */
+    window.addEventListener('teacher:content-change', clearAnnotations);
 
     document.addEventListener('keydown', (e) => {
       const tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
