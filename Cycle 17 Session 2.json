@@ -5,17 +5,10 @@
       "meaning": "Meaning: to think again.\nSentence: We need to rethink our plan.",
       "syllables": [
         {
-          "letters": [
-            "re"
-          ]
+          "letters": ["re"]
         },
         {
-          "letters": [
-            "th",
-            "i__",
-            "n",
-            "k"
-          ]
+          "letters": ["th", "i__", "n", "k"]
         }
       ]
     },
@@ -24,16 +17,10 @@
       "meaning": "Meaning: to read again.\nSentence: Please reread the question.",
       "syllables": [
         {
-          "letters": [
-            "re"
-          ]
+          "letters": ["re"]
         },
         {
-          "letters": [
-            "r",
-            "ea__",
-            "d"
-          ]
+          "letters": ["r", "ea__", "d"]
         }
       ]
     },
@@ -42,39 +29,13 @@
       "meaning": "Meaning: not believing something.\nSentence: She stared in disbelief.",
       "syllables": [
         {
-          "letters": [
-            "dis"
-          ]
+          "letters": ["dis"]
         },
         {
-          "letters": [
-            "b",
-            "e"
-          ]
+          "letters": ["b", "e"]
         },
         {
-          "letters": [
-            "l",
-            "ie_",
-            "f"
-          ]
-        }
-      ]
-    },
-    {
-      "word": "redo",
-      "meaning": "Meaning: to do again.\nSentence: You must redo the work.",
-      "syllables": [
-        {
-          "letters": [
-            "re"
-          ]
-        },
-        {
-          "letters": [
-            "d",
-            "o___"
-          ]
+          "letters": ["l", "ie_", "f"]
         }
       ]
     },
@@ -83,17 +44,10 @@
       "meaning": "Meaning: played again.\nSentence: The coach replayed the clip.",
       "syllables": [
         {
-          "letters": [
-            "re"
-          ]
+          "letters": ["re"]
         },
         {
-          "letters": [
-            "p",
-            "l",
-            "ay",
-            "ed_"
-          ]
+          "letters": ["p", "l", "ay", "ed_"]
         }
       ]
     },
@@ -102,25 +56,16 @@
       "meaning": "Meaning: not obeying; refusing to follow rules.\nSentence: He was disobeying the teacher.",
       "syllables": [
         {
-          "letters": [
-            "dis"
-          ]
+          "letters": ["dis"]
         },
         {
-          "letters": [
-            "o_"
-          ]
+          "letters": ["o_"]
         },
         {
-          "letters": [
-            "b",
-            "ey"
-          ]
+          "letters": ["b", "ey"]
         },
         {
-          "letters": [
-            "ing"
-          ]
+          "letters": ["ing"]
         }
       ]
     },
@@ -129,15 +74,10 @@
       "meaning": "Meaning: to use again.\nSentence: We should reuse old boxes.",
       "syllables": [
         {
-          "letters": [
-            "re"
-          ]
+          "letters": ["re"]
         },
         {
-          "letters": [
-            "u",
-            "se"
-          ]
+          "letters": ["u", "se"]
         }
       ]
     },
@@ -146,17 +86,10 @@
       "meaning": "Meaning: did not like.\nSentence: She disliked the smell.",
       "syllables": [
         {
-          "letters": [
-            "dis"
-          ]
+          "letters": ["dis"]
         },
         {
-          "letters": [
-            "l",
-            "i",
-            "k",
-            "ed__"
-          ]
+          "letters": ["l", "i", "k", "ed__"]
         }
       ]
     }
