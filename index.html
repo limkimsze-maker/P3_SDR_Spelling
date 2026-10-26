@@ -4121,8 +4121,8 @@
       try {
         if (ACTIVE_SOUND_AUDIO) {
           ACTIVE_SOUND_AUDIO.pause();
-          ACTIVE_SOUND_AUDIO.removeAttribute('src');
-          ACTIVE_SOUND_AUDIO.load();
+          // Keep buffered audio available for the next phonogram replay.
+          try { ACTIVE_SOUND_AUDIO.currentTime = 0; } catch (_) {}
         }
       } catch (_) {}
       ACTIVE_SOUND_AUDIO = null;
@@ -4837,8 +4837,14 @@ function rerenderMagicELabel(slotEl) {
       speechSynthesis.speak(u);
     }
 
-    function playAudioUrlSequence(urls, cb, fallbackText) {
-      const queue = (urls || []).filter(Boolean);
+    // Reuse the working file for each phonogram and its predecoded sound.
+    const SOUND_CONFIRMED_URLS = new Map();
+    const SOUND_PRELOADED_AUDIO = new Map();
+
+    function playAudioUrlSequence(urls, cb, fallbackText, soundKey) {
+      const key = String(soundKey || '').trim().toLowerCase();
+      const preferred = key ? SOUND_CONFIRMED_URLS.get(key) : null;
+      const queue = [...new Set([preferred, ...(urls || [])].filter(Boolean))];
       let i = 0;
       let done = false;
       let audio = null;
@@ -4885,7 +4891,11 @@ function rerenderMagicELabel(slotEl) {
           return;
         }
 
-        const candidate = new Audio(queue[i++]);
+        const url = queue[i++];
+        const warmed = key ? SOUND_PRELOADED_AUDIO.get(key) : null;
+        const candidate = (warmed && warmed.src === new URL(url, document.baseURI).href && warmed.readyState >= 2)
+          ? warmed : new Audio(url);
+        try { candidate.currentTime = 0; } catch (_) {}
         audio = candidate;
         ACTIVE_SOUND_AUDIO = candidate;
         candidate.preload = 'auto';
@@ -4902,16 +4912,14 @@ function rerenderMagicELabel(slotEl) {
         // Even if a browser does not fire 'ended', release the programme shortly.
         maxTimer = setTimeout(finish, 3500);
 
-        candidate.onplaying = () => {
+        const ready = () => {
           if (!isCurrent() || audio !== candidate) return;
+          if (key) SOUND_CONFIRMED_URLS.set(key, candidate.src);
           if (failTimer) clearTimeout(failTimer);
           failTimer = null;
         };
-        candidate.oncanplay = () => {
-          if (!isCurrent() || audio !== candidate) return;
-          if (failTimer) clearTimeout(failTimer);
-          failTimer = null;
-        };
+        candidate.onplaying = ready;
+        candidate.oncanplay = ready;
         candidate.onended = finish;
         candidate.onerror = tryNext;
         candidate.play().catch(() => {
@@ -4922,18 +4930,19 @@ function rerenderMagicELabel(slotEl) {
       tryNext();
     }
 
-    function soundCandidateUrls(file, bust) {
+    function soundCandidateUrls(file) {
       const safeFile = String(file || '').trim();
+      // Stable paths permit a real browser cache hit (no per-play timestamp).
+      // Only unique local and fallback hosts are requested.
       return [
-        `./sounds/${safeFile}?v=${bust}`,
-        `sounds/${safeFile}?v=${bust}`,
-        `${RAW_SOUND_BASE}${safeFile}?v=${bust}`,
-        `${SOUND_BASE}${safeFile}?v=${bust}`
+        `./sounds/${safeFile}`,
+        `${RAW_SOUND_BASE}${safeFile}`,
+        `${SOUND_BASE}${safeFile}`
       ];
     }
 
-    function soundCandidateUrlsForFiles(files, bust) {
-      return (files || []).flatMap(file => soundCandidateUrls(file, bust));
+    function soundCandidateUrlsForFiles(files) {
+      return [...new Set((files || []).flatMap(file => soundCandidateUrls(file)))];
     }
 
     function playSoundForToken(token, cb) {
@@ -4942,8 +4951,7 @@ function rerenderMagicELabel(slotEl) {
 
       // Use uploaded GitHub sound files instead of browser TTS for selected tokens.
       if (k === 'beau' || k === 'tures' || k === 'ture' || k === 'trians') {
-        const bust = Date.now().toString(36);
-        playAudioUrlSequence([`${RAW_SOUND_BASE}${k}.mp4?v=${bust}`], cb, null);
+        playAudioUrlSequence(soundCandidateUrlsForFiles([`${encodeURIComponent(k)}.mp4`]), cb, null, k);
         return;
       }
 
@@ -4953,7 +4961,6 @@ function rerenderMagicELabel(slotEl) {
         return;
       }
 
-      const bust = Date.now().toString(36);
       const audioKey = (typeof SOUND_TOKEN_FILE_OVERRIDES !== 'undefined' && SOUND_TOKEN_FILE_OVERRIDES[k]) ? SOUND_TOKEN_FILE_OVERRIDES[k] : k;
 
       // Schwa-marked phonograms must use ONLY their matching .mp4 files.
@@ -4966,54 +4973,63 @@ function rerenderMagicELabel(slotEl) {
       if (SCHWA_MP4_ONLY.has(audioKey)) {
         const file = `${encodeURIComponent(audioKey)}.mp4`;
         playAudioUrlSequence(
-          soundCandidateUrlsForFiles([file], bust),
+          soundCandidateUrlsForFiles([file]),
           cb,
-          null
+          null,
+          audioKey
         );
         return;
       }
 
       const encoded = encodeURIComponent(audioKey);
       const files = ['m4a', 'mp4', 'mp3', 'wav', 'ogg', 'aac', 'webm'].map(ext => `${encoded}.${ext}`);
-      playAudioUrlSequence(soundCandidateUrlsForFiles(files, bust), cb, audioKey);
+      playAudioUrlSequence(soundCandidateUrlsForFiles(files), cb, audioKey, audioKey);
     }
 
     function prefetchLessonAudio(wordArr) {
-      try {
-        const toks = new Set();
-        const bust = Date.now().toString(36);
-
-        (wordArr || []).forEach(w => {
-          (w.syllables || []).forEach(s => {
-            (s.letters || []).forEach(t => {
-              const k = String(t || '').trim().toLowerCase();
-              if (k) toks.add((typeof SOUND_TOKEN_FILE_OVERRIDES !== 'undefined' && SOUND_TOKEN_FILE_OVERRIDES[k]) ? SOUND_TOKEN_FILE_OVERRIDES[k] : k);
-            });
-          });
-        });
-
-        const list = Array.from(toks).slice(0, 120);
-        list.forEach(k => {
-          const encoded = encodeURIComponent(k);
-          const SCHWA_MP4_ONLY = new Set([
-            'a_', 'e_', 'i_', 'o_', 'u_',
-            'ai_', 'ar_', 'ay_', 'ea_', 'er_', 'ir_', 'or_', 'ur_'
-          ]);
-          const files = SCHWA_MP4_ONLY.has(k)
-            ? [`${encoded}.mp4`]
-            : ['m4a', 'mp4', 'mp3', 'wav', 'ogg', 'aac', 'webm'].map(ext => `${encoded}.${ext}`);
-          const urls = soundCandidateUrlsForFiles(files, bust);
-
-          const a = new Audio();
-          a.preload = 'auto';
-          a.src = urls[0];
-          let idx = 1;
-          a.onerror = () => {
-            if (idx < urls.length) a.src = urls[idx++];
-          };
-          try { a.load(); } catch (_) {}
-        });
-      } catch (_) {}
+      // Keep lesson phonograms decoded and ready. Limit simultaneous downloads
+      // so prefetching cannot overwhelm the classroom connection.
+      const keys = new Set();
+      const special = new Set(['beau','tures','ture','trians']);
+      const schwaOnly = new Set([
+        'a_', 'e_', 'i_', 'o_', 'u_',
+        'ai_', 'ar_', 'ay_', 'ea_', 'er_', 'ir_', 'or_', 'ur_'
+      ]);
+      (wordArr || []).forEach(w => (w.syllables || []).forEach(s =>
+        (s.letters || []).forEach(token => {
+          const k = String(token || '').trim().toLowerCase();
+          if (!k || (TTS_SOUND_OVERRIDES[k] && !special.has(k))) return;
+          keys.add(SOUND_TOKEN_FILE_OVERRIDES[k] || k);
+        })
+      ));
+      const pending = [...keys].slice(0, 90);
+      let cursor = 0;
+      function warmNext() {
+        if (cursor >= pending.length) return;
+        const key = pending[cursor++];
+        if (SOUND_PRELOADED_AUDIO.has(key)) { warmNext(); return; }
+        const extensions = (special.has(key) || schwaOnly.has(key))
+          ? ['mp4'] : ['m4a','mp4','mp3','wav','ogg','aac','webm'];
+        const urls = extensions.map(ext => `./sounds/${encodeURIComponent(key)}.${ext}`);
+        const a = new Audio();
+        a.preload = 'auto';
+        let index = 0;
+        function tryNextFile() {
+          if (index >= urls.length) { warmNext(); return; }
+          a.src = urls[index++];
+          try { a.load(); } catch (_) { tryNextFile(); }
+        }
+        a.onloadeddata = () => {
+          SOUND_PRELOADED_AUDIO.set(key, a);
+          SOUND_CONFIRMED_URLS.set(key, a.src);
+          a.onloadeddata = null;
+          a.onerror = null;
+          warmNext();
+        };
+        a.onerror = tryNextFile;
+        tryNextFile();
+      }
+      for (let i = 0; i < Math.min(4, pending.length); i++) warmNext();
     }
 
     function repeatWordAudio() {
